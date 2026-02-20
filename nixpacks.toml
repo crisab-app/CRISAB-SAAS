@@ -1,0 +1,14 @@
+[providers]
+use = ["php", "node"]
+
+[variables]
+NIXPACKS_NODE_VERSION = '22'
+NIXPACKS_PHP_ROOT_DIR = '/app/public'
+# ¡Omitimos a propósito el FALLBACK_PATH aquí para evitar el error de Nginx duplicado!
+
+[phases.build]
+cmds = [
+    "composer install --optimize-autoloader --no-interaction",
+    "npm install",
+    "npm run build"
+]
