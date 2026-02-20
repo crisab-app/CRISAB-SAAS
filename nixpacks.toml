@@ -1,18 +1,11 @@
-[providers]
-use = ["php", "node"]
+providers = ["php", "node"]
 
 [variables]
 NIXPACKS_NODE_VERSION = '22'
-NIXPACKS_PHP_ROOT_DIR = '/app/public'
 
 [phases.build]
 cmds = [
     "composer install --optimize-autoloader --no-interaction",
     "npm install",
     "npm run build"
-]
-
-[phases.setup]
-cmds = [
-    "cp nginx.conf /etc/nginx/sites-available/default"
 ]
