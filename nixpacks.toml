@@ -1,7 +1,17 @@
-providers = ["php", "node"]
-
 [variables]
 NIXPACKS_NODE_VERSION = '22'
+# Al no poner [providers], dejamos que Nixpacks detecte automáticamente PHP
+# pero obligamos a que, cuando use Node internamente, sea la versión 22.
+
+[phases.build]
+cmds = [
+    "composer install --optimize-autoloader --no-interaction",
+    "npm install",
+    "npm run build"
+][variables]
+NIXPACKS_NODE_VERSION = '22'
+# Al no poner [providers], dejamos que Nixpacks detecte automáticamente PHP
+# pero obligamos a que, cuando use Node internamente, sea la versión 22.
 
 [phases.build]
 cmds = [
