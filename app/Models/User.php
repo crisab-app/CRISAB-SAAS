@@ -47,4 +47,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    // Un usuario puede crear/ser responsable de muchos eventos
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
 }
