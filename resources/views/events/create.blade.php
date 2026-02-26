@@ -14,6 +14,10 @@
                         <label class="block text-gray-700 font-bold mb-2">Título del Evento</label>
                         <input type="text" name="title" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Ej: Culto de Jóvenes" required>
                     </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-2">Color del Evento</label>
+                        <input type="color" name="color" value="#3b82f6" class="h-10 w-20 border-gray-300 rounded-md shadow-sm cursor-pointer">
+                    </div>
 
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2">Fecha y Hora de Inicio</label>

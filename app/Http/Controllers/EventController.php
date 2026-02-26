@@ -15,8 +15,9 @@ class EventController extends Controller
                 'title' => $event->title,
                 'start' => $event->start_time->toIso8601String(),
                 'end' => $event->end_time->toIso8601String(),
+                'color' => $event->color, // ¡Esta es la línea mágica!
             ];
-        });
+    });
 
         return view('calendar', compact('events'));
     }
@@ -36,11 +37,13 @@ class EventController extends Controller
         ]);
 
         // 2. Guardamos el evento en la base de datos
-        Event::create([
-            'title' => $request->title,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'user_id' => auth()->id(), // Automáticamente asigna a tu usuario como el creador
+            Event::create([
+                'title' => $request->title,
+                'start_time' => $request->start_time,
+                'end_time' => $request->end_time,
+                'color' => $request->color,
+                'user_id' => auth()->id(),
+]);// Automáticamente asigna a tu usuario como el creador
             // Por ahora dejamos el salón (room) vacío hasta que creemos los salones
         ]);
 

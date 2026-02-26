@@ -10,8 +10,8 @@ class Event extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'type', 'start_time', 'end_time', 'room_id', 'user_id'
-    ];
+    'title', 'description', 'type', 'start_time', 'end_time', 'room_id', 'user_id', 'color'
+];
 
     protected $casts = [
         'start_time' => 'datetime',
