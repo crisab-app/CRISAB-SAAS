@@ -15,12 +15,13 @@ class EventController extends Controller
                 'title' => $event->title,
                 'start' => $event->start_time->toIso8601String(),
                 'end' => $event->end_time->toIso8601String(),
-                'color' => $event->color, // ¡Esta es la línea mágica!
+                'color' => $event->color ?? '#3b82f6', // El color mágico
             ];
-    });
+        });
 
         return view('calendar', compact('events'));
     }
+
     public function create()
     {
         // Esto abrirá la pantalla del formulario
@@ -29,22 +30,21 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validamos que no falten datos importantes
+        // 1. Validamos que no falten datos
         $request->validate([
             'title' => 'required|string|max:255',
             'start_time' => 'required|date',
             'end_time' => 'required|date|after_or_equal:start_time',
+            'color' => 'nullable|string|max:7',
         ]);
 
         // 2. Guardamos el evento en la base de datos
-            Event::create([
-                'title' => $request->title,
-                'start_time' => $request->start_time,
-                'end_time' => $request->end_time,
-                'color' => $request->color,
-                'user_id' => auth()->id(),
-]);// Automáticamente asigna a tu usuario como el creador
-            // Por ahora dejamos el salón (room) vacío hasta que creemos los salones
+        Event::create([
+            'title' => $request->title,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'color' => $request->color ?? '#3b82f6',
+            'user_id' => auth()->id(),
         ]);
 
         // 3. Regresamos al calendario
