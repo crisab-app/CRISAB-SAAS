@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Event::class);
     }
+    // Un usuario pertenece a un contrato
+    public function contract()
+    {
+        return $this->belongsTo(Contract::class);
+    }
 }

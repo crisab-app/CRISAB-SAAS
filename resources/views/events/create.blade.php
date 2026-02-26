@@ -18,6 +18,53 @@
                         <label class="block text-gray-700 font-bold mb-2">Color del Evento</label>
                         <input type="color" name="color" value="#3b82f6" class="h-10 w-20 border-gray-300 rounded-md shadow-sm cursor-pointer">
                     </div>
+                    <hr class="my-6 border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Roles y Encargados (Opcional)</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2">Director del Culto</label>
+                            <select name="participants[Director]" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">-- Seleccionar persona --</option>
+                            @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2">Predicador</label>
+                            <select name="participants[Predicador]" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">-- Seleccionar persona --</option>
+                                @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2">Ministro de Alabanza</label>
+                            <select name="participants[Alabanza]" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">-- Seleccionar persona --</option>
+                                @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+    
+                        <div>
+                            <label class="block text-gray-700 font-bold mb-2">Ujier Principal</label>
+                            <select name="participants[Ujier]" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">-- Seleccionar persona --</option>
+                                @foreach($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                        </select>
+                        </div>
+
+                    </div>
+                    <hr class="my-6 border-gray-200">
 
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-2">Fecha y Hora de Inicio</label>

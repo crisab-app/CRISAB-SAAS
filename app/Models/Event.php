@@ -11,7 +11,7 @@ class Event extends Model
 
     protected $fillable = [
     'title', 'description', 'type', 'start_time', 'end_time', 'room_id', 'user_id', 'color'
-];
+    ];
 
     protected $casts = [
         'start_time' => 'datetime',
@@ -28,5 +28,11 @@ class Event extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    // Un evento tiene muchos participantes (usuarios)
+    
+    public function participants()
+    {
+        return $this->belongsToMany(User::class)->withPivot('role')->withTimestamps();
     }
 }
