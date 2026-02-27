@@ -21,7 +21,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     // Rutas para Grupos y Directivas
-    Route::resource('grupos', GroupController::class);
+Route::resource('grupos', GroupController::class)->parameters([
+        'grupos' => 'group'
+    ]);
     // Rutas especiales para asignar y quitar gente
     Route::post('/grupos/{group}/assign', [GroupController::class, 'assignMember'])->name('grupos.assign');
     Route::delete('/grupos/{group}/remove/{user}', [GroupController::class, 'removeMember'])->name('grupos.remove');

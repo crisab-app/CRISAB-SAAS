@@ -46,10 +46,12 @@ class GroupController extends Controller
     // Ver los detalles y la directiva del grupo
     public function show(Group $group)
     {
-        // Seguridad: Verificar que el grupo sea de MI iglesia
-        if ($group->contract_id !== auth()->user()->contract_id) {
-            abort(403);
+        // Usamos != (solo dos símbolos) en lugar de !==
+        if ($group->contract_id != auth()->user()->contract_id) {
+            abort(403, 'No tienes permiso para ver este grupo.');
         }
+
+        // Cargamos los miembros...
 
         // Cargamos los miembros con sus cargos
         $group->load('members');
@@ -87,9 +89,9 @@ class GroupController extends Controller
     // Eliminar un grupo por completo
     public function destroy(Group $group)
     {
-        // Seguridad: Solo puedes borrar grupos de tu iglesia
-        if ($group->contract_id !== auth()->user()->contract_id) {
-            abort(403);
+        // Usamos != en lugar de !==
+        if ($group->contract_id != auth()->user()->contract_id) {
+            abort(403, 'No tienes permiso para eliminar este grupo.');
         }
 
         $group->delete();

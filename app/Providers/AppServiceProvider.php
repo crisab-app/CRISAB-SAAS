@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL; // <-- 1. Agrega esta línea aquí arriba
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,7 +19,11 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
+    {   // 2. Agrega este bloque de código
+        // Si el sistema detecta que está en internet (producción), fuerza el candado HTTPS
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
         //
     }
 }
