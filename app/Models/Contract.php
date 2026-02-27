@@ -16,4 +16,8 @@ class Contract extends Model
     {
         return $this->hasMany(User::class);
     }
+    public function groups()
+    {
+        return $this->hasMany(Group::class);
+    }
 }

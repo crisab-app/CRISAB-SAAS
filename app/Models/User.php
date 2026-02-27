@@ -59,4 +59,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Contract::class);
     }
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class)->withPivot('role')->withTimestamps();
+    }
 }
