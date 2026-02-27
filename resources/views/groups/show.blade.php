@@ -1,8 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ $group->name }} - Directiva
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ $group->name }} - Directiva
+            </h2>
+            
+            <form action="{{ route('grupos.destroy', $group) }}" method="POST" onsubmit="return confirm('¿Estás COMPLETAMENTE seguro de eliminar este grupo? Se borrará toda su directiva.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 text-sm font-bold shadow-sm">
+                    Eliminar Grupo
+                </button>
+            </form>
+        </div>
     </x-slot>
 
     <div class="py-12">

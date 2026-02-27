@@ -13,10 +13,13 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                        {{ __('Escritorio') }}
                     </x-nav-link>
                     <x-nav-link :href="route('calendario')" :active="request()->routeIs('calendario')">
                         {{ __('Calendario') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">
+                        {{ __('Grupos') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -26,6 +29,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&color=1d4ed8&background=eff6ff&rounded=true" alt="Avatar" class="h-8 w-8 rounded-full mr-2 inline-block">
                             <div>{{ Auth::user()->name }}</div>
 
                             <div class="ms-1">
@@ -71,11 +75,14 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+                {{ __('Escritorio') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('calendario')" :active="request()->routeIs('calendario')">
                 {{ __('Calendario') }}
             </x-responsive-nav-link>
+            <x-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">
+                {{ __('Grupos') }}
+            </x-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->

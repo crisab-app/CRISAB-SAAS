@@ -84,4 +84,16 @@ class GroupController extends Controller
         $group->members()->detach($user->id);
         return back()->with('success', 'Miembro removido del grupo.');
     }
+    // Eliminar un grupo por completo
+    public function destroy(Group $group)
+    {
+        // Seguridad: Solo puedes borrar grupos de tu iglesia
+        if ($group->contract_id !== auth()->user()->contract_id) {
+            abort(403);
+        }
+
+        $group->delete();
+
+        return redirect()->route('grupos.index')->with('success', 'Grupo eliminado correctamente.');
+    }
 }
