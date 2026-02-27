@@ -23,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'contract_id',  // ¡Estas dos son vitales!
+        'system_role',
     ];
 
     /**
