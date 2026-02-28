@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\SkillController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,6 +25,12 @@ Route::middleware('auth')->group(function () {
 Route::resource('grupos', GroupController::class)->parameters([
         'grupos' => 'group'
     ]);
+    // Rutas para Catálogo de Dones/Privilegios
+    Route::resource('privilegios', SkillController::class)->parameters([
+        'privilegios' => 'skill'
+    ]);
+    Route::post('/privilegios/{skill}/assign', [SkillController::class, 'assignUser'])->name('privilegios.assign');
+    Route::delete('/privilegios/{skill}/remove/{user}', [SkillController::class, 'removeUser'])->name('privilegios.remove');
     // Rutas especiales para asignar y quitar gente
     Route::post('/grupos/{group}/assign', [GroupController::class, 'assignMember'])->name('grupos.assign');
     Route::delete('/grupos/{group}/remove/{user}', [GroupController::class, 'removeMember'])->name('grupos.remove');

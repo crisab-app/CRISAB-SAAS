@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Skill;
 
 class Contract extends Model
 {
@@ -19,5 +20,9 @@ class Contract extends Model
     public function groups()
     {
         return $this->hasMany(Group::class);
+    }
+    public function skills()
+    {
+        return $this->hasMany(Skill::class);
     }
 }

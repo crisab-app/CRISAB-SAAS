@@ -54,7 +54,7 @@
                         </div>
     
                         <div>
-                            <label class="block text-gray-700 font-bold mb-2">Ujier Principal</label>
+                            <label class="block text-gray-700 font-bold mb-2">Diacono Principal</label>
                             <select name="participants[Ujier]" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value="">-- Seleccionar persona --</option>
                                 @foreach($users as $user)
