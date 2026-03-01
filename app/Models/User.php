@@ -23,8 +23,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'contract_id',  // ¡Estas dos son vitales!
+        'contract_id',
         'system_role',
+        'last_login_at',  // <-- Agrega esta
+        'last_login_ip',  // <-- Y esta
     ];
 
     /**
@@ -47,6 +49,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_login_at' => 'datetime',
         ];
     }
     // Un usuario puede crear/ser responsable de muchos eventos
