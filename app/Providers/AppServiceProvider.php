@@ -21,7 +21,11 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {   // 2. Agrega este bloque de código
+    {   
+        // Forzar HTTPS cuando estemos en internet (producción)
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }// 2. Agrega este bloque de código
         // Si el sistema detecta que está en internet (producción), fuerza el candado HTTPS
         Event::listen(function (Login $event) {
             $event->user->update([
