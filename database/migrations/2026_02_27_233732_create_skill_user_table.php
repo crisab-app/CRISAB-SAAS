@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('skill_user', function (Blueprint $table) {
             $table->id();
+            // ¡Estas son las dos líneas mágicas que faltaban en la base de datos!
+            $table->foreignId('skill_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

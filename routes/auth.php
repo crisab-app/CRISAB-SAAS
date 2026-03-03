@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
@@ -56,4 +57,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+        // Rutas del Calendario
+    Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario');
+    Route::get('/calendario/crear', [App\Http\Controllers\CalendarController::class, 'create'])->name('calendario.create');
+    Route::post('/calendario', [App\Http\Controllers\CalendarController::class, 'store'])->name('calendario.store');
 });

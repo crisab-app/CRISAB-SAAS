@@ -25,4 +25,8 @@ class Contract extends Model
     {
         return $this->hasMany(Skill::class);
     }
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
 }
