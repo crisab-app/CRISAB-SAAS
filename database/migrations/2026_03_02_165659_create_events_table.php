@@ -1,32 +1,33 @@
 <?php
 
-namespace App\Http\Controllers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\ServiceTemplate;
-use Illuminate\Http\Request;
-
-class ServiceTemplateController extends Controller
+return new class extends Migration
 {
-    public function index()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        $templates = ServiceTemplate::all();
-        return view('templates.index', compact('templates'));
+        Schema::create('events', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('contract_id')->constrained()->cascadeOnDelete(); // Para que pertenezca a tu iglesia
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->dateTime('start');
+            $table->dateTime('end');
+            $table->string('color')->nullable();
+            $table->timestamps();
+        });
     }
 
-    public function create()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        return view('templates.create');
+        Schema::dropIfExists('events');
     }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string'
-        ]);
-
-        ServiceTemplate::create($request->all());
-
-        return redirect()->route('templates.index')->with('success', 'Plantilla creada.');
-    }
-}
+};
