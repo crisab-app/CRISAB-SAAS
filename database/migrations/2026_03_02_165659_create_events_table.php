@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('events')) {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->foreignId('contract_id')->constrained()->cascadeOnDelete(); // Para que pertenezca a tu iglesia
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->string('color')->nullable();
             $table->timestamps();
         });
+        }
     }
 
     /**
