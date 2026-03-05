@@ -66,4 +66,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Group::class)->withPivot('role')->withTimestamps();
     }
+    // Relación para saber qué privilegios/dones tiene este usuario
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'skill_user');
+    }
 }

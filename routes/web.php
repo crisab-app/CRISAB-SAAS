@@ -20,6 +20,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/calendario', [EventController::class, 'index'])->name('calendario');
     Route::get('/calendario/crear', [EventController::class, 'create'])->name('calendario.create');
     Route::post('/calendario', [EventController::class, 'store'])->name('calendario.store');
+    Route::get('/calendario/{event}', [App\Http\Controllers\CalendarController::class, 'show'])->name('calendario.show');
+    Route::delete('/calendario/{event}', [App\Http\Controllers\CalendarController::class, 'destroy'])->name('calendario.destroy');
+    Route::get('/calendario/{event}/edit', [App\Http\Controllers\CalendarController::class, 'edit'])->name('calendario.edit');
+    Route::put('/calendario/{event}', [App\Http\Controllers\CalendarController::class, 'update'])->name('calendario.update');
+    Route::patch('/calendario/{event}/close', [App\Http\Controllers\CalendarController::class, 'closeEvent'])->name('calendario.close');
+    Route::patch('/calendario/items/{item}/assign', [App\Http\Controllers\CalendarController::class, 'assignItem'])->name('calendario.assign');
 
     // --- Rutas de Plantillas de Liturgia (Fase 4) ---
     Route::get('/templates', [ServiceTemplateController::class, 'index'])->name('templates.index');

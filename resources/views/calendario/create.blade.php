@@ -31,6 +31,22 @@
                                     class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
                         </div>
+                        <div class="mb-6">
+                            <label for="template_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                📖 Plantilla de Liturgia / Orden de Servicio (Opcional)
+                            </label>
+                            <select name="template_id" id="template_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300 sm:text-sm">
+                                <option value="">-- Evento normal (Sin plantilla) --</option>
+                                
+                                @foreach($templates as $template)
+                                    <option value="{{ $template->id }}">{{ $template->name }}</option>
+                                @endforeach
+                                
+                            </select>
+                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                Si seleccionas una plantilla, todos sus bloques se copiarán automáticamente a este evento para que puedas asignar a los participantes.
+                            </p>
+                        </div>
 
                         <div class="mb-6">
                             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descripción breve (Opcional)</label>
