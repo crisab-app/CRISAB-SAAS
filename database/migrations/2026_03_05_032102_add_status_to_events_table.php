@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('events', function (Blueprint $table) {
             // Agregamos el estado. Por defecto es 'draft' (borrador/abierto)
-            $table->string('status')->default('draft')->after('color');
+            $table->string('status')->default('draft');
         });
     }
 
