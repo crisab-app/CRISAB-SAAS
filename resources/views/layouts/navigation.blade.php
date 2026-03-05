@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('privilegios.index')" :active="request()->routeIs('privilegios.*')">
                         {{ __('Privilegios') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('templates.index')" :active="request()->routeIs('templates.index')">
+                        📋 {{ __('Actividades') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -84,6 +87,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('privilegios.index')" :active="request()->routeIs('privilegios.*')">
                 {{ __('Privilegios') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('templates.index')" :active="request()->routeIs('templates.index')">
+                📋 {{ __('Actividades') }}
             </x-responsive-nav-link>
         </div>
 
