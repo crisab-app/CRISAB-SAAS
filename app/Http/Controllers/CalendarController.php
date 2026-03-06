@@ -49,12 +49,13 @@ class CalendarController extends Controller
         ]);
         
         // 1. Creamos el evento (¡Una sola vez!)
-        $event = auth()->user()->contract->events()->create([
+        $event = $contract->events()->create([
             'title' => $request->title,
-            'description' => $request->description,
             'start' => $request->start,
             'end' => $request->end,
+            'description' => $request->description,
             'color' => $request->color,
+            'user_id' => auth()->id(), // <-- Esta es la línea clave
         ]);
 
         // 2. LA MAGIA: Si eligió una plantilla, copiamos sus bloques al evento
