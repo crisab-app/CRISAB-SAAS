@@ -88,20 +88,28 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <form action="{{ route('calendario.assign', $item->id) }}" method="POST" class="flex items-center gap-2">
+                                                <form action="{{ route('calendario.assign', $item->id) }}" method="POST" class="flex flex-col gap-2">
                                                     @csrf
                                                     @method('PATCH')
-                                                    <select name="user_id" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300" {{ $event->status === 'closed' ? 'disabled' : '' }}>
-                                                        <option value="">-- Sin Asignar --</option>
-                                                        @foreach($users as $user)
-                                                            {{-- Magia pura: Solo mostramos al usuario si tiene el "don" (skill_id) que pide este bloque --}}
-                                                            @if($user->skills->contains('id', $item->skill_id))
-                                                                <option value="{{ $user->id }}" {{ $item->user_id == $user->id ? 'selected' : '' }}>
-                                                                    {{ $user->name }}
-                                                                </option>
-                                                            @endif
-                                                        @endforeach
-                                                    </select>
+                                                    
+                                                    <div class="flex gap-2">
+                                                        <select name="user_id" onchange="this.form.submit()" class="block w-full pl-3 pr-10 py-1 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300" {{ $event->status === 'closed' ? 'disabled' : '' }}>
+                                                            <option value="">-- Sin Asignar --</option>
+                                                            @foreach($users as $user)
+                                                                @if($user->skills->contains('id', $item->skill_id))
+                                                                    <option value="{{ $user->id }}" {{ $item->user_id == $user->id ? 'selected' : '' }}>
+                                                                        {{ $user->name }}
+                                                                    </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                        
+                                                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1 px-3 rounded text-sm transition duration-150" {{ $event->status === 'closed' ? 'disabled' : '' }}>
+                                                            💾
+                                                        </button>
+                                                    </div>
+
+                                                    <textarea name="details" rows="2" placeholder="Escribe pasajes, cantos o notas..." class="block w-full py-1 px-3 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300" {{ $event->status === 'closed' ? 'disabled' : '' }}>{{ $item->details }}</textarea>
                                                 </form>
                                             </td>
                                         </tr>

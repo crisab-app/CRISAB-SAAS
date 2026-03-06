@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventItem extends Model
 {
-    protected $fillable = ['event_id', 'name', 'skill_id', 'order_index', 'user_id'];
+    protected $fillable = ['event_id', 'name', 'skill_id', 'order_index', 'user_id', 'details'];
 
     public function event() {
         return $this->belongsTo(Event::class);

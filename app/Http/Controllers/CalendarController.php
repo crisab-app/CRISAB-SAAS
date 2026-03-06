@@ -95,24 +95,24 @@ class CalendarController extends Controller
         return view('calendario.show', compact('event', 'users'));
     }
     // 5. Asignar una persona a un bloque de la liturgia
+    // 5. Asignar una persona y sus detalles a un bloque de la liturgia
     public function assignItem(Request $request, \App\Models\EventItem $item)
     {
-        // Validamos que el evento siga perteneciendo a tu iglesia
         if ($item->event->contract_id !== auth()->user()->contract_id) {
             abort(403, 'No tienes permiso para modificar este evento.');
         }
 
-        // Validamos que el usuario elegido exista (o que venga vacío si queremos "desasignar" a alguien)
         $request->validate([
-            'user_id' => 'nullable|exists:users,id'
+            'user_id' => 'nullable|exists:users,id',
+            'details' => 'nullable|string' // Sin límite de tamaño
         ]);
 
-        // Guardamos a la persona elegida en el bloque
         $item->update([
-            'user_id' => $request->user_id
+            'user_id' => $request->user_id,
+            'details' => $request->details
         ]);
 
-        return back()->with('success', 'Participante asignado correctamente.');
+        return back()->with('success', 'Participación actualizada correctamente.');
     }
     // 6. Eliminar el evento por completo
     public function destroy(Event $event)
