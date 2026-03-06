@@ -9,16 +9,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->time('start_time')->nullable()->change();
-            $table->time('end_time')->nullable()->change();
+            // Si la columna existe, la destruimos. Si no, la ignoramos.
+            if (Schema::hasColumn('events', 'start_time')) {
+                $table->dropColumn('start_time');
+            }
+            
+            if (Schema::hasColumn('events', 'end_time')) {
+                $table->dropColumn('end_time');
+            }
         });
     }
 
     public function down(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->time('start_time')->nullable(false)->change();
-            $table->time('end_time')->nullable(false)->change();
-        });
+        // No necesitamos hacer nada en el down por ahora
     }
 };
