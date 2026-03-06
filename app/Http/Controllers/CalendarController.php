@@ -47,7 +47,7 @@ class CalendarController extends Controller
             'color' => 'nullable|string',
             'template_id' => 'nullable|exists:service_templates,id' // El usuario puede o no elegir plantilla
         ]);
-        
+        $contract = auth()->user()->contract;
         // 1. Creamos el evento (¡Una sola vez!)
         $event = $contract->events()->create([
             'title' => $request->title,
