@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Plantillas de Liturgia') }}
+                {{ __('Catalogo de Actividades') }}
             </h2>
             <a href="{{ route('templates.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition">
                 + Nueva Plantilla
