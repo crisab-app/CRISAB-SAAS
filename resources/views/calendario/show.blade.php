@@ -25,6 +25,9 @@
                         🔒 Evento Cerrado
                     </span>
                 @endif
+                <button onclick="window.print()" class="no-print bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm transition duration-150">
+                    🖨️ Exportar PDF
+                </button>
                 <form action="{{ route('calendario.destroy', $event->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este evento y toda su liturgia? Esta acción no se puede deshacer.');">
                     @csrf
                     @method('DELETE')
@@ -123,4 +126,21 @@
 
         </div>
     </div>
+    <style>
+    @media print {
+        /* Ocultar el menú superior, botones y formularios de edición */
+        nav, header, form, select, textarea, .no-print { 
+            display: none !important; 
+        }
+        /* Limpiar fondos y sombras para que el PDF se vea profesional y blanco */
+        body, .bg-white, .dark\:bg-gray-800, .dark\:bg-gray-900 { 
+            background-color: white !important; 
+            color: black !important;
+            box-shadow: none !important;
+        }
+        /* Asegurar que la tabla y los textos se vean bien */
+        table, th, td { border: 1px solid #ccc !important; color: black !important; }
+        .text-gray-500, .dark\:text-gray-400, .dark\:text-white { color: black !important; }
+    }
+</style>
 </x-app-layout>
