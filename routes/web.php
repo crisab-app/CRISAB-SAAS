@@ -27,6 +27,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/calendario/{event}/close', [App\Http\Controllers\CalendarController::class, 'closeEvent'])->name('calendario.close');
     Route::patch('/calendario/items/{item}/assign', [App\Http\Controllers\CalendarController::class, 'assignItem'])->name('calendario.assign');
 
+    // Agrega esta línea para el módulo de miembros:
+    Route::resource('miembros', App\Http\Controllers\MemberController::class);
+    // Rutas públicas de invitación por ID
+    Route::get('/unirme/{contract_id}', [App\Http\Controllers\MemberController::class, 'publicRegistration'])->name('miembros.invitacion');
+    Route::post('/unirme/{contract_id}', [App\Http\Controllers\MemberController::class, 'storePublic'])->name('miembros.invitacion.store');
+    // Ruta para el formulario público de registro de miembros
+    Route::get('/unirme/{slug}', [App\Http\Controllers\MemberController::class, 'publicRegistration'])->name('miembros.invitacion');
+    Route::post('/unirme/{slug}', [App\Http\Controllers\MemberController::class, 'storePublic'])->name('miembros.invitacion.store');
+
     // --- Rutas de Plantillas de Liturgia (Fase 4) ---
     Route::get('/templates', [ServiceTemplateController::class, 'index'])->name('templates.index');
     Route::get('/templates/crear', [ServiceTemplateController::class, 'create'])->name('templates.create');

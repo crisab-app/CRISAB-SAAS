@@ -23,7 +23,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'contract_id',
+        'contract_id', // No borres los que ya tenías
+        'paternal_surname',
+        'maternal_surname',
+        'marital_status',
+        'birthdate',
+        'nationality',
+        'curp',
+        'profile_photo_path',
+        'id_front_path',
+        'id_back_path',
         'system_role',
         'last_login_at',  // <-- Agrega esta
         'last_login_ip',  // <-- Y esta
@@ -49,6 +58,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'birthdate' => 'date',
             'last_login_at' => 'datetime',
         ];
     }
@@ -70,5 +80,12 @@ class User extends Authenticatable
     public function skills()
     {
         return $this->belongsToMany(Skill::class, 'skill_user');
+    }
+    // Atributo virtual para calcular la edad en tiempo real
+    // En app/Models/User.php
+    public function getAgeAttribute()
+    {
+        // Si no hay fecha de nacimiento, devolvemos "N/A" o 0 en lugar de un error
+        return $this->birthdate ? $this->birthdate->age : 'N/A';
     }
 }

@@ -6,23 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('contracts', function (Blueprint $table) {
-            //
+            $table->string('unique_church_id')->unique()->nullable();
+            $table->string('denomination')->nullable();
+            $table->text('address')->nullable();
+            $table->string('maps_coordinates')->nullable();
+            $table->string('initiator_name')->nullable();
+            // Los campos que terminan en _path guardarán la ubicación del archivo en tu servidor
+            $table->string('registration_document_path')->nullable();
+            $table->string('exterior_photo_path')->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('contracts', function (Blueprint $table) {
-            //
+            $table->dropColumn([
+                'unique_church_id', 'denomination', 'address', 
+                'maps_coordinates', 'initiator_name', 
+                'registration_document_path', 'exterior_photo_path'
+            ]);
         });
     }
 };
