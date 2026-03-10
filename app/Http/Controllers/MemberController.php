@@ -141,6 +141,7 @@ class MemberController extends Controller
     }
 
     // 8. Guardar registro desde link público usando ID
+    // 8. Guardar registro desde link público usando ID
     public function storePublic(Request $request, $contract_id)
     {
         $iglesia = Contract::findOrFail($contract_id);
@@ -152,19 +153,32 @@ class MemberController extends Controller
             'birthdate' => 'required|date',
             'nationality' => 'required|string',
             'curp' => 'required_if:nationality,México|nullable|string|max:18|unique:users,curp',
+            // Agregamos la validación de las imágenes
+            'profile_photo' => 'nullable|image|max:2048', 
+            'id_front' => 'nullable|image|max:2048',
+            'id_back' => 'nullable|image|max:2048',
         ]);
+
+        // Procesamos las imágenes si el usuario las subió
+        $profilePath = $request->hasFile('profile_photo') ? $request->file('profile_photo')->store('kyc/profiles', 'public') : null;
+        $idFrontPath = $request->hasFile('id_front') ? $request->file('id_front')->store('kyc/documents', 'public') : null;
+        $idBackPath = $request->hasFile('id_back') ? $request->file('id_back')->store('kyc/documents', 'public') : null;
 
         User::create([
             'name' => $request->name,
             'paternal_surname' => $request->paternal_surname,
             'maternal_surname' => $request->maternal_surname,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
             'contract_id' => $iglesia->id,
             'birthdate' => $request->birthdate,
             'nationality' => $request->nationality,
             'curp' => mb_strtoupper($request->curp),
             'marital_status' => $request->marital_status,
+            // Guardamos las rutas en la base de datos
+            'profile_photo_path' => $profilePath,
+            'id_front_path' => $idFrontPath,
+            'id_back_path' => $idBackPath,
         ]);
 
         return redirect()->back()->with('success', '¡Registro completado! Tu líder revisará tu información pronto.');

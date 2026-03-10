@@ -6,94 +6,38 @@
     </div>
 
     @if(session('success'))
-        <div class="bg-green-600/20 border border-green-500 text-green-400 p-4 rounded-lg mb-6 text-center font-medium">
+        <div class="bg-green-600/20 border border-green-500 text-green-400 p-4 rounded-lg mb-6 text-center font-medium shadow-lg">
+            <p class="text-lg mb-2">✅</p>
             {{ session('success') }}
+            <p class="text-sm mt-4 text-gray-400 font-normal">Ya puedes cerrar esta ventana.</p>
         </div>
     @else
-        <form action="{{ route('miembros.invitacion.store', $iglesia->id) }}" method="POST" class="space-y-4">
+        <form action="{{ route('miembros.invitacion.store', $iglesia->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             
             <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 space-y-4">
                 
                 <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Nombre Completo *</label>
-                    <input type="text" name="name" required placeholder="Tu nombre" 
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Nombre(s) *</label>
+                    <input type="text" name="name" required placeholder="Tus nombres" 
                         class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Apellido Paterno</label>
+                        <input type="text" name="paternal_surname" placeholder="Primer apellido" 
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Apellido Materno</label>
+                        <input type="text" name="maternal_surname" placeholder="Segundo apellido" 
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Correo Electrónico *</label>
                     <input type="email" name="email" required placeholder="ejemplo@correo.com" 
                         class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                    @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Contraseña *</label>
-                        <input type="password" name="password" required 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Confirmar *</label>
-                        <input type="password" name="password_confirmation" required 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">F. Nacimiento *</label>
-                        <input type="date" name="birthdate" required 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Estado Civil</label>
-                        <select name="marital_status" class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm">
-                            <option value="Soltero(a)">Soltero(a)</option>
-                            <option value="Casado(a)">Casado(a)</option>
-                            <option value="Unión Libre">Unión Libre</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-4 pt-2">
-                    <select name="nationality" id="nationality_public" 
-                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300">
-                        <option value="México">México</option>
-                        <option value="Guatemala">Guatemala</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                    <input type="text" name="curp" id="curp_public" placeholder="CURP *" 
-                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 uppercase">
-                </div>
-
-                <div class="mt-6">
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-bold shadow-lg transition transform active:scale-95">
-                        Completar mi Registro
-                    </button>
-                    <p class="text-center text-[10px] text-gray-500 mt-4 italic">
-                        Tu información será validada por el administrador de la iglesia.
-                    </p>
-                </div>
-            </div>
-        </form>
-    @endif
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const nationality = document.getElementById('nationality_public');
-            const curp = document.getElementById('curp_public');
-            
-            nationality.addEventListener('change', function() {
-                if (this.value === 'México') {
-                    curp.required = true;
-                    curp.placeholder = "CURP *";
-                } else {
-                    curp.required = false;
-                    curp.placeholder = "CURP (Opcional)";
-                }
-            });
-        });
-    </script>
-</x-guest-layout>
+                    @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p
