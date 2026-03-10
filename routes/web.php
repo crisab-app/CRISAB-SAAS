@@ -8,16 +8,25 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\ServiceTemplateController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\ChurchRegistrationController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 // ==========================================================
-// 🔓 RUTAS PÚBLICAS (Cualquier persona puede entrar por WhatsApp)
+// 🔓 RUTAS PÚBLICAS (No requieren iniciar sesión)
 // ==========================================================
+
+// 1. Invitaciones para Miembros (De la iglesia ya existente)
 Route::get('/unirme/{contract_id}', [MemberController::class, 'publicRegistration'])->name('miembros.invitacion');
 Route::post('/unirme/{contract_id}', [MemberController::class, 'storePublic'])->name('miembros.invitacion.store');
+
+// 2. Registro del SaaS (Nuevas Iglesias)
+Route::middleware('guest')->group(function () {
+    Route::get('/registrar-iglesia', [ChurchRegistrationController::class, 'create'])->name('church.register');
+    Route::post('/registrar-iglesia', [ChurchRegistrationController::class, 'store'])->name('church.register.store');
+});
 
 
 // ==========================================================
@@ -48,6 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/templates/{template}/items', [ServiceTemplateController::class, 'storeItem'])->name('templates.items.store');
     Route::delete('/templates/{template}', [ServiceTemplateController::class, 'destroy'])->name('templates.destroy');
     Route::delete('/templates/items/{id}', [ServiceTemplateController::class, 'destroyItem'])->name('templates.items.destroy');
+    
     // Rutas para mover el orden
     Route::patch('/templates/items/{id}/up', [ServiceTemplateController::class, 'moveUp'])->name('templates.items.up');
     Route::patch('/templates/items/{id}/down', [ServiceTemplateController::class, 'moveDown'])->name('templates.items.down');

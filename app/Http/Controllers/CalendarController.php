@@ -77,7 +77,7 @@ class CalendarController extends Controller
         }
 
         // Lo regresamos al calendario
-        return redirect()->route('calendario')->with('success', 'Evento creado exitosamente con su liturgia.');
+        return redirect()->route('calendario')->with('success', 'Evento creado exitosamente con su actividad.');
     }
     // 4. Mostrar los detalles de un evento específico y su liturgia
     public function show(Event $event)
@@ -172,6 +172,6 @@ class CalendarController extends Controller
 
         $event->update(['status' => 'closed']);
 
-        return back()->with('success', '¡Evento cerrado! La liturgia ha sido bloqueada y ya no se puede modificar.');
+        return back()->with('success', '¡Evento cerrado! La actividad ha sido bloqueada y ya no se puede modificar.');
     }
 }
