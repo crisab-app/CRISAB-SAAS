@@ -6,12 +6,15 @@ use App\Models\ServiceTemplate;
 use App\Models\Skill;
 use App\Models\ServiceItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceTemplateController extends Controller
 {
     public function index()
     {
-        $templates = ServiceTemplate::all();
+        // Solo traemos las plantillas que le pertenecen a la iglesia del usuario actual
+        $templates = ServiceTemplate::where('contract_id', auth()->user()->contract_id)->get();
+        
         return view('templates.index', compact('templates'));
     }
 
@@ -24,13 +27,14 @@ class ServiceTemplateController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
         ]);
 
         ServiceTemplate::create([
-            'contract_id' => auth()->user()->contract_id,
             'name' => $request->name,
             'description' => $request->description,
+            // ¡Esta es la línea mágica que amarra la plantilla a la iglesia!
+            'contract_id' => auth()->user()->contract_id, 
         ]);
 
         return redirect()->route('templates.index')->with('success', 'Plantilla creada con éxito.');
