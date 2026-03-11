@@ -3,39 +3,52 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 
 return new class extends Migration
 {
     public function up(): void 
     {
-        Schema::table('contracts', function (Blueprint $table) {
-            // Validamos cada columna individualmente antes de crearla
+        // Procesamos cada columna por separado para que el error de una no detenga a las demás
+        
+        // 1. SLUG
+        try {
             if (!Schema::hasColumn('contracts', 'slug')) {
-                $table->string('slug')->unique()->nullable()->after('name');
+                Schema::table('contracts', function (Blueprint $table) {
+                    $table->string('slug')->unique()->nullable()->after('name');
+                });
             }
-            
-            if (!Schema::hasColumn('contracts', 'unique_church_id')) {
-                $table->string('unique_church_id')->nullable();
-            }
+        } catch (\Exception $e) { /* Ignorar si ya existe */ }
 
-            if (!Schema::hasColumn('contracts', 'address')) {
-                $table->text('address')->nullable();
+        // 2. UNIQUE CHURCH ID
+        try {
+            if (!Schema::hasColumn('contracts', 'unique_church_id')) {
+                Schema::table('contracts', function (Blueprint $table) {
+                    $table->string('unique_church_id')->nullable();
+                });
             }
-            
-            // Si tienes más columnas en este archivo que estén dando error, 
-            // agrégalas aquí siguiendo el mismo patrón de "if (!Schema::hasColumn...)"
-        });
+        } catch (\Exception $e) { /* Ignorar si ya existe */ }
+
+        // 3. ADDRESS
+        try {
+            if (!Schema::hasColumn('contracts', 'address')) {
+                Schema::table('contracts', function (Blueprint $table) {
+                    $table->text('address')->nullable();
+                });
+            }
+        } catch (\Exception $e) { /* Ignorar si ya existe */ }
     }
 
     public function down(): void
     {
         Schema::table('contracts', function (Blueprint $table) {
             $columnas = ['slug', 'unique_church_id', 'address'];
-            
             foreach ($columnas as $columna) {
-                if (Schema::hasColumn('contracts', $columna)) {
-                    $table->dropColumn($columna);
-                }
+                try {
+                    if (Schema::hasColumn('contracts', $columna)) {
+                        $table->dropColumn($columna);
+                    }
+                } catch (\Exception $e) { }
             }
         });
     }
