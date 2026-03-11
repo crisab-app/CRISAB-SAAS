@@ -146,8 +146,8 @@
                 } else {
                     curpInput.required = false;
                     curpInput.value = ''; 
-                    curpLabel.innerHTML = 'Documento de Identidad (Opcional)';
-                    curpInput.placeholder = "DPI, Pasaporte, etc. (Opcional)";
+                    curpLabel.innerHTML = 'Documento de Identidad/CURP (Opcional)';
+                    curpInput.placeholder = "CURP, DPI, Pasaporte, etc. (Opcional)";
                 }
             }
 
