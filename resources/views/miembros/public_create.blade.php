@@ -56,15 +56,23 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">F. Nacimiento *</label>
                         <input type="date" name="birthdate" required 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm">
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Género *</label>
+                        <select name="gender" required class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="" disabled selected>Selecciona...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Estado Civil</label>
-                        <select name="marital_status" class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm">
+                        <select name="marital_status" class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="Soltero(a)">Soltero(a)</option>
                             <option value="Casado(a)">Casado(a)</option>
                             <option value="Unión Libre">Unión Libre</option>
@@ -72,17 +80,23 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-4 pt-2">
-                    <select name="nationality" id="nationality_public" 
-                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300">
-                        <option value="México">México</option>
-                        <option value="Guatemala">Guatemala</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                    <input type="text" name="curp" id="curp_public" placeholder="CURP *" 
-                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 uppercase">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Nacionalidad</label>
+                        <select name="nationality" id="nationality_public" 
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="México">México</option>
+                            <option value="Guatemala">Guatemala</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1" id="curp_label">CURP *</label>
+                        <input type="text" name="curp" id="curp_public" placeholder="Ingresa tu CURP" 
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 uppercase focus:ring-indigo-500 focus:border-indigo-500">
+                        @error('curp') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
-
                 <div class="border-t border-gray-700 pt-5 mt-5 space-y-4">
                     <h3 class="text-sm font-bold text-gray-300 mb-2">Fotografía y Documentos <span class="text-gray-500 font-normal">(Opcional)</span></h3>
                     
@@ -118,26 +132,28 @@
         </form>
     @endif
 
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', function() {
-            const nationality = document.getElementById('nationality_public');
-            const curp = document.getElementById('curp_public');
+            const nationalitySelect = document.getElementById('nationality_public');
+            const curpInput = document.getElementById('curp_public');
+            const curpLabel = document.getElementById('curp_label');
             
-            // Verificamos al cargar la página por si el default es México
-            if (nationality.value === 'México') {
-                curp.required = true;
-                curp.placeholder = "CURP *";
+            function toggleCurpRequirement() {
+                if (nationalitySelect.value === 'México') {
+                    curpInput.required = true;
+                    curpLabel.innerHTML = 'CURP *';
+                    curpInput.placeholder = "Ingresa tu CURP";
+                } else {
+                    curpInput.required = false;
+                    curpInput.value = ''; 
+                    curpLabel.innerHTML = 'Documento de Identidad (Opcional)';
+                    curpInput.placeholder = "DPI, Pasaporte, etc. (Opcional)";
+                }
             }
 
-            nationality.addEventListener('change', function() {
-                if (this.value === 'México') {
-                    curp.required = true;
-                    curp.placeholder = "CURP *";
-                } else {
-                    curp.required = false;
-                    curp.placeholder = "CURP (Opcional)";
-                }
-            });
+            toggleCurpRequirement();
+            nationalitySelect.addEventListener('change', toggleCurpRequirement);
         });
     </script>
+    
 </x-guest-layout>

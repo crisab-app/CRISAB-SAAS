@@ -151,6 +151,7 @@ class MemberController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed', 
             'birthdate' => 'required|date',
+            'gender' => 'required|string|in:Masculino,Femenino', 
             'nationality' => 'required|string',
             'curp' => 'required_if:nationality,México|nullable|string|max:18|unique:users,curp',
             // Agregamos la validación de las imágenes
@@ -172,6 +173,7 @@ class MemberController extends Controller
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
             'contract_id' => $iglesia->id,
             'birthdate' => $request->birthdate,
+            'gender' => $request->gender, 
             'nationality' => $request->nationality,
             'curp' => mb_strtoupper($request->curp),
             'marital_status' => $request->marital_status,
