@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+
 
 class Event extends Model
 {
+    use BelongsToTenant;
     // Los campos que el formulario puede llenar
     protected $fillable = ['contract_id', 'user_id', 'title', 'description', 'start', 'end', 'color', 'status'];
 

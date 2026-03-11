@@ -5,6 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceItem extends Model
 {
+    use App\Traits\BelongsToTenant;
+    use BelongsToTenant;
     protected $fillable = ['service_template_id', 'skill_id', 'name', 'order_index'];
 
     // Este bloque pertenece a una plantilla

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Contract extends Model
 {
+    use BelongsToTenant;
     use HasFactory;
 
     // 1. Agregamos 'slug' a los campos que se pueden llenar

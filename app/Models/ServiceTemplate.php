@@ -1,11 +1,13 @@
 <?php
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class ServiceTemplate extends Model
 {
+    use BelongsToTenant;
     protected $fillable = ['contract_id', 'name', 'description'];
 
     protected static function boot() {
