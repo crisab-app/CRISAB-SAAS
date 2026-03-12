@@ -38,9 +38,14 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     // Ruta exclusiva para el Súper Admin (Tú)
-    Route::get('/master-panel', [\App\Http\Controllers\SuperAdminController::class, 'index'])->name('superadmin.index');
-    Route::post('/master-panel/{church}/status', [\App\Http\Controllers\SuperAdminController::class, 'updateStatus'])->name('superadmin.status');
-    
+    Route::get('/master-panel', [\App\Http\Controllers\SuperAdminController::class, 'index'])
+        ->name('superadmin.index')
+        ->middleware([\App\Http\Middleware\SuperAdminMiddleware::class]); 
+
+    Route::post('/master-panel/{church}/status', [\App\Http\Controllers\SuperAdminController::class, 'updateStatus'])
+        ->name('superadmin.status')
+        ->middleware([\App\Http\Middleware\SuperAdminMiddleware::class]); 
+
     // --- Rutas del Calendario ---
     Route::get('/calendario', [EventController::class, 'index'])->name('calendario');
     Route::get('/calendario/crear', [EventController::class, 'create'])->name('calendario.create');
