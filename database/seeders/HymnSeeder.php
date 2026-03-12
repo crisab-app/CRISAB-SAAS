@@ -11,7 +11,7 @@ class HymnSeeder extends Seeder
     public function run(): void
     {
         // Buscamos el archivo en la carpeta storage/app
-        $path = storage_path('app/himnario.csv');
+        $path = database_path('seeders/himnario.csv');
 
         if (!file_exists($path)) {
             $this->command->error("¡No se encontró el archivo himnario.csv en storage/app!");
