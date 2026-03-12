@@ -10,14 +10,17 @@ class HymnSeeder extends Seeder
 {
     public function run(): void
     {
-        // Buscamos el archivo en la carpeta storage/app
+        // ESTA LÍNEA ES NUEVA: Limpia la tabla antes de insertar para no duplicar
+        \App\Models\Hymn::truncate(); 
+
         $path = database_path('seeders/himnario.csv');
 
         if (!file_exists($path)) {
-            $this->command->error("¡No se encontró el archivo himnario.csv en storage/app!");
+            $this->command->error("¡No se encontró el archivo himnario.csv!");
             return;
         }
 
+        
         $file = fopen($path, "r");
         $firstline = true;
 
