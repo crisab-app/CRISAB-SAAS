@@ -5,6 +5,7 @@ use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+
 class ServiceTemplate extends Model
 {
     use BelongsToTenant;

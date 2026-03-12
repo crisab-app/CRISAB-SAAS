@@ -46,16 +46,22 @@ Route::middleware('auth')->group(function () {
         ->name('superadmin.status')
         ->middleware([\App\Http\Middleware\SuperAdminMiddleware::class]); 
 
-    // --- Rutas del Calendario ---
-    Route::get('/calendario', [EventController::class, 'index'])->name('calendario');
-    Route::get('/calendario/crear', [EventController::class, 'create'])->name('calendario.create');
-    Route::post('/calendario', [EventController::class, 'store'])->name('calendario.store');
-    Route::get('/calendario/{event}', [CalendarController::class, 'show'])->name('calendario.show');
-    Route::delete('/calendario/{event}', [CalendarController::class, 'destroy'])->name('calendario.destroy');
-    Route::get('/calendario/{event}/edit', [CalendarController::class, 'edit'])->name('calendario.edit');
-    Route::put('/calendario/{event}', [CalendarController::class, 'update'])->name('calendario.update');
-
+// --- Rutas del Calendario (Unificado en CalendarController) ---
+Route::controller(CalendarController::class)->group(function () {
+    Route::get('/calendario', 'index')->name('calendario');
+    Route::get('/calendario/crear', 'create')->name('calendario.create');
+    Route::post('/calendario', 'store')->name('calendario.store');
+    Route::get('/calendario/{event}', 'show')->name('calendario.show');
+    Route::get('/calendario/{event}/edit', 'edit')->name('calendario.edit');
+    Route::put('/calendario/{event}', 'update')->name('calendario.update');
+    Route::delete('/calendario/{event}', 'destroy')->name('calendario.destroy');
+    Route::patch('/calendario/{event}/close', 'closeEvent')->name('calendario.close');
+    Route::patch('/calendario/{event}/sermon', 'updateSermon')->name('calendario.sermon.update');
     
+    // Ruta para asignar personas a los bloques
+    Route::post('/calendario/item/{item}/assign', 'assignItem')->name('calendario.assignItem');
+});    
+
     // --- Módulo de Miembros (Administración interna) ---
     Route::resource('miembros', MemberController::class);
 

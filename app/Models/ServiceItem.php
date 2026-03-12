@@ -1,17 +1,34 @@
 <?php
+
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ServiceItem extends Model
 {
-    use App\Traits\BelongsToTenant;
-    use BelongsToTenant;
-    protected $fillable = ['service_template_id', 'skill_id', 'name', 'order_index'];
+    use HasFactory;
 
-    // Este bloque pertenece a una plantilla
-    public function template() { return $this->belongsTo(ServiceTemplate::class, 'service_template_id'); }
+    // Aquí está el arreglo: Cambiamos 'title' por 'name' y 'order' por 'order_index'
+    // para que coincida exactamente con lo que envía el Controlador en la función storeItem
+    protected $fillable = [
+        'service_template_id',
+        'name',
+        'description',
+        'duration_minutes',
+        'order_index',
+        'skill_id',
+    ];
 
-    // Este bloque requiere un privilegio en específico (opcional)
-    public function skill() { return $this->belongsTo(Skill::class); }
+    // Relación con la plantilla
+    public function template()
+    {
+        return $this->belongsTo(ServiceTemplate::class, 'service_template_id');
+    }
+
+    // Relación con el ministerio/habilidad requerido
+    public function skill()
+    {
+        return $this->belongsTo(Skill::class);
+    }
 }
