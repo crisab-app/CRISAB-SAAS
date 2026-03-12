@@ -12,7 +12,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     // 2. Limpiamos el 'use' para que no esté repetido
-    use HasFactory, Notifiable, HasRoles, BelongsToTenant; 
+    use HasFactory, Notifiable, HasRoles; 
 
     /**
      * The attributes that are mass assignable.
