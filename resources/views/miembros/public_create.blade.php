@@ -25,7 +25,13 @@
                 <p class="font-bold mb-2 flex items-center gap-2">⚠️ Por favor corrige lo siguiente:</p>
                 <ul class="list-disc list-inside text-sm space-y-1">
                     @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
+                        @if(Str::contains($error, 'validation.min.string'))
+                            <li>Uno de los campos es demasiado corto (Las contraseñas deben tener mínimo 8 caracteres).</li>
+                        @elseif(Str::contains($error, 'validation.unique'))
+                            <li>Ese correo o CURP ya está registrado en nuestro sistema.</li>
+                        @else
+                            <li>{{ str_replace('validation.', 'Error en: ', $error) }}</li>
+                        @endif
                     @endforeach
                 </ul>
             </div>
@@ -66,9 +72,10 @@
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Contraseña *</label>
                         <input type="password" name="password" required 
                             class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300">
+                        <p class="text-[10px] text-gray-500 mt-1">Mínimo 8 caracteres.</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Confirmar *</label>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Confirmar Contraseña *</label>
                         <input type="password" name="password_confirmation" required 
                             class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300">
                     </div>
@@ -110,8 +117,9 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1" id="curp_label">CURP *</label>
-                        <input type="text" name="curp" id="curp_public" placeholder="Ingresa tu CURP" value="{{ old('curp') }}"
+                        <input type="text" name="curp" id="curp_public" placeholder="Ingresa tu CURP (18 caracteres)" value="{{ old('curp') }}"
                             class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 uppercase focus:ring-indigo-500 focus:border-indigo-500 autosave">
+                        <p class="text-[10px] text-gray-500 mt-1" id="curp_helper">Formato de 18 caracteres.</p>
                     </div>
                 </div>
 
@@ -161,17 +169,14 @@
 
             formInputs.forEach(input => {
                 const savedValue = sessionStorage.getItem(formId + input.name);
-                // Restauramos solo si el campo está vacío (así no pisamos el 'old()' de Laravel)
                 if (savedValue !== null && input.value === '') {
                     input.value = savedValue;
                 }
-
                 input.addEventListener('input', () => {
                     sessionStorage.setItem(formId + input.name, input.value);
                 });
             });
 
-            // Cambiamos el texto del botón al enviar para que el usuario sepa que está cargando
             const form = document.getElementById('registroForm');
             const submitBtn = document.getElementById('submitBtn');
             if(form) {
@@ -191,16 +196,19 @@
             const nationalitySelect = document.getElementById('nationality_public');
             const curpInput = document.getElementById('curp_public');
             const curpLabel = document.getElementById('curp_label');
+            const curpHelper = document.getElementById('curp_helper');
             
             function toggleCurpRequirement() {
                 if (nationalitySelect && nationalitySelect.value === 'México') {
                     curpInput.required = true;
                     curpLabel.innerHTML = 'CURP *';
-                    curpInput.placeholder = "Ingresa tu CURP";
+                    curpInput.placeholder = "Ingresa tu CURP (18 caracteres)";
+                    if(curpHelper) curpHelper.style.display = 'block';
                 } else if(curpInput) {
                     curpInput.required = false;
                     curpLabel.innerHTML = 'Documento de Identidad (Opcional)';
                     curpInput.placeholder = "DPI, Pasaporte, etc. (Opcional)";
+                    if(curpHelper) curpHelper.style.display = 'none';
                 }
             }
 
