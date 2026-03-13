@@ -56,7 +56,7 @@
                     </div>
                 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">F. Nacimiento *</label>
                         <input type="date" name="birthdate" required 
@@ -97,24 +97,25 @@
                         @error('curp') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
+
                 <div class="border-t border-gray-700 pt-5 mt-5 space-y-4">
                     <h3 class="text-sm font-bold text-gray-300 mb-2">Fotografía y Documentos <span class="text-gray-500 font-normal">(Opcional)</span></h3>
                     
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Foto de Perfil</label>
-                        <input type="file" name="profile_photo" accept="image/*" 
+                        <input type="file" name="profile_photo" id="profile_photo" accept="image/*" 
                             class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700">
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Identificación (Frente)</label>
-                            <input type="file" name="id_front" accept="image/*" 
+                            <input type="file" name="id_front" id="id_front" accept="image/*" 
                                 class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-gray-700 file:text-white hover:file:bg-gray-600">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Identificación (Reverso)</label>
-                            <input type="file" name="id_back" accept="image/*" 
+                            <input type="file" name="id_back" id="id_back" accept="image/*" 
                                 class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-gray-700 file:text-white hover:file:bg-gray-600">
                         </div>
                     </div>
@@ -132,8 +133,11 @@
         </form>
     @endif
 
-<script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
+
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // --- 1. LÓGICA DE CURP ---
             const nationalitySelect = document.getElementById('nationality_public');
             const curpInput = document.getElementById('curp_public');
             const curpLabel = document.getElementById('curp_label');
@@ -153,6 +157,44 @@
 
             toggleCurpRequirement();
             nationalitySelect.addEventListener('change', toggleCurpRequirement);
+
+            // --- 2. LÓGICA DE COMPRESIÓN DE IMÁGENES ---
+            function activarCompresion(inputId) {
+                const inputElement = document.getElementById(inputId);
+                
+                if (inputElement) {
+                    inputElement.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        new Compressor(file, {
+                            quality: 0.7, // Calidad del 70%
+                            maxWidth: 1200, 
+                            maxHeight: 1200,
+                            mimeType: 'image/jpeg',
+                            success(result) {
+                                const dataTransfer = new DataTransfer();
+                                const compressedFile = new File([result], result.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now()
+                                });
+                                dataTransfer.items.add(compressedFile);
+                                inputElement.files = dataTransfer.files;
+                                
+                                console.log('✅ Archivo comprimido con éxito en la vista pública:', inputId);
+                            },
+                            error(err) {
+                                console.error('Error al comprimir:', err.message);
+                            },
+                        });
+                    });
+                }
+            }
+
+            // Aplicamos la compresión a los tres campos de la vista pública
+            activarCompresion('profile_photo');
+            activarCompresion('id_front');
+            activarCompresion('id_back');
         });
     </script>
     
