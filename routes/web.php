@@ -9,6 +9,7 @@ use App\Http\Controllers\ServiceTemplateController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ChurchRegistrationController;
+use App\Http\Controllers\BibleController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -96,6 +97,11 @@ Route::controller(CalendarController::class)->group(function () {
     ]);
     Route::post('/privilegios/{skill}/assign', [SkillController::class, 'assignUser'])->name('privilegios.assign');
     Route::delete('/privilegios/{skill}/remove/{user}', [SkillController::class, 'removeUser'])->name('privilegios.remove');
+
+    // --- RUTAS PARA LA BIBLIA INTELIGENTE ---
+    Route::get('/api/bible/chapters', [BibleController::class, 'getChapters'])->name('bible.chapters');
+    Route::get('/api/bible/verses', [BibleController::class, 'getVerses'])->name('bible.verses');
+    Route::get('/api/bible/text', [BibleController::class, 'getText'])->name('bible.text');
 });
 
 require __DIR__.'/auth.php';

@@ -77,6 +77,7 @@
 
                     <div class="mb-8">
                         <label style="color: #9ca3af;" class="block text-sm font-medium mb-2">Descripción (Opcional)</label>
+                        
                         <textarea name="description" rows="3" 
                             style="background-color: #ffffff; color: #000000; border: 1px solid #d1d5db;"
                             class="w-full rounded-lg p-2.5" placeholder="Escribe detalles aquí...">{{ old('description') }}</textarea>
