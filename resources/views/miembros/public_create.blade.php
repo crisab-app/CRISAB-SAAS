@@ -12,7 +12,7 @@
             <p class="text-sm mt-4 text-gray-400 font-normal">Ya puedes cerrar esta ventana.</p>
         </div>
     @else
-        <form action="{{ route('miembros.invitacion.store', $iglesia->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <form id="registroForm" action="{{ route('miembros.invitacion.store', $iglesia->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             
             <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 space-y-4">
@@ -20,26 +20,26 @@
                 <div>
                     <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Nombre(s) *</label>
                     <input type="text" name="name" required placeholder="Tus nombres" 
-                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Apellido Paterno</label>
                         <input type="text" name="paternal_surname" placeholder="Primer apellido" 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Apellido Materno</label>
                         <input type="text" name="maternal_surname" placeholder="Segundo apellido" 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Correo Electrónico *</label>
                     <input type="email" name="email" required placeholder="ejemplo@correo.com" 
-                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
                     @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
@@ -60,11 +60,11 @@
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">F. Nacimiento *</label>
                         <input type="date" name="birthdate" required 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500 autosave">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Género *</label>
-                        <select name="gender" required class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="gender" required class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500 autosave">
                             <option value="" disabled selected>Selecciona...</option>
                             <option value="Masculino">Masculino</option>
                             <option value="Femenino">Femenino</option>
@@ -72,7 +72,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Estado Civil</label>
-                        <select name="marital_status" class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="marital_status" class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500 autosave">
                             <option value="Soltero(a)">Soltero(a)</option>
                             <option value="Casado(a)">Casado(a)</option>
                             <option value="Unión Libre">Unión Libre</option>
@@ -84,7 +84,7 @@
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Nacionalidad</label>
                         <select name="nationality" id="nationality_public" 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
                             <option value="México">México</option>
                             <option value="Guatemala">Guatemala</option>
                             <option value="Otro">Otro</option>
@@ -93,7 +93,7 @@
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1" id="curp_label">CURP *</label>
                         <input type="text" name="curp" id="curp_public" placeholder="Ingresa tu CURP" 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 uppercase focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 uppercase focus:ring-indigo-500 focus:border-indigo-500 autosave">
                         @error('curp') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -103,19 +103,19 @@
                     
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Foto de Perfil</label>
-                        <input type="file" name="profile_photo" id="profile_photo" accept="image/*" 
+                        <input type="file" name="profile_photo" id="profile_photo" accept="image/*" capture="user"
                             class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700">
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Identificación (Frente)</label>
-                            <input type="file" name="id_front" id="id_front" accept="image/*" 
+                            <input type="file" name="id_front" id="id_front" accept="image/*" capture="environment"
                                 class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-gray-700 file:text-white hover:file:bg-gray-600">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Identificación (Reverso)</label>
-                            <input type="file" name="id_back" id="id_back" accept="image/*" 
+                            <input type="file" name="id_back" id="id_back" accept="image/*" capture="environment"
                                 class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-gray-700 file:text-white hover:file:bg-gray-600">
                         </div>
                     </div>
@@ -137,7 +137,35 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- 1. LÓGICA DE CURP ---
+            
+            // --- 1. LÓGICA DE AUTO-GUARDADO (CONTRA EL REINICIO DE CÁMARA) ---
+            const formInputs = document.querySelectorAll('.autosave');
+            const formId = 'registro_miembro_';
+
+            // Recuperar datos si la página se recargó
+            formInputs.forEach(input => {
+                const savedValue = sessionStorage.getItem(formId + input.name);
+                if (savedValue !== null && input.value === '') {
+                    input.value = savedValue;
+                }
+
+                // Guardar cada vez que el usuario escribe o cambia algo
+                input.addEventListener('input', () => {
+                    sessionStorage.setItem(formId + input.name, input.value);
+                });
+            });
+
+            // Limpiar la memoria al enviar el formulario con éxito
+            const form = document.getElementById('registroForm');
+            if(form) {
+                form.addEventListener('submit', () => {
+                    formInputs.forEach(input => {
+                        sessionStorage.removeItem(formId + input.name);
+                    });
+                });
+            }
+
+            // --- 2. LÓGICA DE CURP ---
             const nationalitySelect = document.getElementById('nationality_public');
             const curpInput = document.getElementById('curp_public');
             const curpLabel = document.getElementById('curp_label');
@@ -149,16 +177,16 @@
                     curpInput.placeholder = "Ingresa tu CURP";
                 } else {
                     curpInput.required = false;
-                    curpInput.value = ''; 
                     curpLabel.innerHTML = 'Documento de Identidad/CURP (Opcional)';
                     curpInput.placeholder = "CURP, DPI, Pasaporte, etc. (Opcional)";
                 }
             }
 
+            // Disparar la lógica de CURP después de restaurar los datos
             toggleCurpRequirement();
             nationalitySelect.addEventListener('change', toggleCurpRequirement);
 
-            // --- 2. LÓGICA DE COMPRESIÓN DE IMÁGENES ---
+            // --- 3. LÓGICA DE COMPRESIÓN DE IMÁGENES ---
             function activarCompresion(inputId) {
                 const inputElement = document.getElementById(inputId);
                 
@@ -168,7 +196,7 @@
                         if (!file) return;
 
                         new Compressor(file, {
-                            quality: 0.7, // Calidad del 70%
+                            quality: 0.7, 
                             maxWidth: 1200, 
                             maxHeight: 1200,
                             mimeType: 'image/jpeg',
@@ -180,8 +208,6 @@
                                 });
                                 dataTransfer.items.add(compressedFile);
                                 inputElement.files = dataTransfer.files;
-                                
-                                console.log('✅ Archivo comprimido con éxito en la vista pública:', inputId);
                             },
                             error(err) {
                                 console.error('Error al comprimir:', err.message);
@@ -191,11 +217,9 @@
                 }
             }
 
-            // Aplicamos la compresión a los tres campos de la vista pública
             activarCompresion('profile_photo');
             activarCompresion('id_front');
             activarCompresion('id_back');
         });
     </script>
-    
 </x-guest-layout>
