@@ -9,19 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contracts', function (Blueprint $table) {
-            // Imágenes (Guardaremos la ruta del archivo)
             $table->string('logo_path')->nullable();
             $table->string('cover_photo_path')->nullable();
-            
-            // Textos largos
             $table->longText('history')->nullable();
-            
-            // Contacto y Ubicación
             $table->string('contact_email')->nullable();
             $table->string('contact_phone')->nullable();
-            $table->text('address')->nullable();
-            
-            // Redes Sociales
+            // $table->text('address')->nullable(); <--- ESTA LÍNEA BÓRRALA
             $table->string('facebook_url')->nullable();
             $table->string('youtube_url')->nullable();
         });
@@ -32,7 +25,7 @@ return new class extends Migration
         Schema::table('contracts', function (Blueprint $table) {
             $table->dropColumn([
                 'logo_path', 'cover_photo_path', 'history', 
-                'contact_email', 'contact_phone', 'address', 
+                'contact_email', 'contact_phone', // 'address', <--- QUÍTALA DE AQUÍ TAMBIÉN
                 'facebook_url', 'youtube_url'
             ]);
         });
