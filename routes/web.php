@@ -46,6 +46,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/master-panel/{church}/status', [\App\Http\Controllers\SuperAdminController::class, 'updateStatus'])
         ->name('superadmin.status')
         ->middleware([\App\Http\Middleware\SuperAdminMiddleware::class]); 
+    
+// Ruta para eliminar iglesia
+Route::delete('/master-panel/church/{church}', [App\Http\Controllers\SuperAdminController::class, 'destroyChurch'])->name('superadmin.destroyChurch');
+
+// Ruta para ver el menú de usuarios de la iglesia
+Route::get('/master-panel/church/{church}/users', [App\Http\Controllers\SuperAdminController::class, 'churchUsers'])->name('superadmin.churchUsers');
 
 // --- Rutas del Calendario (Unificado en CalendarController) ---
 Route::controller(CalendarController::class)->group(function () {

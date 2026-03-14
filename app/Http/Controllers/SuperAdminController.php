@@ -29,4 +29,21 @@ class SuperAdminController extends Controller
         
         return back()->with('success', 'Estatus de la iglesia actualizado correctamente.');
     }
+    // 1. Nueva función para eliminar la iglesia
+    public function destroyChurch(Contract $church)
+    {
+        // Nota: Dependiendo de tu base de datos, esto borrará la iglesia. 
+        // Si tienes borrado en cascada, borrará a sus usuarios también.
+        $church->delete();
+        return back()->with('success', 'Iglesia eliminada de la plataforma.');
+    }
+
+    // 2. Nueva función para ver los usuarios de una iglesia específica
+    public function churchUsers(Contract $church)
+    {
+        // Traemos a todos los usuarios que pertenecen a este contrato/iglesia
+        $users = $church->users()->get(); 
+        
+        return view('superadmin.users', compact('church', 'users'));
+    }
 }

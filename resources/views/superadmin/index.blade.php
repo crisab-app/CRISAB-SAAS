@@ -101,13 +101,22 @@
                                         </form>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <div class="flex justify-end gap-2">
-                                            <a href="#" class="text-blue-400 hover:text-blue-300 font-bold bg-gray-900 p-2 rounded-lg transition" title="Gestionar Usuarios">
-                                                👥 Ver Usuarios
+                                        <div class="flex justify-end gap-2 items-center">
+                                            <a href="{{ route('superadmin.churchUsers', $church->id) }}" class="text-blue-400 hover:text-blue-300 font-bold bg-gray-900 p-2 rounded-lg transition" title="Gestionar Usuarios">
+                                                👥 Usuarios
                                             </a>
+                                            
                                             <a href="#" class="text-gray-400 hover:text-white font-bold bg-gray-900 p-2 rounded-lg transition" title="Editar Iglesia">
                                                 ⚙️ Editar
                                             </a>
+
+                                            <form action="{{ route('superadmin.destroyChurch', $church->id) }}" method="POST" onsubmit="return confirm('⚠️ ¿Estás COMPLETAMENTE SEGURO de eliminar esta iglesia? Esto podría borrar todos sus datos.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-400 hover:text-red-300 font-bold bg-red-900/20 p-2 rounded-lg transition" title="Eliminar Iglesia">
+                                                    🗑️ Borrar
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
