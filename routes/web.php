@@ -40,9 +40,9 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     // Ruta exclusiva para el Súper Admin (Tú)
     Route::get('/master-panel', [\App\Http\Controllers\SuperAdminController::class, 'index'])
-        ->name('superadmin.index')
+        ->name('superadmin.index')        
         ->middleware([\App\Http\Middleware\SuperAdminMiddleware::class]); 
-
+    Route::patch('/master-panel/church/{church}/status', [App\Http\Controllers\SuperAdminController::class, 'updateStatus'])->name('superadmin.updateStatus');
     Route::post('/master-panel/{church}/status', [\App\Http\Controllers\SuperAdminController::class, 'updateStatus'])
         ->name('superadmin.status')
         ->middleware([\App\Http\Middleware\SuperAdminMiddleware::class]); 
