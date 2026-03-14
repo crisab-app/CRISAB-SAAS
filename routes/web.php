@@ -59,6 +59,7 @@ Route::controller(CalendarController::class)->group(function () {
     Route::patch('/calendario/{event}/close', 'closeEvent')->name('calendario.close');
     Route::patch('/calendario/{id}/sermon', [EventController::class, 'updateSermon'])->name('calendario.sermon.update');
     Route::patch('/calendario/{event}/sermon', 'updateSermon')->name('calendario.sermon.update');
+    Route::get('/calendario/{id}/pdf', [App\Http\Controllers\EventController::class, 'exportPdf'])->name('calendario.pdf');
     
     // Ruta para asignar personas a los bloques
     Route::post('/calendario/item/{item}/assign', 'assignItem')->name('calendario.assignItem');

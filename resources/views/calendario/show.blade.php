@@ -14,6 +14,11 @@
                     </div>
                     <div class="flex gap-2">
                         <a href="{{ route('calendario') }}" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition">← Volver</a>
+                        
+                        <a href="{{ route('calendario.pdf', $event->id) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition flex items-center gap-1">
+                            📄 Exportar PDF
+                        </a>
+                        
                         <a href="{{ route('calendario.edit', $event->id) }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm transition">✏️ Editar</a>
                         <form action="{{ route('calendario.destroy', $event->id) }}" method="POST" onsubmit="return confirm('¿Eliminar este evento?')">
                             @csrf @method('DELETE')

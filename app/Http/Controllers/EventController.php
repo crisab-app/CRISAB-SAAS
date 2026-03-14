@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EventController extends Controller
 {
@@ -94,5 +95,16 @@ class EventController extends Controller
 
         // 3. Recargamos la página
         return redirect()->back()->with('success', 'Bosquejo y lectura guardados correctamente.');
+    }
+    public function exportPdf($id)
+    {
+        // Buscamos el evento con sus ítems de liturgia
+        $event = Event::with('items')->findOrFail($id);
+        
+        // Generamos el PDF usando una vista especial que crearemos ahora
+        $pdf = Pdf::loadView('calendario.pdf', compact('event'));
+        
+        // Descargamos el archivo con un nombre bonito
+        return $pdf->download('Liturgia - ' . $event->title . '.pdf');
     }
 }
