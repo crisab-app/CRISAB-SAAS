@@ -13,7 +13,7 @@ class Contract extends Model
     use HasFactory;
 
     // 1. Agregamos 'slug' a los campos que se pueden llenar
-    protected $fillable = ['name', 'address', 'coordinates', 'slug'];
+    protected $fillable = ['name', 'address', 'coordinates', 'slug','status'];
 
     /**
      * Lógica Automática (Cerebro del Modelo)
@@ -57,4 +57,5 @@ class Contract extends Model
     {
         return $this->hasMany(Event::class);
     }
+    
 }
