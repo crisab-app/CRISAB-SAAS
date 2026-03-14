@@ -147,14 +147,16 @@ class CalendarController extends Controller
 
         $request->validate([
             'sermon_notes' => 'nullable|string',
+            'bible_reading'   => $request->bible_reading,
             'preaching_topic' => 'nullable|string|max:255'
         ]);
 
         $event->update([
             'sermon_notes' => $request->sermon_notes,
+            'bible_reading'   => $request->bible_reading,
             'preaching_topic' => $request->preaching_topic
         ]);
 
-        return back()->with('success', '¡Bosquejo de predicación guardado con éxito!');
+        return redirect()->back()->with('success', 'Bosquejo y lectura guardados correctamente.');
     }
 }

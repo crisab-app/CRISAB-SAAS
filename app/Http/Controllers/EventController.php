@@ -78,4 +78,21 @@ class EventController extends Controller
         // Te redirige al calendario usando el nombre de ruta que ya tenías
         return redirect()->route('calendario')->with('success', 'Evento programado exitosamente.');
     }
+
+    // === AQUÍ EMPIEZA LA NUEVA FUNCIÓN (Bien separada de la anterior) ===
+    public function updateSermon(Request $request, $id)
+    {
+        // 1. Buscamos el evento en la base de datos
+        $event = Event::findOrFail($id);
+        
+        // 2. Actualizamos los 3 campos (¡Incluyendo la nueva lectura bíblica!)
+        $event->update([
+            'preaching_topic' => $request->preaching_topic,
+            'bible_reading'   => $request->bible_reading, // ¡Aquí atrapamos la lectura!
+            'sermon_notes'    => $request->sermon_notes,
+        ]);
+
+        // 3. Recargamos la página
+        return redirect()->back()->with('success', 'Bosquejo y lectura guardados correctamente.');
+    }
 }

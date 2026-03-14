@@ -57,6 +57,7 @@ Route::controller(CalendarController::class)->group(function () {
     Route::put('/calendario/{event}', 'update')->name('calendario.update');
     Route::delete('/calendario/{event}', 'destroy')->name('calendario.destroy');
     Route::patch('/calendario/{event}/close', 'closeEvent')->name('calendario.close');
+    Route::patch('/calendario/{id}/sermon', [EventController::class, 'updateSermon'])->name('calendario.sermon.update');
     Route::patch('/calendario/{event}/sermon', 'updateSermon')->name('calendario.sermon.update');
     
     // Ruta para asignar personas a los bloques

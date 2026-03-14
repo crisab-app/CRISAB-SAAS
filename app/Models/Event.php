@@ -22,7 +22,8 @@ class Event extends Model
         'preaching_topic',   
         'liturgy_details',   
         'attendance_count',
-        'sermon_notes' // <-- ¡Agregamos esta línea!
+        'sermon_notes',
+        'bible_reading' // <-- ¡Agregamos esta línea!
     ];
 
     public function contract()
