@@ -13,7 +13,19 @@ class Contract extends Model
     use HasFactory;
 
     // 1. Agregamos 'slug' a los campos que se pueden llenar
-    protected $fillable = ['name', 'address', 'coordinates', 'slug','status'];
+    protected $fillable = [
+        'name',
+        'status', // El que agregamos para activo/suspendido
+        // --- LOS CAMPOS NUEVOS DEL PERFIL ---
+        'logo_path',
+        'cover_photo_path',
+        'history',
+        'contact_email',
+        'contact_phone',
+        'address',
+        'facebook_url',
+        'youtube_url',
+    ];
 
     /**
      * Lógica Automática (Cerebro del Modelo)
