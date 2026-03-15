@@ -29,10 +29,12 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // 1. Aquí validamos que hayan marcado la casilla
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'terms' => ['accepted', 'required'], // <-- NUEVO CANDADO LEGAL
         ]);
 
         $user = User::create([

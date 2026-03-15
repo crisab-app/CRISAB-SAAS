@@ -28,6 +28,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/registrar-iglesia', [ChurchRegistrationController::class, 'create'])->name('church.register');
     Route::post('/registrar-iglesia', [ChurchRegistrationController::class, 'store'])->name('church.register.store');
 });
+// Rutas Legales
+Route::view('/terminos-de-servicio', 'legales.terminos')->name('terminos');
+Route::view('/aviso-de-privacidad', 'legales.privacidad')->name('privacidad');
 
 
 // ==========================================================
