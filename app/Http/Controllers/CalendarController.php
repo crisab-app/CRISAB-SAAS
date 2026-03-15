@@ -73,10 +73,10 @@ class CalendarController extends Controller
             if ($template) {
                 foreach ($template->items as $item) {
                     $event->items()->create([
-                        'name'        => $item->name,         // El nombre del bloque (Bienvenida, Himno, etc)
-                        'skill_id'    => $item->skill_id,     // El privilegio requerido
-                        'order_index' => $item->order_index,  // El orden
-            ]);
+                        'name'        => $item->name,         
+                        'skill_id'    => $item->skill_id,     
+                        'order_index' => $item->order_index,  
+                    ]);
                 }
             }
         }
@@ -113,32 +113,24 @@ class CalendarController extends Controller
         return back()->with('success', 'Participación actualizada.');
     }
 
-    public function update(Request $request, Event $event)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'start' => 'required|date',
-            'end' => 'required|date|after_or_equal:start',
-            'visibility' => 'required|in:public,private',
-        ]);
-
-        $event->update($request->all());
-
-        return redirect()->route('calendario.show', $event->id)->with('success', 'Evento actualizado.');
-    }
-
     public function destroy(Event $event)
     {
+        if ($event->contract_id !== auth()->user()->contract_id) {
+            abort(403);
+        }
         $event->delete();
         return redirect()->route('calendario')->with('success', 'Evento eliminado.');
     }
 
     public function closeEvent(Event $event)
     {
+        if ($event->contract_id !== auth()->user()->contract_id) {
+            abort(403);
+        }
         $event->update(['status' => 'closed']);
         return back()->with('success', 'Evento cerrado.');
     }
-    // 10. Guardar el bosquejo de predicación (TinyMCE)
+
     public function updateSermon(Request $request, Event $event)
     {
         if ($event->contract_id !== auth()->user()->contract_id) {
@@ -147,16 +139,57 @@ class CalendarController extends Controller
 
         $request->validate([
             'sermon_notes' => 'nullable|string',
-            'bible_reading'   => $request->bible_reading,
+            'bible_reading' => 'nullable|string', // <- Esto estaba mal antes
             'preaching_topic' => 'nullable|string|max:255'
         ]);
 
         $event->update([
             'sermon_notes' => $request->sermon_notes,
-            'bible_reading'   => $request->bible_reading,
+            'bible_reading' => $request->bible_reading,
             'preaching_topic' => $request->preaching_topic
         ]);
 
         return redirect()->back()->with('success', 'Bosquejo y lectura guardados correctamente.');
+    }
+
+    // ==========================================
+    // NUEVAS FUNCIONES DE EDICIÓN
+    // ==========================================
+
+    public function edit(Event $event)
+    {
+        // Seguridad: Solo los de esta iglesia pueden editarlo
+        if ($event->contract_id !== auth()->user()->contract_id) {
+            abort(403, 'No tienes permiso para editar este evento.');
+        }
+
+        return view('calendario.edit', compact('event'));
+    }
+
+    public function update(Request $request, Event $event)
+    {
+        if ($event->contract_id !== auth()->user()->contract_id) {
+            abort(403, 'No tienes permiso para modificar este evento.');
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'start' => 'required|date',
+            'end' => 'required|date|after_or_equal:start',
+            'color' => 'nullable|string|max:7',
+            'visibility' => 'required|in:public,private',
+            'description' => 'nullable|string'
+        ]);
+
+        $event->update([
+            'title' => $request->title,
+            'start' => $request->start, 
+            'end' => $request->end,     
+            'color' => $request->color,
+            'visibility' => $request->visibility,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('calendario.show', $event->id)->with('success', 'Evento actualizado correctamente.');
     }
 }

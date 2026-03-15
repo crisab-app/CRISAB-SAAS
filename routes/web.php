@@ -69,6 +69,7 @@ Route::controller(CalendarController::class)->group(function () {
     // Rutas para el Perfil de la Iglesia
     Route::get('/mi-iglesia', [App\Http\Controllers\ChurchProfileController::class, 'edit'])->name('church.profile.edit');
     Route::put('/mi-iglesia', [App\Http\Controllers\ChurchProfileController::class, 'update'])->name('church.profile.update');
+    Route::put('/calendario/{event}', [App\Http\Controllers\CalendarController::class, 'update'])->name('calendario.update');
     
     // Ruta para asignar personas a los bloques
     Route::post('/calendario/item/{item}/assign', 'assignItem')->name('calendario.assignItem');
