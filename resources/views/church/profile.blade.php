@@ -31,7 +31,7 @@
                     <div class="absolute inset-0 bg-black/40"></div>
                     
                     <div class="absolute -bottom-10 left-8">
-                        <div class="h-24 w-24 rounded-full border-4 border-[#1f2937] bg-white overflow-hidden shadow-lg flex items-center justify-center">
+                        <div class="h-24 w-24 rounded-full border-4 border-[#1f2937] bg-white overflow-hidden shadow-lg flex items-center justify-center relative z-10">
                             @if($church->logo_path)
                                 <img src="{{ asset('storage/' . $church->logo_path) }}" alt="Logo" class="h-full w-full object-cover">
                             @else
@@ -41,7 +41,7 @@
                     </div>
                 </div>
 
-                <form action="{{ route('church.profile.update') }}" method="POST" enctype="multipart/form-data" class="p-8 pt-16">
+                <form id="churchForm" action="{{ route('church.profile.update') }}" method="POST" enctype="multipart/form-data" class="p-8 pt-16">
                     @csrf 
                     @method('PUT')
 
@@ -50,14 +50,16 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Logo de la Iglesia (PNG/JPG)</label>
-                            <input type="file" name="logo" accept="image/*"
+                            <input type="file" name="logo" id="logo_input" accept="image/*"
                                 class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 transition">
+                            <p id="logo_status" class="text-xs text-indigo-400 mt-1 hidden">✅ Logo comprimido y listo.</p>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Foto de Portada / Banner (PNG/JPG)</label>
-                            <input type="file" name="cover_photo" accept="image/*"
+                            <input type="file" name="cover_photo" id="cover_input" accept="image/*"
                                 class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600 transition">
+                            <p id="cover_status" class="text-xs text-indigo-400 mt-1 hidden">✅ Portada comprimida y lista.</p>
                         </div>
                     </div>
 
@@ -96,7 +98,7 @@
                     </div>
 
                     <div class="flex justify-end mt-8">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all text-lg flex items-center gap-2">
+                        <button type="submit" id="submitBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all text-lg flex items-center gap-2">
                             💾 Guardar Perfil
                         </button>
                     </div>
@@ -105,4 +107,86 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Función principal de compresión
+        async function compressImage(file, maxWidth, maxHeight, quality = 0.7) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+
+                        // Redimensionar manteniendo proporciones
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+
+                        // Dibujar en canvas
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Convertir a archivo JPG optimizado
+                        canvas.toBlob((blob) => {
+                            const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            resolve(compressedFile);
+                        }, 'image/jpeg', quality);
+                    };
+                };
+            });
+        }
+
+        // Listener para el LOGO (Lo limitamos a 800x800 px)
+        document.getElementById('logo_input').addEventListener('change', async function(e) {
+            if(e.target.files.length > 0) {
+                const file = e.target.files[0];
+                const btn = document.getElementById('submitBtn');
+                btn.disabled = true; btn.innerText = "⏳ Comprimiendo logo...";
+
+                const compressed = await compressImage(file, 800, 800, 0.7);
+                
+                // Reemplazamos el archivo pesado por el ligero en el input original
+                const dt = new DataTransfer();
+                dt.items.add(compressed);
+                e.target.files = dt.files;
+
+                document.getElementById('logo_status').classList.remove('hidden');
+                btn.disabled = false; btn.innerText = "💾 Guardar Perfil";
+            }
+        });
+
+        // Listener para la PORTADA (La limitamos a 1920x1080 px)
+        document.getElementById('cover_input').addEventListener('change', async function(e) {
+            if(e.target.files.length > 0) {
+                const file = e.target.files[0];
+                const btn = document.getElementById('submitBtn');
+                btn.disabled = true; btn.innerText = "⏳ Comprimiendo portada...";
+
+                const compressed = await compressImage(file, 1920, 1080, 0.7);
+                
+                // Reemplazamos el archivo pesado por el ligero en el input original
+                const dt = new DataTransfer();
+                dt.items.add(compressed);
+                e.target.files = dt.files;
+
+                document.getElementById('cover_status').classList.remove('hidden');
+                btn.disabled = false; btn.innerText = "💾 Guardar Perfil";
+            }
+        });
+    </script>
 </x-app-layout>
