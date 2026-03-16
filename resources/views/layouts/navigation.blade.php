@@ -4,30 +4,39 @@
             <div class="flex">
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        <x-application-logo class="block h-9 w-auto fill-current text-indigo-600 dark:text-indigo-400" />
                     </a>
                 </div>
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-6 sm:-my-px sm:ms-8 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Escritorio') }}
+                        🏠 {{ __('Inicio') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('calendario')" :active="request()->routeIs('calendario')">
-                        {{ __('Calendario') }}
+
+                    <x-nav-link :href="route('church.profile.edit')" :active="request()->routeIs('church.profile.*')">
+                        ⛪ {{ __('Mi Iglesia') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('calendario')" :active="request()->routeIs('calendario.*')">
+                        📅 {{ __('Calendario') }}
+                    </x-nav-link>
+
                     <x-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">
-                        {{ __('Grupos') }}
+                        👥 {{ __('Grupos') }}
                     </x-nav-link>
+
                     <x-nav-link :href="route('privilegios.index')" :active="request()->routeIs('privilegios.*')">
-                        {{ __('Privilegios') }}
+                        ⭐ {{ __('Privilegios') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('templates.index')" :active="request()->routeIs('templates.index')">
+
+                    <x-nav-link :href="route('templates.index')" :active="request()->routeIs('templates.*')">
                         📋 {{ __('Actividades') }}
                     </x-nav-link>
                 </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                
                 <button onclick="localStorage.theme = localStorage.theme === 'dark' ? 'light' : 'dark'; document.documentElement.classList.toggle('dark')" class="mr-4 p-2 rounded-full text-gray-500 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 dark:text-gray-400 dark:hover:text-white dark:bg-gray-700 dark:hover:bg-gray-600 transition duration-150 ease-in-out">
                     🌓
                 </button>
@@ -35,7 +44,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&color=1d4ed8&background=eff6ff&rounded=true" alt="Avatar" class="h-8 w-8 rounded-full mr-2 inline-block">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&color=4f46e5&background=e0e7ff&rounded=true" alt="Avatar" class="h-8 w-8 rounded-full mr-2 inline-block">
                             <div>{{ Auth::user()->name }}</div>
 
                             <div class="ms-1">
@@ -47,8 +56,12 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <x-dropdown-link :href="url('/master-panel')">
+                            👑 {{ __('Master Panel') }}
+                        </x-dropdown-link>
+
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            ⚙️ {{ __('Mi Perfil') }}
                         </x-dropdown-link>
 
                         <form method="POST" action="{{ route('logout') }}">
@@ -56,7 +69,7 @@
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                🚪 {{ __('Cerrar Sesión') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -77,18 +90,26 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden dark:bg-gray-800">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Escritorio') }}
+                🏠 {{ __('Inicio') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('calendario')" :active="request()->routeIs('calendario')">
-                {{ __('Calendario') }}
+
+            <x-responsive-nav-link :href="route('church.profile.edit')" :active="request()->routeIs('church.profile.*')">
+                ⛪ {{ __('Mi Iglesia') }}
             </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('calendario')" :active="request()->routeIs('calendario.*')">
+                📅 {{ __('Calendario') }}
+            </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">
-                {{ __('Grupos') }}
+                👥 {{ __('Grupos') }}
             </x-responsive-nav-link>
+
             <x-responsive-nav-link :href="route('privilegios.index')" :active="request()->routeIs('privilegios.*')">
-                {{ __('Privilegios') }}
+                ⭐ {{ __('Privilegios') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('templates.index')" :active="request()->routeIs('templates.index')">
+
+            <x-responsive-nav-link :href="route('templates.index')" :active="request()->routeIs('templates.*')">
                 📋 {{ __('Actividades') }}
             </x-responsive-nav-link>
         </div>
@@ -104,8 +125,12 @@
                     🌓 Cambiar Tema
                 </button>
                 
+                <x-responsive-nav-link :href="url('/master-panel')">
+                    👑 {{ __('Master Panel') }}
+                </x-responsive-nav-link>
+
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    ⚙️ {{ __('Mi Perfil') }}
                 </x-responsive-nav-link>
 
                 <form method="POST" action="{{ route('logout') }}">
@@ -113,7 +138,7 @@
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        🚪 {{ __('Cerrar Sesión') }}
                     </x-responsive-nav-link>
                 </form>
             </div>
