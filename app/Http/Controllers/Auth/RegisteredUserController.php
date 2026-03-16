@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Contract; // <-- Importamos el modelo de la iglesia
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,33 +15,33 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
-        // 1. Aquí validamos que hayan marcado la casilla
         $request->validate([
+            'church_name' => ['required', 'string', 'max:255'], // Validamos la iglesia
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'terms' => ['accepted', 'required'], // <-- NUEVO CANDADO LEGAL
+            'terms' => ['accepted', 'required'], 
         ]);
 
+        // 1. CREAMOS LA IGLESIA PRIMERO
+        $contract = Contract::create([
+            'name' => $request->church_name,
+            'status' => 'active', // O 'trial' si luego les darás días de prueba
+        ]);
+
+        // 2. CREAMOS AL USUARIO Y LO AMARRAMOS A ESA IGLESIA
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'contract_id' => $contract->id, // ¡El candado mágico!
         ]);
 
         event(new Registered($user));

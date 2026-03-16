@@ -1,10 +1,14 @@
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
-
+        <div>
+            <x-input-label for="church_name" value="Nombre de tu Iglesia / Ministerio" />
+            <x-text-input id="church_name" class="block mt-1 w-full" type="text" name="church_name" :value="old('church_name')" required autofocus placeholder="Ej. Iglesia Vida Abundante" />
+            <x-input-error :messages="$errors->get('church_name')" class="mt-2" />
+        </div>
         <div>
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')"/>
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
