@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
-use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Contract extends Model
 {
-    use BelongsToTenant;
     use HasFactory;
+    // 🚨 AQUÍ ELIMINAMOS EL `use BelongsToTenant;` QUE ESTABA CAUSANDO EL PROBLEMA 🚨
 
     // 1. Agregamos 'slug' a los campos que se pueden llenar
     protected $fillable = [
@@ -69,5 +68,4 @@ class Contract extends Model
     {
         return $this->hasMany(Event::class);
     }
-    
 }
