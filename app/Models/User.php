@@ -65,9 +65,10 @@ class User extends Authenticatable
         return $this->hasMany(Event::class);
     }
 
-    public function contract()
+public function contract()
     {
-        return $this->belongsTo(Contract::class);
+
+        return $this->belongsTo(Contract::class, 'contract_id', 'id');
     }
 
     public function groups()
@@ -92,4 +93,5 @@ class User extends Authenticatable
     {
         return "{$this->name} {$this->paternal_surname} {$this->maternal_surname}";
     }
+
 }
