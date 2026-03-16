@@ -117,6 +117,28 @@ Route::controller(CalendarController::class)->group(function () {
     Route::get('/api/bible/chapters', [BibleController::class, 'getChapters'])->name('bible.chapters');
     Route::get('/api/bible/verses', [BibleController::class, 'getVerses'])->name('bible.verses');
     Route::get('/api/bible/text', [BibleController::class, 'getText'])->name('bible.text');
+
+    // Ruta de cuarentena (Cuando están suspendidos)
+Route::get('/cuenta-suspendida', function () {
+    // Si no están suspendidos, que los regrese al inicio
+    if (auth()->user()->contract->status !== 'suspended') return redirect('/dashboard');
+    return view('errors.suspended');
+})->middleware(['auth'])->name('cuenta.suspendida');
+
+
+// 👇 APLICAMOS EL GUARDIA A TUS RUTAS PRIVADAS 👇
+Route::middleware(['auth', 'verified', 'church.status'])->group(function () {
+    
+    Route::view('/dashboard', 'dashboard')->name('dashboard');
+    
+    // Tus rutas de iglesia
+    Route::get('/mi-iglesia', [App\Http\Controllers\ChurchProfileController::class, 'edit'])->name('church.profile.edit');
+    Route::put('/mi-iglesia', [App\Http\Controllers\ChurchProfileController::class, 'update'])->name('church.profile.update');
+
+    // Tus rutas de calendario
+    Route::get('/calendario', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendario');
+    // ... (todas tus demás rutas privadas van aquí adentro)
+});
 });
 
 require __DIR__.'/auth.php';
