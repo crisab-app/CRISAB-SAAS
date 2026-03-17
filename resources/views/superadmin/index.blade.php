@@ -85,6 +85,7 @@
                                             {{ strtoupper($church->plan ?? 'BÁSICO') }}
                                         </span>
                                     </td>
+                                    
                                     <td class="px-6 py-4 text-center">
                                         <form action="{{ route('superadmin.updateStatus', $church->id) }}" method="POST">
                                             @csrf
@@ -100,23 +101,26 @@
                                             </select>
                                         </form>
                                     </td>
+
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex justify-end gap-2 items-center">
+                                            
                                             <a href="{{ route('superadmin.churchUsers', $church->id) }}" class="text-blue-400 hover:text-blue-300 font-bold bg-gray-900 p-2 rounded-lg transition" title="Gestionar Usuarios">
                                                 👥 Usuarios
                                             </a>
                                             
-                                            <a href="{{ route('superadmin.church.edit', $church->id) }}" class="text-blue-400 hover:text-blue-300 font-bold px-3 py-1">
+                                            <a href="{{ route('superadmin.church.edit', $church->id) }}" class="text-yellow-400 hover:text-yellow-300 font-bold px-3 py-1">
                                                 ⚙️ Editar
                                             </a>
 
-                                            <form action="{{ route('superadmin.church.destroy', $church->id) }}" method="POST" class="inline-block" onsubmit="return confirm('⚠️ ¿Estás COMPLETAMENTE seguro de borrar esta iglesia? Esta acción no se puede deshacer.');">
+                                            <form action="{{ route('superadmin.church.destroy', $church->id) }}" method="POST" class="inline-block">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-400 hover:text-red-300 font-bold px-3 py-1">
+                                                <button type="button" onclick="if(confirm('🚨 PELIGRO: ¿Estás COMPLETAMENTE seguro de borrar esta IGLESIA? Esto borrará también a todos sus usuarios y datos. NO SE PUEDE DESHACER.')) { this.closest('form').submit(); }" class="text-red-400 hover:text-red-300 font-bold px-3 py-1">
                                                     🗑️ Borrar
                                                 </button>
                                             </form>
+
                                         </div>
                                     </td>
                                 </tr>
