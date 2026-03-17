@@ -8,15 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        return; // 👈 ESTO CANCELA LA MIGRACIÓN AUTOMÁTICAMENTE
+        
         Schema::table('contracts', function (Blueprint $table) {
-            $table->string('unique_church_id')->unique()->nullable();
-            $table->string('denomination')->nullable();
-            $table->text('address')->nullable();
-            $table->string('maps_coordinates')->nullable();
-            $table->string('initiator_name')->nullable();
-            // Los campos que terminan en _path guardarán la ubicación del archivo en tu servidor
-            $table->string('registration_document_path')->nullable();
-            $table->string('exterior_photo_path')->nullable();
+            // ... lo que sea que haya aquí abajo ya no importa
         });
     }
 
