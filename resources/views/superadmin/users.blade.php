@@ -56,12 +56,13 @@
                                             </a>
                                             
                                             <button class="text-red-400 hover:text-red-300 font-bold bg-red-900/20 p-2 rounded-lg transition" title="Eliminar Usuario">
-                                                <form action="{{ route('master.users.destroy', $user->id) }}" method="POST" class="inline-block" onsubmit="return confirm('⚠️ ALERTA: ¿Estás seguro de borrar a este USUARIO? Esta acción es irreversible y perderá su acceso de inmediato.');">
+                                                <form action="{{ route('master.users.destroy', $user->id) }}" method="POST" class="inline-block relative z-50" x-data @submit.prevent="if(confirm('⚠️ ALERTA: ¿Estás seguro de borrar a este USUARIO?')) $el.submit()">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-400 hover:text-red-300 font-bold bg-red-900/20 p-2 rounded-lg transition" title="Eliminar Usuario">
+                                                    <button type="submit" class="text-red-400 hover:text-red-500 font-bold bg-red-900/20 p-2 rounded-lg transition cursor-pointer">
                                                         🗑️
                                                     </button>
+                                                </form>
                                                 </form>                                               
                                             </button>
                                         </div>
