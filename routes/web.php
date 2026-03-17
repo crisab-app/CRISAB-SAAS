@@ -53,6 +53,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/master-panel/users/{user}/edit', [App\Http\Controllers\SuperAdminController::class, 'editUser'])->name('master.users.edit');
     Route::put('/master-panel/users/{user}', [App\Http\Controllers\SuperAdminController::class, 'updateUser'])->name('master.users.update');
     Route::put('/master-panel/users/{user}/password', [App\Http\Controllers\SuperAdminController::class, 'updatePassword'])->name('master.users.password');
+    // Editar y Borrar Iglesias
+    Route::get('/master-panel/church/{church}/edit', [App\Http\Controllers\SuperAdminController::class, 'editChurch'])->name('superadmin.church.edit');
+    Route::put('/master-panel/church/{church}', [App\Http\Controllers\SuperAdminController::class, 'updateChurch'])->name('superadmin.church.update');
+    Route::delete('/master-panel/church/{church}', [App\Http\Controllers\SuperAdminController::class, 'destroyChurch'])->name('superadmin.church.destroy');
     
 // Ruta para eliminar iglesia
 Route::delete('/master-panel/church/{church}', [App\Http\Controllers\SuperAdminController::class, 'destroyChurch'])->name('superadmin.destroyChurch');

@@ -106,14 +106,14 @@
                                                 👥 Usuarios
                                             </a>
                                             
-                                            <a href="#" class="text-gray-400 hover:text-white font-bold bg-gray-900 p-2 rounded-lg transition" title="Editar Iglesia">
+                                            <a href="{{ route('superadmin.church.edit', $church->id) }}" class="text-blue-400 hover:text-blue-300 font-bold px-3 py-1">
                                                 ⚙️ Editar
                                             </a>
 
-                                            <form action="{{ route('superadmin.destroyChurch', $church->id) }}" method="POST" onsubmit="return confirm('⚠️ ¿Estás COMPLETAMENTE SEGURO de eliminar esta iglesia? Esto podría borrar todos sus datos.')">
+                                            <form action="{{ route('superadmin.church.destroy', $church->id) }}" method="POST" class="inline-block" onsubmit="return confirm('⚠️ ¿Estás COMPLETAMENTE seguro de borrar esta iglesia? Esta acción no se puede deshacer.');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-400 hover:text-red-300 font-bold bg-red-900/20 p-2 rounded-lg transition" title="Eliminar Iglesia">
+                                                <button type="submit" class="text-red-400 hover:text-red-300 font-bold px-3 py-1">
                                                     🗑️ Borrar
                                                 </button>
                                             </form>
