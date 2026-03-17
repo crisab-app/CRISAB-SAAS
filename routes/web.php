@@ -49,6 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/master-panel/{church}/status', [\App\Http\Controllers\SuperAdminController::class, 'updateStatus'])
         ->name('superadmin.status')
         ->middleware([\App\Http\Middleware\SuperAdminMiddleware::class]); 
+    // Rutas para gestionar usuarios desde el Master Panel
+    Route::get('/master-panel/users/{user}/edit', [App\Http\Controllers\SuperAdminController::class, 'editUser'])->name('master.users.edit');
+    Route::put('/master-panel/users/{user}', [App\Http\Controllers\SuperAdminController::class, 'updateUser'])->name('master.users.update');
+    Route::put('/master-panel/users/{user}/password', [App\Http\Controllers\SuperAdminController::class, 'updatePassword'])->name('master.users.password');
     
 // Ruta para eliminar iglesia
 Route::delete('/master-panel/church/{church}', [App\Http\Controllers\SuperAdminController::class, 'destroyChurch'])->name('superadmin.destroyChurch');
