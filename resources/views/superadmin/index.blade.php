@@ -113,10 +113,10 @@
                                                 ⚙️ Editar
                                             </a>
 
-                                            <form action="{{ route('superadmin.church.destroy', $church->id) }}" method="POST" class="inline-block">
+                                            <form action="{{ route('superadmin.church.destroy', $church->id) }}" method="POST" class="inline-block relative z-50" x-data @submit.prevent="if(confirm('🚨 PELIGRO: ¿Estás COMPLETAMENTE seguro de borrar esta IGLESIA? Esto borrará también a todos sus usuarios y datos. NO SE PUEDE DESHACER.')) $el.submit()">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" onclick="if(confirm('🚨 PELIGRO: ¿Estás COMPLETAMENTE seguro de borrar esta IGLESIA? Esto borrará también a todos sus usuarios y datos. NO SE PUEDE DESHACER.')) { this.closest('form').submit(); }" class="text-red-400 hover:text-red-300 font-bold px-3 py-1">
+                                                <button type="submit" class="text-red-400 hover:text-red-500 font-bold px-3 py-1 cursor-pointer">
                                                     🗑️ Borrar
                                                 </button>
                                             </form>
