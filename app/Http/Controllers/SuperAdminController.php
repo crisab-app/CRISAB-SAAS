@@ -46,4 +46,38 @@ class SuperAdminController extends Controller
         
         return view('superadmin.users', compact('church', 'users'));
     }
+    // --- GESTIÓN DE USUARIOS ---
+
+    public function editUser(\App\Models\User $user)
+    {
+        return view('superadmin.users-edit', compact('user'));
+    }
+
+    public function updateUser(Request $request, \App\Models\User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return back()->with('success', 'Usuario actualizado correctamente.');
+    }
+
+    public function updatePassword(Request $request, \App\Models\User $user)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8',
+        ]);
+
+        $user->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+        ]);
+
+        return back()->with('success', 'Contraseña cambiada exitosamente.');
+    }
 }

@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             <div class="mb-6 flex justify-between items-center">
-                <a href="{{ route('superadmin.index') }}" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition">
+                <a href="{{ url('/master-panel') }}" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition">
                     ← Volver al Panel
                 </a>
                 <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
@@ -51,8 +51,13 @@
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex justify-end gap-2">
-                                            <button class="text-yellow-400 hover:text-white font-bold bg-gray-900 p-2 rounded-lg transition" title="Cambiar Contraseña">🔑</button>
-                                            <button class="text-red-400 hover:text-red-300 font-bold bg-red-900/20 p-2 rounded-lg transition" title="Eliminar Usuario">🗑️</button>
+                                            <a href="{{ route('master.users.edit', $user->id) }}" class="text-yellow-400 hover:text-white font-bold bg-gray-900 p-2 rounded-lg transition" title="Editar Perfil / Contraseña">
+                                                ⚙️ Editar
+                                            </a>
+                                            
+                                            <button class="text-red-400 hover:text-red-300 font-bold bg-red-900/20 p-2 rounded-lg transition" title="Eliminar Usuario">
+                                                🗑️
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
