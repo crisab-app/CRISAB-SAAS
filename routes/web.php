@@ -68,7 +68,7 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
     Route::get('/master-panel/users/{user}/edit', [SuperAdminController::class, 'editUser'])->name('master.users.edit');
     Route::put('/master-panel/users/{user}', [SuperAdminController::class, 'updateUser'])->name('master.users.update');
     Route::put('/master-panel/users/{user}/password', [SuperAdminController::class, 'updatePassword'])->name('master.users.password');
-
+    Route::delete('/master-panel/users/{user}', [SuperAdminController::class, 'destroyUser'])->name('master.users.destroy');
 });
 
 

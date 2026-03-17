@@ -57,13 +57,23 @@ class SuperAdminController extends Controller
     }
 
     // Eliminar una iglesia por completo
-    public function destroyChurch(Contract $church)
+    // Eliminar una iglesia por completo (y sus usuarios)
+    public function destroyChurch(\App\Models\Contract $church)
     {
-        // Nota: Dependiendo de tu base de datos, esto borrará la iglesia. 
-        // Si tienes borrado en cascada, borrará a sus usuarios también.
+        // 1. Primero borramos a todos los usuarios de esta iglesia para que no queden "huérfanos"
+        $church->users()->delete();
+        
+        // 2. Ahora sí, borramos la iglesia
         $church->delete();
         
-        return back()->with('success', 'Iglesia eliminada de la plataforma.');
+        return back()->with('success', 'Iglesia y todos sus usuarios eliminados permanentemente.');
+    }
+
+    // Eliminar un solo usuario
+    public function destroyUser(\App\Models\User $user)
+    {
+        $user->delete();
+        return back()->with('success', 'Usuario eliminado de la plataforma.');
     }
 
     // Ver los usuarios de una iglesia específica

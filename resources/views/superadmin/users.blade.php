@@ -56,7 +56,13 @@
                                             </a>
                                             
                                             <button class="text-red-400 hover:text-red-300 font-bold bg-red-900/20 p-2 rounded-lg transition" title="Eliminar Usuario">
-                                                🗑️
+                                                <form action="{{ route('master.users.destroy', $user->id) }}" method="POST" class="inline-block" onsubmit="return confirm('⚠️ ALERTA: ¿Estás seguro de borrar a este USUARIO? Esta acción es irreversible y perderá su acceso de inmediato.');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-400 hover:text-red-300 font-bold bg-red-900/20 p-2 rounded-lg transition" title="Eliminar Usuario">
+                                                        🗑️
+                                                    </button>
+                                                </form>                                               
                                             </button>
                                         </div>
                                     </td>
