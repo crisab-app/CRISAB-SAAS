@@ -13,8 +13,7 @@ return new class extends Migration
             $table->string('cover_photo_path')->nullable();
             $table->longText('history')->nullable();
             $table->string('contact_email')->nullable();
-            $table->string('contact_phone')->nullable();
-            // $table->text('address')->nullable(); <--- ESTA LÍNEA BÓRRALA
+            $table->string('contact_phone')->nullable();            
             $table->string('facebook_url')->nullable();
             $table->string('youtube_url')->nullable();
         });

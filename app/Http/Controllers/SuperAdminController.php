@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contract;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash; // Agregamos esto para las contraseñas
+use Illuminate\Support\Facades\Hash; 
 
 class SuperAdminController extends Controller
 {
@@ -17,8 +17,7 @@ class SuperAdminController extends Controller
         $totalUsers = User::count();
 
         // 2. Traemos todas las iglesias con su conteo de usuarios
-        // Ordenamos para que las más nuevas salgan primero
-        $churches = Contract::withCount('users')->latest()->get();
+        $churches = Contract::withoutGlobalScopes()->withCount('users')->latest()->get();        
         
         return view('superadmin.index', compact('churches', 'totalChurches', 'activeChurches', 'totalUsers'));
     }
@@ -27,20 +26,17 @@ class SuperAdminController extends Controller
     // --- GESTIÓN DE IGLESIAS (CONTRATOS) ---
     // ==========================================
 
-    // Actualización rápida del semáforo desde la lista (si lo sigues usando)
     public function updateStatus(Request $request, Contract $church)
     {
         $church->update(['status' => $request->status]); 
         return back()->with('success', 'Estatus de la iglesia actualizado correctamente.');
     }
 
-    // Mostrar pantalla de edición completa de la iglesia
     public function editChurch(Contract $church)
     {
         return view('superadmin.church-edit', compact('church'));
     }
 
-    // Guardar los cambios del nombre o estatus de la iglesia
     public function updateChurch(Request $request, Contract $church)
     {
         $request->validate([
@@ -56,39 +52,32 @@ class SuperAdminController extends Controller
         return redirect('/master-panel')->with('success', 'Iglesia actualizada correctamente.');
     }
 
-    // Eliminar una iglesia por completo
-    // Eliminar una iglesia por completo (y sus usuarios)
-    public function destroyChurch(\App\Models\Contract $church)
+    public function destroyChurch(Contract $church)
     {
-        // 1. Primero borramos a todos los usuarios de esta iglesia para que no queden "huérfanos"
-        $church->users()->delete();
+        // 1. Borramos a los usuarios directamente por su ID de contrato (Más seguro)
+        User::where('contract_id', $church->id)->delete();
         
-        // 2. Ahora sí, borramos la iglesia
+        // 2. Borramos la iglesia
         $church->delete();
         
         return back()->with('success', 'Iglesia y todos sus usuarios eliminados permanentemente.');
     }
 
-    // Eliminar un solo usuario
-    public function destroyUser(\App\Models\User $user)
+    // ==========================================
+    // --- GESTIÓN DE USUARIOS ---
+    // ==========================================
+
+    public function churchUsers(Contract $church)
+    {
+        $users = User::where('contract_id', $church->id)->get(); 
+        return view('superadmin.users', compact('church', 'users'));
+    }
+
+    public function destroyUser(User $user)
     {
         $user->delete();
         return back()->with('success', 'Usuario eliminado de la plataforma.');
     }
-
-    // Ver los usuarios de una iglesia específica
-    public function churchUsers(Contract $church)
-    {
-        // Traemos a todos los usuarios que pertenecen a este contrato/iglesia
-        $users = $church->users()->get(); 
-        
-        return view('superadmin.users', compact('church', 'users'));
-    }
-
-
-    // ==========================================
-    // --- GESTIÓN DE USUARIOS ---
-    // ==========================================
 
     public function editUser(User $user)
     {

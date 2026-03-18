@@ -81,6 +81,23 @@ Route::middleware(['auth', 'verified', 'church.status'])->group(function () {
     // Dashboard General
     Route::view('/dashboard', 'dashboard')->name('dashboard');
 
+    // --- Módulo de Finanzas ---
+    Route::controller(\App\Http\Controllers\FinanceController::class)->group(function () {
+        Route::get('/finanzas', 'index')->name('finances.index'); // Dashboard
+        Route::get('/finanzas/cajas', 'funds')->name('finances.funds'); // Gestión de Cajas
+        Route::post('/finanzas/cajas', 'storeFund')->name('finances.funds.store'); // 👈 
+        Route::get('/finanzas/cajas/{fund}', 'showFund')->name('finances.funds.show'); // 👈 NUEVA RUTA: ESTADO DE CUENTA
+        Route::get('/finanzas/movimientos', 'transactions')->name('finances.transactions'); // Libro Diario
+        Route::post('/finanzas/movimientos', 'storeTransaction')->name('finances.transactions.store');  // modulo movimiento
+        Route::get('/finanzas/movimientos/{transaction}/recibo', 'receipt')->name('finances.receipt'); // PDF Recibo
+        Route::patch('/finanzas/movimientos/{transaction}/cancelar', 'cancelTransaction')->name('finances.transactions.cancel'); // 
+        Route::get('/finanzas/cortes', 'closings')->name('finances.closings'); // Cortes Mensuales
+        Route::post('/finanzas/cortes', 'storeClosing')->name('finances.closings.store'); // Generar/Actualizar corte
+        Route::patch('/finanzas/cortes/{closing}/cerrar', 'lockClosing')->name('finances.closings.lock'); // Cerrar mes definitivamente
+        Route::match(['get', 'post'], '/finanzas/auditoria', 'audit')->name('finances.audit');
+    
+    });
+
     // --- Perfil de la Iglesia ---
     Route::get('/mi-iglesia', [ChurchProfileController::class, 'edit'])->name('church.profile.edit');
     Route::put('/mi-iglesia', [ChurchProfileController::class, 'update'])->name('church.profile.update');

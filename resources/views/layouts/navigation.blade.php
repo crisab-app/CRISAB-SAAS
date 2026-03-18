@@ -33,7 +33,7 @@
                         📋 {{ __('Actividades') }}
                     </x-nav-link>
 
-                    <x-nav-link href="#" :active="false">
+                    <x-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.*')">
                         💰 {{ __('Finanzas') }}
                     </x-nav-link>
 
@@ -121,7 +121,7 @@
                 📋 {{ __('Actividades') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link href="#" :active="false">
+            <x-responsive-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.*')">
                 💰 {{ __('Finanzas') }}
             </x-responsive-nav-link>
 

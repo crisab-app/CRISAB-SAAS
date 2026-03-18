@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        return; // 👈 ESTO CANCELA LA MIGRACIÓN AUTOMÁTICAMENTE
+        
         
         Schema::table('contracts', function (Blueprint $table) {
             // ... lo que sea que haya aquí abajo ya no importa

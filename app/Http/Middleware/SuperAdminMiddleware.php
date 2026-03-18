@@ -4,26 +4,22 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class SuperAdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // Revisamos quién está intentando entrar
-        $user = Auth::user();
-
-        // Jalamos tus correos maestros del servidor
-        $superAdmin = env('SUPER_ADMIN_EMAIL');
-        $localAdmin = env('LOCAL_ADMIN_EMAIL');
-
-        // Si el correo del usuario NO es ninguno de los tuyos, lo pateamos al dashboard normal
-        if ($user->email !== $superAdmin && $user->email !== $localAdmin) {
-            return redirect('/dashboard')->with('error', 'No tienes permisos de CEO para ver esta sección.');
+        // 🚨 REGLA DE ORO: Si no ha iniciado sesión, o SI NO TIENE la bandera de super_admin, lo pateamos.
+        if (!auth()->check() || auth()->user()->is_super_admin !== 1) {
+            
+            // Opción A: Mandarlo a un error 403 (Prohibido)
+            abort(403, 'Acceso Denegado. Solo personal autorizado.');
+            
+            // Opción B (Más sigilosa): Fingir que la página no existe (Error 404) para que los hackers no sepan que hay un panel maestro aquí.
+            // abort(404);
         }
 
-        // Si sí eres tú, lo dejamos pasar al panel
         return $next($request);
     }
 }
