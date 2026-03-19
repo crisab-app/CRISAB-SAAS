@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
+        
         @if(config('app.env') === 'production' && env('GOOGLE_ANALYTICS_ID'))
             <script async src="https://www.googletagmanager.com/gtag/js?id={{ env('GOOGLE_ANALYTICS_ID') }}"></script>
             <script>
@@ -10,6 +11,7 @@
                 gtag('config', '{{ env('G-EP2DGM4LVR') }}');
             </script>
         @endif
+        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">

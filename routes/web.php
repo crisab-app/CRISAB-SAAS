@@ -35,6 +35,9 @@ Route::middleware('guest')->group(function () {
 Route::view('/terminos-de-servicio', 'legales.terminos')->name('terminos');
 Route::view('/aviso-de-privacidad', 'legales.privacidad')->name('privacidad');
 
+// 4. Herramientas publicas
+Route::view('/herramientas/generador', 'generador-activos')->name('generador');
+
 
 // ==========================================================
 // 🔒 RUTAS DE CUARENTENA (Para iglesias suspendidas)
