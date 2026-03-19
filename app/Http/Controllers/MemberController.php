@@ -135,12 +135,10 @@ class MemberController extends Controller
     // 7. Mostrar formulario público de invitación usando ID
     public function publicRegistration($contract_id)
     {
-        // Cambiamos slug por ID para mayor seguridad
         $iglesia = Contract::findOrFail($contract_id);
         return view('miembros.public_create', compact('iglesia'));
     }
 
-    // 8. Guardar registro desde link público usando ID
     // 8. Guardar registro desde link público usando ID
     public function storePublic(Request $request, $contract_id)
     {
@@ -154,13 +152,11 @@ class MemberController extends Controller
             'gender' => 'required|string|in:Masculino,Femenino', 
             'nationality' => 'required|string',
             'curp' => 'required_if:nationality,México|nullable|string|max:18|unique:users,curp',
-            // Agregamos la validación de las imágenes
             'profile_photo' => 'nullable|image|max:2048', 
             'id_front' => 'nullable|image|max:2048',
             'id_back' => 'nullable|image|max:2048',
         ]);
 
-        // Procesamos las imágenes si el usuario las subió
         $profilePath = $request->hasFile('profile_photo') ? $request->file('profile_photo')->store('kyc/profiles', 'public') : null;
         $idFrontPath = $request->hasFile('id_front') ? $request->file('id_front')->store('kyc/documents', 'public') : null;
         $idBackPath = $request->hasFile('id_back') ? $request->file('id_back')->store('kyc/documents', 'public') : null;
@@ -177,12 +173,29 @@ class MemberController extends Controller
             'nationality' => $request->nationality,
             'curp' => mb_strtoupper($request->curp),
             'marital_status' => $request->marital_status,
-            // Guardamos las rutas en la base de datos
             'profile_photo_path' => $profilePath,
             'id_front_path' => $idFrontPath,
             'id_back_path' => $idBackPath,
         ]);
 
         return redirect()->back()->with('success', '¡Registro completado! Tu líder revisará tu información pronto.');
+    }
+
+    // ==========================================
+    // 9. ACTUALIZAR PRIVILEGIOS Y PERMISOS (RBAC)
+    // ==========================================
+    public function updatePermissions(Request $request, User $miembro)
+    {
+        // 1. Validamos que el administrador no esté editando a alguien de otra iglesia
+        if ($miembro->contract_id !== auth()->user()->contract_id) {
+            abort(403, 'No tienes permiso para editar a este usuario.');
+        }
+
+        // 2. Actualizamos el permiso en la base de datos (Si viene marcado es true, si no, false)
+        $miembro->update([
+            'can_manage_finances' => $request->has('can_manage_finances')
+        ]);
+
+        return back()->with('success', 'Permisos financieros actualizados para ' . $miembro->name);
     }
 }

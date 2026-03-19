@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'contract_id',
+        'is_super_admin',
         'paternal_surname',
         'maternal_surname',
         'gender', // <-- Agregado (lo necesitaremos para las estadísticas)
@@ -33,6 +34,7 @@ class User extends Authenticatable
         'id_front_path',
         'id_back_path',
         'system_role',
+        'can_manage_finances',
         'last_login_at',  
         'last_login_ip',  
     ];
@@ -53,6 +55,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_super_admin' => 'boolean',      // <-- Agrega esta línea
+            'can_manage_finances' => 'boolean', // <-- Y esta también
             'birthdate' => 'date',
             'last_login_at' => 'datetime',
         ];

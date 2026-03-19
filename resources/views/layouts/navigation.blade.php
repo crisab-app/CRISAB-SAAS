@@ -32,16 +32,18 @@
                     <x-nav-link :href="route('templates.index')" :active="request()->routeIs('templates.*')">
                         📋 {{ __('Actividades') }}
                     </x-nav-link>
-
-                    <x-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.*')">
+                    @if(auth()->user()->can_manage_finances || auth()->user()->is_super_admin)
+                        <x-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.*')">
                         💰 {{ __('Finanzas') }}
-                    </x-nav-link>
+                        </x-nav-link>
+                    @endif
 
                     <x-nav-link href="#" :active="false">
                         🌱 {{ __('Discipulado') }}
                     </x-nav-link>
                 </div>
             </div>
+
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 
@@ -64,6 +66,7 @@
                     </x-slot>
 
                     <x-slot name="content">
+
                         <x-dropdown-link :href="url('/master-panel')">
                             👑 {{ __('Master Panel') }}
                         </x-dropdown-link>
@@ -121,9 +124,11 @@
                 📋 {{ __('Actividades') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.*')">
-                💰 {{ __('Finanzas') }}
-            </x-responsive-nav-link>
+            @if(Auth::user()->can_manage_finances || Auth::user()->is_super_admin)
+                <x-responsive-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.*')">
+                    💰 {{ __('Finanzas') }}
+                </x-responsive-nav-link>
+            @endif
 
             <x-responsive-nav-link href="#" :active="false">
                 🌱 {{ __('Discipulado') }}

@@ -6,9 +6,9 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+            
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-200 dark:border-gray-700">
                 <form action="{{ route('miembros.update', $miembro->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
                     @method('PUT')
@@ -65,21 +65,21 @@
                                 @if($miembro->profile_photo_path)
                                     <img src="{{ asset('storage/'.$miembro->profile_photo_path) }}" class="h-20 w-20 rounded mb-2 object-cover border border-gray-300 dark:border-gray-600">
                                 @endif
-                                <input type="file" name="profile_photo" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                <input type="file" name="profile_photo" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-400">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Credencial (Frente)</label>
                                 @if($miembro->id_front_path)
                                     <div class="text-xs text-green-600 dark:text-green-400 mb-1">✓ Archivo existente</div>
                                 @endif
-                                <input type="file" name="id_front" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                <input type="file" name="id_front" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-400">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Credencial (Reverso)</label>
                                 @if($miembro->id_back_path)
                                     <div class="text-xs text-green-600 dark:text-green-400 mb-1">✓ Archivo existente</div>
                                 @endif
-                                <input type="file" name="id_back" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                                <input type="file" name="id_back" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/50 dark:file:text-indigo-400">
                             </div>
                         </div>
                     </div>
@@ -106,6 +106,33 @@
                     </div>
                 </form>
             </div>
+
+            <div class="bg-white dark:bg-gray-800 shadow sm:rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-black text-gray-900 dark:text-white mb-2">🛡️ Permisos de Sistema (RBAC)</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Enciende o apaga el acceso de este usuario a los módulos restringidos de la iglesia. Este cambio se guarda automáticamente.</p>
+
+                <form action="{{ route('miembros.permissions', $miembro->id) }}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <label class="flex items-center cursor-pointer gap-4 p-4 border rounded-xl transition-colors {{ $miembro->can_manage_finances ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50' }}">
+                        
+                        <input type="checkbox" name="can_manage_finances" onchange="this.form.submit()" style="display:none;" {{ $miembro->can_manage_finances ? 'checked' : '' }}>
+                        
+                        <div style="width: 3.5rem; height: 1.75rem; border-radius: 9999px; position: relative; transition: background-color 0.3s; background-color: {{ $miembro->can_manage_finances ? '#4f46e5' : '#9ca3af' }};">
+                            <div style="width: 1.5rem; height: 1.5rem; background-color: white; border-radius: 9999px; position: absolute; top: 0.125rem; transition: left 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); left: {{ $miembro->can_manage_finances ? '1.875rem' : '0.125rem' }};"></div>
+                        </div>
+                        
+                        <div class="flex-1">
+                            <span class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                Módulo de Finanzas y Auditoría 
+                                @if($miembro->can_manage_finances) <span class="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300 rounded-full">Activo</span> @endif
+                            </span>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Si está encendido, el usuario podrá ver el saldo de las cajas, registrar ingresos/egresos y generar cortes de caja.</p>
+                        </div>
+                    </label>
+                </form>
+            </div>
+
         </div>
     </div>
     

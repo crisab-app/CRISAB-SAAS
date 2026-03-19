@@ -16,8 +16,11 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        // Cargamos al usuario actual con su iglesia (contract) y sus privilegios (skills)
+        $user = $request->user()->load(['contract', 'skills']);
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 

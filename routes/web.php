@@ -12,6 +12,7 @@ use App\Http\Controllers\ChurchRegistrationController;
 use App\Http\Controllers\BibleController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\ChurchProfileController;
+use App\Http\Controllers\FinanceController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,11 +32,9 @@ Route::middleware('guest')->group(function () {
     Route::post('/registrar-iglesia', [ChurchRegistrationController::class, 'store'])->name('church.register.store');
 });
 
-// 3. Rutas Legales
+// 3. Rutas Legales & Herramientas
 Route::view('/terminos-de-servicio', 'legales.terminos')->name('terminos');
 Route::view('/aviso-de-privacidad', 'legales.privacidad')->name('privacidad');
-
-// 4. Herramientas publicas
 Route::view('/herramientas/generador', 'generador-activos')->name('generador');
 
 
@@ -54,19 +53,11 @@ Route::get('/cuenta-suspendida', function () {
 // 👑 RUTAS DEL SUPER ADMIN (Master Panel)
 // ==========================================================
 Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->group(function () {
-    
-    // Panel Principal
     Route::get('/master-panel', [SuperAdminController::class, 'index'])->name('superadmin.index');
-    
-    // Gestión Rápida de Semáforo
     Route::patch('/master-panel/church/{church}/status', [SuperAdminController::class, 'updateStatus'])->name('superadmin.updateStatus');
-    
-    // CRUD Iglesias
     Route::get('/master-panel/church/{church}/edit', [SuperAdminController::class, 'editChurch'])->name('superadmin.church.edit');
     Route::put('/master-panel/church/{church}', [SuperAdminController::class, 'updateChurch'])->name('superadmin.church.update');
     Route::delete('/master-panel/church/{church}', [SuperAdminController::class, 'destroyChurch'])->name('superadmin.church.destroy');
-    
-    // Gestión de Usuarios de las Iglesias
     Route::get('/master-panel/church/{church}/users', [SuperAdminController::class, 'churchUsers'])->name('superadmin.churchUsers');
     Route::get('/master-panel/users/{user}/edit', [SuperAdminController::class, 'editUser'])->name('master.users.edit');
     Route::put('/master-panel/users/{user}', [SuperAdminController::class, 'updateUser'])->name('master.users.update');
@@ -78,32 +69,35 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
 // ==========================================================
 // ⛪ RUTAS PRIVADAS (Sistema SaaS General)
 // ==========================================================
-// Todos deben estar autenticados, verificados y su iglesia NO debe estar suspendida
-Route::middleware(['auth', 'verified', 'church.status'])->group(function () {
+// Guardia Base: Autenticado, Verificado y con Iglesia Activa
+Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::class])->group(function () {
     
     // Dashboard General
     Route::view('/dashboard', 'dashboard')->name('dashboard');
 
-    // --- Módulo de Finanzas ---
-    Route::controller(\App\Http\Controllers\FinanceController::class)->group(function () {
-        Route::get('/finanzas', 'index')->name('finances.index'); // Dashboard
-        Route::get('/finanzas/cajas', 'funds')->name('finances.funds'); // Gestión de Cajas
-        Route::post('/finanzas/cajas', 'storeFund')->name('finances.funds.store'); // 👈 
-        Route::get('/finanzas/cajas/{fund}', 'showFund')->name('finances.funds.show'); // 👈 NUEVA RUTA: ESTADO DE CUENTA
-        Route::get('/finanzas/movimientos', 'transactions')->name('finances.transactions'); // Libro Diario
-        Route::post('/finanzas/movimientos', 'storeTransaction')->name('finances.transactions.store');  // modulo movimiento
-        Route::get('/finanzas/movimientos/{transaction}/recibo', 'receipt')->name('finances.receipt'); // PDF Recibo
-        Route::patch('/finanzas/movimientos/{transaction}/cancelar', 'cancelTransaction')->name('finances.transactions.cancel'); // 
-        Route::get('/finanzas/cortes', 'closings')->name('finances.closings'); // Cortes Mensuales
-        Route::post('/finanzas/cortes', 'storeClosing')->name('finances.closings.store'); // Generar/Actualizar corte
-        Route::patch('/finanzas/cortes/{closing}/cerrar', 'lockClosing')->name('finances.closings.lock'); // Cerrar mes definitivamente
-        Route::match(['get', 'post'], '/finanzas/auditoria', 'audit')->name('finances.audit');
-    
-    });
-
     // --- Perfil de la Iglesia ---
     Route::get('/mi-iglesia', [ChurchProfileController::class, 'edit'])->name('church.profile.edit');
     Route::put('/mi-iglesia', [ChurchProfileController::class, 'update'])->name('church.profile.update');
+
+
+    // 🛡️ ==================================================
+    // 💰 MÓDULO DE FINANZAS (Rutas VIP: Solo con permiso)
+    // ==================================================
+    Route::middleware([\App\Http\Middleware\CheckFinancePermission::class])->controller(FinanceController::class)->group(function () {
+        Route::get('/finanzas', 'index')->name('finances.index'); 
+        Route::get('/finanzas/cajas', 'funds')->name('finances.funds'); 
+        Route::post('/finanzas/cajas', 'storeFund')->name('finances.funds.store'); 
+        Route::get('/finanzas/cajas/{fund}', 'showFund')->name('finances.funds.show'); 
+        Route::get('/finanzas/movimientos', 'transactions')->name('finances.transactions'); 
+        Route::post('/finanzas/movimientos', 'storeTransaction')->name('finances.transactions.store'); 
+        Route::get('/finanzas/movimientos/{transaction}/recibo', 'receipt')->name('finances.receipt'); 
+        Route::patch('/finanzas/movimientos/{transaction}/cancelar', 'cancelTransaction')->name('finances.transactions.cancel'); 
+        Route::get('/finanzas/cortes', 'closings')->name('finances.closings'); 
+        Route::post('/finanzas/cortes', 'storeClosing')->name('finances.closings.store'); 
+        Route::patch('/finanzas/cortes/{closing}/cerrar', 'lockClosing')->name('finances.closings.lock'); 
+        Route::match(['get', 'post'], '/finanzas/auditoria', 'audit')->name('finances.audit');
+    });
+
 
     // --- Módulo de Calendario y Eventos ---
     Route::controller(CalendarController::class)->group(function () {
@@ -118,7 +112,6 @@ Route::middleware(['auth', 'verified', 'church.status'])->group(function () {
         Route::patch('/calendario/{event}/sermon', 'updateSermon')->name('calendario.sermon.update');
         Route::post('/calendario/item/{item}/assign', 'assignItem')->name('calendario.assignItem');
     });
-    // PDF extra para calendario
     Route::get('/calendario/{id}/pdf', [EventController::class, 'exportPdf'])->name('calendario.pdf');
 
     // --- Módulo de Plantillas de Liturgia ---
@@ -142,8 +135,9 @@ Route::middleware(['auth', 'verified', 'church.status'])->group(function () {
     Route::post('/privilegios/{skill}/assign', [SkillController::class, 'assignUser'])->name('privilegios.assign');
     Route::delete('/privilegios/{skill}/remove/{user}', [SkillController::class, 'removeUser'])->name('privilegios.remove');
 
-    // --- Módulo de Miembros Interno ---
-    Route::resource('miembros', MemberController::class);
+    // --- Módulo de Miembros ---
+    Route::patch('/miembros/{miembro}/permisos', [MemberController::class, 'updatePermissions'])->name('miembros.permissions');
+    Route::resource('miembros', MemberController::class); // Esto genera el route('miembros.index') correctamente
 
     // --- Biblia API ---
     Route::get('/api/bible/chapters', [BibleController::class, 'getChapters'])->name('bible.chapters');
