@@ -13,6 +13,13 @@ class CalendarController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+
+        // 🛡️ ESCUDO: Si el SuperAdmin Global entra aquí por la memoria de Laravel, lo mandamos a su panel.
+        if ($user->is_super_admin && is_null($user->contract_id)) {
+            return redirect()->route('superadmin.index');
+        }
+          
         $events = auth()->user()->contract->events()
             ->where(function($query) {
                 $query->where('visibility', 'public')

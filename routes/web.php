@@ -139,6 +139,12 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
     Route::patch('/miembros/{miembro}/permisos', [MemberController::class, 'updatePermissions'])->name('miembros.permissions');
     Route::resource('miembros', MemberController::class); // Esto genera el route('miembros.index') correctamente
 
+    // --- Notificaciones ---
+    Route::patch('/notificaciones/leer', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back();
+    })->name('notifications.markAsRead');
+
     // --- Biblia API ---
     Route::get('/api/bible/chapters', [BibleController::class, 'getChapters'])->name('bible.chapters');
     Route::get('/api/bible/verses', [BibleController::class, 'getVerses'])->name('bible.verses');
@@ -152,3 +158,25 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
 });
 
 require __DIR__.'/auth.php';
+Route::get('/prueba-aviso', function () {
+    auth()->user()->notify(new \App\Notifications\ActivityReminder(
+        'Ensayo de Alabanza', 
+        'Recuerda que tienes ensayo mañana a las 6:00 PM.', 
+        '/calendario', 
+        '🎸'
+    ));
+    return "¡Notificación enviada! Revisa tu campanita.";
+});
+Route::get('/arreglar-cuenta', function () {
+    // 1. Le damos poder absoluto al usuario actual
+    $user = auth()->user();
+    $user->is_super_admin = true;
+    $user->contract_id = null; // Confirmamos que es global
+    $user->save();
+
+    // 2. Limpiamos la memoria caché del sistema para que lea los guardias nuevos
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    \Illuminate\Support\Facades\Artisan::call('view:clear');
+
+    return "¡Poderes de SuperAdmin activados y caché limpia! 👑 Ya puedes ir a: <a href='/master-panel'>/master-panel</a>";
+})->middleware('auth');

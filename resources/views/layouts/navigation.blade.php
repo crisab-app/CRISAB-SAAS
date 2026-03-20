@@ -9,6 +9,7 @@
                 </div>
 
                 <div class="hidden space-x-6 sm:-my-px sm:ms-8 sm:flex">
+                @if(!Auth::user()->is_super_admin || Auth::user()->contract_id)
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         🏠 {{ __('Inicio') }}
                     </x-nav-link>
@@ -20,6 +21,12 @@
                     <x-nav-link :href="route('calendario')" :active="request()->routeIs('calendario.*')">
                         📅 {{ __('Calendario') }}
                     </x-nav-link>
+                @endif
+                @if(Auth::user()->is_super_admin && is_null(Auth::user()->contract_id))
+                    <x-nav-link :href="route('superadmin.index')" :active="request()->routeIs('superadmin.*')">
+                        👑 {{ __('Master Panel') }}
+                    </x-nav-link>
+                @endif
 
                     <x-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">
                         👥 {{ __('Grupos') }}
@@ -37,6 +44,7 @@
                         💰 {{ __('Finanzas') }}
                         </x-nav-link>
                     @endif
+                    
 
                     <x-nav-link href="#" :active="false">
                         🌱 {{ __('Discipulado') }}
@@ -66,7 +74,62 @@
                     </x-slot>
 
                     <x-slot name="content">
+                    <div class="relative mr-4">
+    <x-dropdown align="right" width="80">
+        <x-slot name="trigger">
+            <button class="relative flex items-center p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                
+                @if(auth()->user()->unreadNotifications->count() > 0)
+                    <span class="absolute top-1 right-1 flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 text-[8px] text-white font-bold items-center justify-center">
+                            {{ auth()->user()->unreadNotifications->count() }}
+                        </span>
+                    </span>
+                @endif
+            </button>
+        </x-slot>
 
+        <x-slot name="content">
+            <div class="w-80 max-h-96 overflow-y-auto bg-white dark:bg-gray-800 rounded-md shadow-lg">
+                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900/50">
+                    <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Notificaciones</span>
+                    @if(auth()->user()->unreadNotifications->count() > 0)
+                        <form action="{{ route('notifications.markAsRead') }}" method="POST">
+                            @csrf @method('PATCH')
+                            <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 font-bold">Marcar como leídas</button>
+                        </form>
+                    @endif
+                </div>
+
+                <div class="divide-y divide-gray-100 dark:divide-gray-700">
+                    @forelse(auth()->user()->notifications->take(5) as $notification)
+                        <a href="{{ $notification->data['url'] ?? '#' }}" class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition {{ $notification->read_at ? 'opacity-60' : 'bg-indigo-50/50 dark:bg-indigo-900/20' }}">
+                            <div class="flex items-start gap-3">
+                                <div class="text-xl">{{ $notification->data['icon'] ?? '🔔' }}</div>
+                                <div>
+                                    <p class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ $notification->data['title'] }}</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">{{ $notification->data['message'] }}</p>
+                                    <p class="text-[10px] text-gray-400 mt-2">{{ $notification->created_at->diffForHumans() }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    @empty
+                        <div class="px-4 py-6 text-center text-sm text-gray-500">
+                            No tienes notificaciones nuevas.
+                        </div>
+                    @endforelse
+                </div>
+                <div class="px-4 py-2 border-t border-gray-100 dark:border-gray-700 text-center">
+                    <a href="#" class="text-xs font-bold text-gray-500 hover:text-gray-700 dark:text-gray-400">Ver todo el historial</a>
+                </div>
+            </div>
+        </x-slot>
+    </x-dropdown>
+</div>
                         <x-dropdown-link :href="url('/master-panel')">
                             👑 {{ __('Master Panel') }}
                         </x-dropdown-link>
