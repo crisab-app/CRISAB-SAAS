@@ -67,22 +67,20 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
 
 
 // ==========================================================
-// ⛪ RUTAS PRIVADAS (Sistema SaaS General)
+// ⛪ RUTAS PRIVADAS LOCALES (Sistema SaaS General)
 // ==========================================================
-// Guardia Base: Autenticado, Verificado y con Iglesia Activa
 Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::class])->group(function () {
     
     // Dashboard General
     Route::view('/dashboard', 'dashboard')->name('dashboard');
 
-    // --- Perfil de la Iglesia ---
-    Route::get('/mi-iglesia', [ChurchProfileController::class, 'edit'])->name('church.profile.edit');
-    Route::put('/mi-iglesia', [ChurchProfileController::class, 'update'])->name('church.profile.update');
+    // 🛡️ MÓDULO DE CONFIGURACIÓN DE IGLESIA (Protegido)
+    Route::middleware([\App\Http\Middleware\CheckChurchPermission::class])->group(function () {
+        Route::get('/mi-iglesia', [ChurchProfileController::class, 'edit'])->name('church.profile.edit');
+        Route::put('/mi-iglesia', [ChurchProfileController::class, 'update'])->name('church.profile.update');
+    });
 
-
-    // 🛡️ ==================================================
-    // 💰 MÓDULO DE FINANZAS (Rutas VIP: Solo con permiso)
-    // ==================================================
+    // 🛡️ MÓDULO DE FINANZAS (Protegido)
     Route::middleware([\App\Http\Middleware\CheckFinancePermission::class])->controller(FinanceController::class)->group(function () {
         Route::get('/finanzas', 'index')->name('finances.index'); 
         Route::get('/finanzas/cajas', 'funds')->name('finances.funds'); 
@@ -98,6 +96,11 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
         Route::match(['get', 'post'], '/finanzas/auditoria', 'audit')->name('finances.audit');
     });
 
+    // 🛡️ MÓDULO DE MIEMBROS (Protegido)
+    Route::middleware([\App\Http\Middleware\CheckMembersPermission::class])->group(function () {
+        Route::patch('/miembros/{miembro}/permisos', [MemberController::class, 'updatePermissions'])->name('miembros.permissions');
+        Route::resource('miembros', MemberController::class);
+    });
 
     // --- Módulo de Calendario y Eventos ---
     Route::controller(CalendarController::class)->group(function () {
@@ -125,6 +128,18 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
     Route::patch('/templates/items/{id}/up', [ServiceTemplateController::class, 'moveUp'])->name('templates.items.up');
     Route::patch('/templates/items/{id}/down', [ServiceTemplateController::class, 'moveDown'])->name('templates.items.down');
 
+    // --- Módulo de Discipulado / Academia ---
+    Route::resource('cursos', \App\Http\Controllers\CourseController::class)->parameters(['cursos' => 'curso']);
+    
+    // Rutas para administrar el Aula Virtual
+    Route::post('/cursos/{curso}/enroll', [\App\Http\Controllers\CourseController::class, 'enroll'])->name('cursos.enroll');
+    Route::patch('/cursos/{curso}/students/{student}/status', [\App\Http\Controllers\CourseController::class, 'updateStudentStatus'])->name('cursos.students.status');
+    
+    
+
+    // --- Módulo de Biblioteca Digital ---
+    Route::resource('biblioteca', \App\Http\Controllers\LibraryController::class)->parameters(['biblioteca' => 'biblioteca']);
+    
     // --- Grupos y Sociedades ---
     Route::resource('grupos', GroupController::class)->parameters(['grupos' => 'group']);
     Route::post('/grupos/{group}/assign', [GroupController::class, 'assignMember'])->name('grupos.assign');
@@ -135,11 +150,29 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
     Route::post('/privilegios/{skill}/assign', [SkillController::class, 'assignUser'])->name('privilegios.assign');
     Route::delete('/privilegios/{skill}/remove/{user}', [SkillController::class, 'removeUser'])->name('privilegios.remove');
 
-    // --- Módulo de Miembros ---
-    Route::patch('/miembros/{miembro}/permisos', [MemberController::class, 'updatePermissions'])->name('miembros.permissions');
-    Route::resource('miembros', MemberController::class); // Esto genera el route('miembros.index') correctamente
+    // 📢 Enviar Aviso Masivo a toda la Iglesia
+    Route::post('/notificaciones/enviar-masivo', function (\Illuminate\Http\Request $request) {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'message' => 'required|string',
+        ]);
 
-    // --- Notificaciones ---
+        $user = auth()->user();
+        
+        // Buscamos a TODOS los miembros que pertenecen a la misma iglesia
+        $miembros = \App\Models\User::where('contract_id', $user->contract_id)->get();
+
+        \Illuminate\Support\Facades\Notification::send($miembros, new \App\Notifications\ActivityReminder(
+            $request->title,
+            $request->message,
+            '/dashboard', 
+            '📢'
+        ));
+
+        return back()->with('success', '¡Aviso enviado exitosamente a ' . $miembros->count() . ' miembros!');
+    })->name('notifications.sendMassive');
+
+    // --- Marcar Notificaciones como Leídas ---
     Route::patch('/notificaciones/leer', function () {
         auth()->user()->unreadNotifications->markAsRead();
         return back();
@@ -158,25 +191,52 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
 });
 
 require __DIR__.'/auth.php';
-Route::get('/prueba-aviso', function () {
-    auth()->user()->notify(new \App\Notifications\ActivityReminder(
-        'Ensayo de Alabanza', 
-        'Recuerda que tienes ensayo mañana a las 6:00 PM.', 
-        '/calendario', 
-        '🎸'
-    ));
-    return "¡Notificación enviada! Revisa tu campanita.";
+
+// ==========================================================
+// 📚 MÓDULO DE BIBLIOTECA GLOBAL (Accesible para Master y Locales)
+// ==========================================================
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('biblioteca', \App\Http\Controllers\LibraryController::class)->parameters(['biblioteca' => 'biblioteca']);
 });
-Route::get('/arreglar-cuenta', function () {
-    // 1. Le damos poder absoluto al usuario actual
-    $user = auth()->user();
-    $user->is_super_admin = true;
-    $user->contract_id = null; // Confirmamos que es global
-    $user->save();
 
-    // 2. Limpiamos la memoria caché del sistema para que lea los guardias nuevos
-    \Illuminate\Support\Facades\Artisan::call('route:clear');
-    \Illuminate\Support\Facades\Artisan::call('view:clear');
+// ==========================================================
+// 🛠️ RUTAS DE SOPORTE / HACK (Solo para desarrollo)
+// ==========================================================
+Route::middleware('auth')->group(function () {
+    
+    // ⚡ 1. Botón de Pánico: Obtener todos los permisos locales
+    Route::get('/dame-poder', function () {
+        $user = auth()->user();
+        $user->update([
+            'can_manage_members' => true,
+            'can_manage_church' => true,
+            'can_manage_finances' => true,
+        ]);
+        return "¡Poderes otorgados con éxito a {$user->name}! 🦸‍♂️ Ya puedes regresar al Dashboard y ver los menús.";
+    });
 
-    return "¡Poderes de SuperAdmin activados y caché limpia! 👑 Ya puedes ir a: <a href='/master-panel'>/master-panel</a>";
-})->middleware('auth');
+    // ⚡ 2. Convertirse en SuperAdmin Global
+    Route::get('/arreglar-cuenta', function () {
+        $user = auth()->user();
+        $user->is_super_admin = true;
+        $user->contract_id = null;
+        $user->save();
+        \Illuminate\Support\Facades\Artisan::call('route:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        return "¡Poderes de SuperAdmin Global activados! 👑 Ve a: <a href='/master-panel'>/master-panel</a>";
+    });
+
+    // ⚡ 3. Prueba de Campanita
+    Route::get('/prueba-aviso', function () {
+        auth()->user()->notify(new \App\Notifications\ActivityReminder('Ensayo de Alabanza', 'Recuerda que tienes ensayo mañana.', '/calendario', '🎸'));
+        return "¡Notificación enviada! Revisa tu campanita.";
+    });
+    // ⚡ 4. Hacer a mi usuario local un SuperAdmin para subir libros
+    Route::get('/soy-el-creador', function () {
+        $user = auth()->user();
+        $user->is_super_admin = true;
+        $user->save();
+        
+        return redirect('/biblioteca')->with('success', '¡Poderes de Creador Global activados! 👑 Ya puedes subir libros.');
+    });
+});

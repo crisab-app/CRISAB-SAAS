@@ -35,6 +35,8 @@ class User extends Authenticatable
         'id_back_path',
         'system_role',
         'can_manage_finances',
+        'can_manage_members',
+        'can_manage_church',
         'last_login_at',  
         'last_login_ip',  
     ];
@@ -55,8 +57,10 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_super_admin' => 'boolean',      // <-- Agrega esta línea
-            'can_manage_finances' => 'boolean', // <-- Y esta también
+            'is_super_admin' => 'boolean',      
+            'can_manage_finances' => 'boolean', 
+            'can_manage_members' => 'boolean',
+            'can_manage_church' => 'boolean',
             'birthdate' => 'date',
             'last_login_at' => 'datetime',
         ];
@@ -97,5 +101,17 @@ public function contract()
     {
         return "{$this->name} {$this->paternal_surname} {$this->maternal_surname}";
     }
+// Discipulado: Cursos donde este usuario es el MAESTRO
+    public function coursesAsTeacher()
+    {
+        return $this->hasMany(Course::class, 'teacher_id');
+    }
 
+    // Discipulado: Cursos donde este usuario es el ALUMNO
+    public function coursesAsStudent()
+    {
+        return $this->belongsToMany(Course::class, 'course_user')
+                    ->withPivot('status', 'enrollment_date', 'completion_date')
+                    ->withTimestamps();
+    }
 }

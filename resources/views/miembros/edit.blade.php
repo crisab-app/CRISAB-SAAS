@@ -109,28 +109,56 @@
 
             <div class="bg-white dark:bg-gray-800 shadow sm:rounded-xl p-6 border border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-black text-gray-900 dark:text-white mb-2">🛡️ Permisos de Sistema (RBAC)</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Enciende o apaga el acceso de este usuario a los módulos restringidos de la iglesia. Este cambio se guarda automáticamente.</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Enciende o apaga el acceso a los módulos restringidos. Se guarda automáticamente.</p>
 
-                <form action="{{ route('miembros.permissions', $miembro->id) }}" method="POST">
-                    @csrf
-                    @method('PATCH')
-                    <label class="flex items-center cursor-pointer gap-4 p-4 border rounded-xl transition-colors {{ $miembro->can_manage_finances ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50' }}">
-                        
-                        <input type="checkbox" name="can_manage_finances" onchange="this.form.submit()" style="display:none;" {{ $miembro->can_manage_finances ? 'checked' : '' }}>
-                        
-                        <div style="width: 3.5rem; height: 1.75rem; border-radius: 9999px; position: relative; transition: background-color 0.3s; background-color: {{ $miembro->can_manage_finances ? '#4f46e5' : '#9ca3af' }};">
-                            <div style="width: 1.5rem; height: 1.5rem; background-color: white; border-radius: 9999px; position: absolute; top: 0.125rem; transition: left 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); left: {{ $miembro->can_manage_finances ? '1.875rem' : '0.125rem' }};"></div>
-                        </div>
-                        
-                        <div class="flex-1">
-                            <span class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                Módulo de Finanzas y Auditoría 
-                                @if($miembro->can_manage_finances) <span class="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300 rounded-full">Activo</span> @endif
-                            </span>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Si está encendido, el usuario podrá ver el saldo de las cajas, registrar ingresos/egresos y generar cortes de caja.</p>
-                        </div>
-                    </label>
-                </form>
+                <div class="space-y-4">
+                    
+                    <form action="{{ route('miembros.permissions', $miembro->id) }}" method="POST">
+                        @csrf @method('PATCH')
+                        <input type="hidden" name="permission_type" value="can_manage_finances">
+                        <label class="flex items-center cursor-pointer gap-4 p-4 border rounded-xl transition-colors {{ $miembro->can_manage_finances ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50' }}">
+                            <input type="checkbox" name="status" onchange="this.form.submit()" class="sr-only" {{ $miembro->can_manage_finances ? 'checked' : '' }}>
+                            <div style="width: 3.5rem; height: 1.75rem; border-radius: 9999px; position: relative; transition: background-color 0.3s; background-color: {{ $miembro->can_manage_finances ? '#4f46e5' : '#9ca3af' }};">
+                                <div style="width: 1.5rem; height: 1.5rem; background-color: white; border-radius: 9999px; position: absolute; top: 0.125rem; transition: left 0.3s; left: {{ $miembro->can_manage_finances ? '1.875rem' : '0.125rem' }}; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
+                            </div>
+                            <div class="flex-1">
+                                <span class="font-bold text-gray-900 dark:text-white flex items-center gap-2">💰 Módulo de Finanzas</span>
+                                <p class="text-xs text-gray-500 mt-1">Permite registrar ingresos, egresos y auditorías.</p>
+                            </div>
+                        </label>
+                    </form>
+
+                    <form action="{{ route('miembros.permissions', $miembro->id) }}" method="POST">
+                        @csrf @method('PATCH')
+                        <input type="hidden" name="permission_type" value="can_manage_members">
+                        <label class="flex items-center cursor-pointer gap-4 p-4 border rounded-xl transition-colors {{ $miembro->can_manage_members ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50' }}">
+                            <input type="checkbox" name="status" onchange="this.form.submit()" class="sr-only" {{ $miembro->can_manage_members ? 'checked' : '' }}>
+                            <div style="width: 3.5rem; height: 1.75rem; border-radius: 9999px; position: relative; transition: background-color 0.3s; background-color: {{ $miembro->can_manage_members ? '#22c55e' : '#9ca3af' }};">
+                                <div style="width: 1.5rem; height: 1.5rem; background-color: white; border-radius: 9999px; position: absolute; top: 0.125rem; transition: left 0.3s; left: {{ $miembro->can_manage_members ? '1.875rem' : '0.125rem' }}; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
+                            </div>
+                            <div class="flex-1">
+                                <span class="font-bold text-gray-900 dark:text-white flex items-center gap-2">👥 Gestión de Miembros</span>
+                                <p class="text-xs text-gray-500 mt-1">Permite agregar miembros, editar expedientes y dar bajas.</p>
+                            </div>
+                        </label>
+                    </form>
+
+                    <form action="{{ route('miembros.permissions', $miembro->id) }}" method="POST">
+                        @csrf @method('PATCH')
+                        <input type="hidden" name="permission_type" value="can_manage_church">
+                        <label class="flex items-center cursor-pointer gap-4 p-4 border rounded-xl transition-colors {{ $miembro->can_manage_church ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50' }}">
+                            <input type="checkbox" name="status" onchange="this.form.submit()" class="sr-only" {{ $miembro->can_manage_church ? 'checked' : '' }}>
+                            <div style="width: 3.5rem; height: 1.75rem; border-radius: 9999px; position: relative; transition: background-color 0.3s; background-color: {{ $miembro->can_manage_church ? '#f59e0b' : '#9ca3af' }};">
+                                <div style="width: 1.5rem; height: 1.5rem; background-color: white; border-radius: 9999px; position: absolute; top: 0.125rem; transition: left 0.3s; left: {{ $miembro->can_manage_church ? '1.875rem' : '0.125rem' }}; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
+                            </div>
+                            <div class="flex-1">
+                                <span class="font-bold text-gray-900 dark:text-white flex items-center gap-2">⛪ Configuración de Iglesia</span>
+                                <p class="text-xs text-gray-500 mt-1">Permite editar nombre, logo y suspender la cuenta.</p>
+                            </div>
+                        </label>
+                    </form>
+
+                </div>
             </div>
 
         </div>

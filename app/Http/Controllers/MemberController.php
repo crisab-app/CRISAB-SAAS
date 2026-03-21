@@ -181,7 +181,7 @@ class MemberController extends Controller
         return redirect()->back()->with('success', '¡Registro completado! Tu líder revisará tu información pronto.');
     }
 
-    // ==========================================
+// ==========================================
     // 9. ACTUALIZAR PRIVILEGIOS Y PERMISOS (RBAC)
     // ==========================================
     public function updatePermissions(Request $request, User $miembro)
@@ -191,11 +191,25 @@ class MemberController extends Controller
             abort(403, 'No tienes permiso para editar a este usuario.');
         }
 
-        // 2. Actualizamos el permiso en la base de datos (Si viene marcado es true, si no, false)
-        $miembro->update([
-            'can_manage_finances' => $request->has('can_manage_finances')
-        ]);
+        // 2. Si la petición viene desde la vista "Editar" (usa el campo hidden 'permission_type')
+        if ($request->has('permission_type')) {
+            $field = $request->permission_type;
+            
+            // Medida de seguridad: Solo permitimos modificar estos 3 campos exactos
+            $allowedPermissions = ['can_manage_finances', 'can_manage_members', 'can_manage_church'];
+            
+            if (in_array($field, $allowedPermissions)) {
+                // Si el switch está encendido, 'status' existirá. Si está apagado, no existirá.
+                $miembro->$field = $request->has('status');
+                $miembro->save();
+            }
+        } 
+        // 3. Si la petición viene desde la tabla del "Directorio" (que por ahora solo manda finanzas)
+        else {
+            $miembro->can_manage_finances = $request->has('can_manage_finances');
+            $miembro->save();
+        }
 
-        return back()->with('success', 'Permisos financieros actualizados para ' . $miembro->name);
+        return back()->with('success', 'Privilegios de sistema actualizados para ' . $miembro->name);
     }
 }
