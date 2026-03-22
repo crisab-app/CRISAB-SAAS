@@ -15,6 +15,16 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-xl border border-gray-200 dark:border-gray-700">
                 <div class="p-8">
                     
+                    @if ($errors->any())
+                        <div class="mb-6 bg-red-50 border border-red-200 text-red-600 rounded-xl p-4 shadow-sm">
+                            <ul class="list-disc pl-5 text-sm font-bold">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <form action="{{ route('biblioteca.store') }}" method="POST">
                         @csrf
 
@@ -27,6 +37,15 @@
                             <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Enlace / URL del archivo <span class="text-red-500">*</span></label>
                             <input type="url" name="url" required placeholder="Ej. https://www.biblegateway.com/" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <p class="text-xs text-gray-500 mt-1">Pega aquí el link directo al PDF, página web o video de YouTube.</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Tipo de Recurso <span class="text-red-500">*</span></label>
+                            <select name="type" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="pdf">📄 Documento PDF</option>
+                                <option value="link">🔗 Enlace a Sitio Web</option>
+                                <option value="video">▶️ Video</option>
+                            </select>
                         </div>
 
                         <div class="mb-6">
