@@ -11,27 +11,24 @@ class SuperAdminController extends Controller
 {
     public function index()
     {
-        // 1. Estadísticas (Ignoramos TODO, incluso los eliminados)
-        $totalChurches = Contract::withoutGlobalScopes()->withTrashed()->count();
-        $activeChurches = Contract::withoutGlobalScopes()->withTrashed()->where('status', 'active')->count();
-        $totalUsers = User::withoutGlobalScopes()->withTrashed()->where('is_super_admin', false)->count();
+        // 1. Estadísticas (Sin papelera)
+        $totalChurches = Contract::withoutGlobalScopes()->count();
+        $activeChurches = Contract::withoutGlobalScopes()->where('status', 'active')->count();
+        $totalUsers = User::withoutGlobalScopes()->where('is_super_admin', false)->count();
 
-        // 2. Traemos TODAS las iglesias (incluso las atoradas o borradas suavemente)
+        // 2. Traemos TODAS las iglesias 
         $churches = Contract::withoutGlobalScopes()
-            ->withTrashed() // <--- MAGIA: Muestra incluso las eliminadas
             ->withCount(['users' => function ($query) {
-                $query->withoutGlobalScopes()->withTrashed();
+                $query->withoutGlobalScopes();
             }])
             ->latest()
             ->get();        
 
         // 3. Traemos TODOS los usuarios (Para que puedas verlos y modificarlos)
-        // Traemos también la información de su contrato para saber a qué iglesia pertenecen
         $allUsers = User::withoutGlobalScopes()
-            ->withTrashed()
             ->where('is_super_admin', false) // Excluimos a tu cuenta Master
             ->with(['contract' => function ($query) {
-                $query->withoutGlobalScopes()->withTrashed();
+                $query->withoutGlobalScopes();
             }])
             ->latest()
             ->get();
