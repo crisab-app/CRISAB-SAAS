@@ -11,20 +11,32 @@ class SuperAdminController extends Controller
 {
     public function index()
     {
-        // 1. Estadísticas Rápidas (Ignorando los candados locales)
-        $totalChurches = Contract::withoutGlobalScopes()->count();
-        $activeChurches = Contract::withoutGlobalScopes()->where('status', 'active')->count();
-        $totalUsers = User::withoutGlobalScopes()->count();
+        // 1. Estadísticas (Ignoramos TODO, incluso los eliminados)
+        $totalChurches = Contract::withoutGlobalScopes()->withTrashed()->count();
+        $activeChurches = Contract::withoutGlobalScopes()->withTrashed()->where('status', 'active')->count();
+        $totalUsers = User::withoutGlobalScopes()->withTrashed()->where('is_super_admin', false)->count();
 
-        // 2. Traemos las iglesias y contamos sus usuarios (quitando el candado también al conteo)
+        // 2. Traemos TODAS las iglesias (incluso las atoradas o borradas suavemente)
         $churches = Contract::withoutGlobalScopes()
+            ->withTrashed() // <--- MAGIA: Muestra incluso las eliminadas
             ->withCount(['users' => function ($query) {
-                $query->withoutGlobalScopes(); // Visión de rayos X para ver a los usuarios
+                $query->withoutGlobalScopes()->withTrashed();
             }])
             ->latest()
             ->get();        
+
+        // 3. Traemos TODOS los usuarios (Para que puedas verlos y modificarlos)
+        // Traemos también la información de su contrato para saber a qué iglesia pertenecen
+        $allUsers = User::withoutGlobalScopes()
+            ->withTrashed()
+            ->where('is_super_admin', false) // Excluimos a tu cuenta Master
+            ->with(['contract' => function ($query) {
+                $query->withoutGlobalScopes()->withTrashed();
+            }])
+            ->latest()
+            ->get();
         
-        return view('superadmin.index', compact('churches', 'totalChurches', 'activeChurches', 'totalUsers'));
+        return view('superadmin.index', compact('churches', 'totalChurches', 'activeChurches', 'totalUsers', 'allUsers'));
     }
 
     // ==========================================

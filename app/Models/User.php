@@ -38,6 +38,7 @@ class User extends Authenticatable
         'can_manage_members',
         'can_manage_church',
         'role',
+        'is_church_owner',
         'last_login_at',  
         'last_login_ip',  
     ];

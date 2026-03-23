@@ -18,6 +18,68 @@
                         <span class="text-indigo-400 text-2xl">⛪</span>
                     </div>
                 </div>
+                <div class="mt-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">👥 Todos los Usuarios ({{ $allUsers->count() }})</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Lista global sin filtros. Aquí puedes ver usuarios huérfanos o atorados.</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
+                    <thead class="bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300">
+                        <tr>
+                            <th class="py-3 px-4">Nombre</th>
+                            <th class="py-3 px-4">Correo</th>
+                            <th class="py-3 px-4">Iglesia Perteneciente</th>
+                            <th class="py-3 px-4">Estado</th>
+                            <th class="py-3 px-4 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @foreach($allUsers as $user)
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/20 transition">
+                            <td class="py-3 px-4 font-medium text-gray-900 dark:text-white">
+                                {{ $user->name }}
+                                @if($user->is_church_owner)
+                                    <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                                        Dueño
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="py-3 px-4">{{ $user->email }}</td>
+                            <td class="py-3 px-4">
+                                @if($user->contract)
+                                    {{ $user->contract->name }}
+                                @else
+                                    <span class="text-red-500 font-bold">🚫 Huérfano (Sin iglesia)</span>
+                                @endif
+                            </td>
+                            <td class="py-3 px-4">
+                                @if($user->trashed())
+                                    <span class="text-red-500 font-bold">🗑️ Eliminado</span>
+                                @else
+                                    <span class="text-green-500 font-bold">✅ Activo</span>
+                                @endif
+                            </td>
+                            <td class="py-3 px-4 flex justify-center gap-2">
+                                <a href="{{ route('superadmin.users.edit', $user) }}" class="px-3 py-1 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 dark:bg-indigo-900/50 dark:text-indigo-300 rounded text-xs font-bold transition">
+                                    Editar
+                                </a>
+                                @if(!$user->trashed())
+                                <form action="{{ route('superadmin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('¿Eliminar usuario?');">
+                                    @csrf @method('DELETE')
+                                    <button class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/50 dark:text-red-300 rounded text-xs font-bold transition">Borrar</button>
+                                </form>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
                 <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-lg flex items-center justify-between">
                     <div>
