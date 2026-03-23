@@ -76,6 +76,12 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
     
     // Dashboard General
     Route::view('/dashboard', 'dashboard')->name('dashboard');
+    
+    // ==========================================
+    // ☕ MÓDULO: INVÍTAME UN CAFÉ
+    // ==========================================
+    Route::get('/invitame-un-cafe', [\App\Http\Controllers\DonationController::class, 'index'])->name('cafe.index');
+    Route::post('/invitame-un-cafe/pagar', [\App\Http\Controllers\DonationController::class, 'checkout'])->name('cafe.checkout');
 
     // 🛡️ MÓDULO DE CONFIGURACIÓN DE IGLESIA (Protegido)
     Route::middleware([\App\Http\Middleware\CheckChurchPermission::class])->group(function () {
