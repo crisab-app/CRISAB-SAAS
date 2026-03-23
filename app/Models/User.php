@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     // 2. Limpiamos el 'use' para que no esté repetido
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, Billable, HasRoles;
+    use HasFactory, Notifiable, SoftDeletes, Billable, HasRoles;
     
 
     /**
