@@ -7,7 +7,21 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
+            @if(request()->query('cafe') == 'gracias')
+                <div class="mb-8 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 shadow-sm flex items-center justify-between relative overflow-hidden">
+                    <div class="flex items-center gap-4 z-10">
+                        <div class="text-5xl drop-shadow-md">☕🎉</div>
+                        <div>
+                            <h4 class="text-xl font-extrabold text-amber-900 dark:text-amber-300">¡Muchísimas gracias por tu café!</h4>
+                            <p class="text-amber-800 dark:text-amber-400 mt-1 font-medium">Tu aportación nos ayuda enormemente a mantener los servidores encendidos y a seguir mejorando esta herramienta. ¡Que Dios te multiplique!</p>
+                        </div>
+                    </div>
+                    <button onclick="this.parentElement.style.display='none'" class="absolute top-4 right-4 text-amber-700 dark:text-amber-500 hover:text-amber-900 dark:hover:text-amber-300 transition z-10">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                    <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl pointer-events-none">✨</div>
+                </div>
+            @endif
             @php
                 // Obtenemos mágicamente los datos de la iglesia a la que pertenece este usuario
                 $church = Auth::user()->contract;

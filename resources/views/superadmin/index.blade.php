@@ -197,4 +197,60 @@
 
         </div>
     </div>
+    <div class="mt-12 mb-8 bg-gray-800 border border-amber-500/30 shadow-2xl rounded-xl overflow-hidden relative">
+                <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="p-6 border-b border-gray-700 bg-gray-900/60 flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
+                    <div class="flex items-center gap-3">
+                        <span class="text-4xl">☕</span>
+                        <div>
+                            <h3 class="text-xl font-black text-amber-400">Finanzas y Diezmos (Reporte Secreto)</h3>
+                            <p class="text-sm text-gray-400 mt-1">Devolución del 10% de las aportaciones del "Café Mensual" a cada iglesia.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-center shadow-inner">
+                        <p class="text-xs text-gray-500 font-bold uppercase">Precio del Café (Unidad)</p>
+                        <p class="text-lg font-bold text-gray-200">${{ number_format($precioCafe, 2) }}</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto relative z-10">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="bg-gray-900/80 text-amber-500 uppercase text-xs font-black tracking-wider border-b border-gray-700">
+                            <tr>
+                                <th class="py-4 px-6">Iglesia (Tenant)</th>
+                                <th class="py-4 px-6 text-center">Donantes Activos</th>
+                                <th class="py-4 px-6 text-right">Total Recaudado</th>
+                                <th class="py-4 px-6 text-right text-green-400">Diezmo a Devolver (10%)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-700/50">
+                            @forelse($reporteDiezmos as $reporte)
+                            <tr class="hover:bg-gray-750 transition">
+                                <td class="py-4 px-6 font-bold text-white">{{ $reporte->name }}</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="bg-blue-900/50 text-blue-300 py-1 px-4 rounded-full text-xs font-bold border border-blue-800/50">
+                                        👥 {{ $reporte->donantes_activos }}
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-right font-medium text-gray-300">
+                                    ${{ number_format($reporte->total_recaudado, 2) }}
+                                </td>
+                                <td class="py-4 px-6 text-right font-black text-green-400 text-lg bg-green-900/10">
+                                    ${{ number_format($reporte->diezmo_a_devolver, 2) }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="py-12 px-6 text-center text-gray-500">
+                                    <span class="text-3xl block mb-2 opacity-50">🌱</span>
+                                    <p class="font-bold text-lg">Aún no hay iglesias con donantes activos.</p>
+                                    <p class="text-sm mt-1">Las aportaciones aparecerán aquí en automático en cuanto proceses el primer pago exitoso.</p>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 </x-app-layout>

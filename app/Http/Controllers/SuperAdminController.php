@@ -11,12 +11,12 @@ class SuperAdminController extends Controller
 {
     public function index()
     {
-        // 1. Estadísticas (Sin papelera)
+        // 1. Estadísticas básicas
         $totalChurches = Contract::withoutGlobalScopes()->count();
         $activeChurches = Contract::withoutGlobalScopes()->where('status', 'active')->count();
         $totalUsers = User::withoutGlobalScopes()->where('is_super_admin', false)->count();
 
-        // 2. Traemos TODAS las iglesias 
+        // 2. Traemos TODAS las iglesias
         $churches = Contract::withoutGlobalScopes()
             ->withCount(['users' => function ($query) {
                 $query->withoutGlobalScopes();
@@ -24,16 +24,52 @@ class SuperAdminController extends Controller
             ->latest()
             ->get();        
 
-        // 3. Traemos TODOS los usuarios (Para que puedas verlos y modificarlos)
+        // 3. Traemos TODOS los usuarios
         $allUsers = User::withoutGlobalScopes()
-            ->where('is_super_admin', false) // Excluimos a tu cuenta Master
+            ->where('is_super_admin', false)
             ->with(['contract' => function ($query) {
                 $query->withoutGlobalScopes();
             }])
             ->latest()
             ->get();
+
+        // =========================================================
+        // 4. 💰 MAGIA FINANCIERA: REPORTE SECRETO DE DIEZMOS (CAFÉ)
+        // =========================================================
         
-        return view('superadmin.index', compact('churches', 'totalChurches', 'activeChurches', 'totalUsers', 'allUsers'));
+        // Pon aquí el precio exacto que le pusiste a tu producto en Stripe (ej. 5.00 USD o 100.00 MXN)
+        $precioCafe = 5.00; 
+
+        $reporteDiezmos = Contract::withoutGlobalScopes()
+            ->with(['users' => function($query) {
+                // Traemos a los usuarios y sus suscripciones para no hacer la base de datos lenta
+                $query->withoutGlobalScopes()->with('subscriptions'); 
+            }])
+            ->get()
+            ->map(function ($church) use ($precioCafe) {
+                
+                // Contamos cuántos usuarios de esta iglesia están pagando el café
+                $activeDonorsCount = 0;
+                foreach ($church->users as $user) {
+                    // Cashier verifica mágicamente si el pago está activo en Stripe
+                    if ($user->subscribed('cafe_mensual')) { 
+                        $activeDonorsCount++;
+                    }
+                }
+
+                $church->donantes_activos = $activeDonorsCount;
+                $church->total_recaudado = $activeDonorsCount * $precioCafe;
+                $church->diezmo_a_devolver = $church->total_recaudado * 0.10; // Sacamos el 10%
+
+                return $church;
+            })
+            ->filter(function ($church) {
+                // Filtramos para que SOLO aparezcan las iglesias que ya tengan al menos 1 donante
+                return $church->donantes_activos > 0;
+            })
+            ->sortByDesc('total_recaudado'); // Ordenamos de las que más donan a las que menos
+
+        return view('superadmin.index', compact('churches', 'totalChurches', 'activeChurches', 'totalUsers', 'allUsers', 'reporteDiezmos', 'precioCafe'));
     }
 
     // ==========================================
