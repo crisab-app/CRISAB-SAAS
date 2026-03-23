@@ -11,13 +11,18 @@ class SuperAdminController extends Controller
 {
     public function index()
     {
-        // 1. Estadísticas Rápidas para el Dashboard
-        $totalChurches = Contract::count();
-        $activeChurches = Contract::where('status', 'active')->count();
-        $totalUsers = User::count();
+        // 1. Estadísticas Rápidas (Ignorando los candados locales)
+        $totalChurches = Contract::withoutGlobalScopes()->count();
+        $activeChurches = Contract::withoutGlobalScopes()->where('status', 'active')->count();
+        $totalUsers = User::withoutGlobalScopes()->count();
 
-        // 2. Traemos todas las iglesias con su conteo de usuarios
-        $churches = Contract::withoutGlobalScopes()->withCount('users')->latest()->get();        
+        // 2. Traemos las iglesias y contamos sus usuarios (quitando el candado también al conteo)
+        $churches = Contract::withoutGlobalScopes()
+            ->withCount(['users' => function ($query) {
+                $query->withoutGlobalScopes(); // Visión de rayos X para ver a los usuarios
+            }])
+            ->latest()
+            ->get();        
         
         return view('superadmin.index', compact('churches', 'totalChurches', 'activeChurches', 'totalUsers'));
     }
@@ -54,10 +59,8 @@ class SuperAdminController extends Controller
 
     public function destroyChurch(Contract $church)
     {
-        // 1. Borramos a los usuarios directamente por su ID de contrato (Más seguro)
-        User::where('contract_id', $church->id)->delete();
-        
-        // 2. Borramos la iglesia
+        // Borramos usuarios ignorando los scopes
+        User::withoutGlobalScopes()->where('contract_id', $church->id)->delete();
         $church->delete();
         
         return back()->with('success', 'Iglesia y todos sus usuarios eliminados permanentemente.');
@@ -69,7 +72,8 @@ class SuperAdminController extends Controller
 
     public function churchUsers(Contract $church)
     {
-        $users = User::where('contract_id', $church->id)->get(); 
+        // Listamos usuarios de esa iglesia usando rayos X
+        $users = User::withoutGlobalScopes()->where('contract_id', $church->id)->get(); 
         return view('superadmin.users', compact('church', 'users'));
     }
 
