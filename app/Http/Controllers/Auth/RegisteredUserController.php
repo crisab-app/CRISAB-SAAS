@@ -42,6 +42,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'contract_id' => $contract->id, // ¡El candado mágico!
+            'role' => 'pastor', // Asignamos el rol de pastor al registrarse
         ]);
 
         event(new Registered($user));

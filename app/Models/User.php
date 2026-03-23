@@ -37,6 +37,7 @@ class User extends Authenticatable
         'can_manage_finances',
         'can_manage_members',
         'can_manage_church',
+        'role',
         'last_login_at',  
         'last_login_ip',  
     ];
@@ -114,4 +115,5 @@ public function contract()
                     ->withPivot('status', 'enrollment_date', 'completion_date')
                     ->withTimestamps();
     }
+    
 }
