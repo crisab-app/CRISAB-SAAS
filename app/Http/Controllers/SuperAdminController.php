@@ -97,19 +97,33 @@ class SuperAdminController extends Controller
         return view('superadmin.users-edit', compact('user'));
     }
 
-    public function updateUser(Request $request, User $user)
+public function updateUser(Request $request, User $user)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'role' => 'required|in:miembro,admin,pastor',
         ]);
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
+        // Guardamos los datos básicos y el rol
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role;
+        
+        // Verificamos si marcaste la casilla de "Dueño"
+        $user->is_church_owner = $request->has('is_church_owner');
 
-        return back()->with('success', 'Usuario actualizado correctamente.');
+        // MAGIA: Si lo haces Pastor o Admin, le encendemos los permisos de los menús
+        if (in_array($request->role, ['pastor', 'admin']) || $user->is_church_owner) {
+            $user->can_manage_finances = true;
+            $user->can_manage_members = true;
+            $user->can_manage_church = true;
+        }
+
+        $user->save();
+
+        return redirect()->route('superadmin.churchUsers', $user->contract_id)
+                         ->with('success', 'Usuario y privilegios actualizados correctamente.');
     }
 
     public function updatePassword(Request $request, User $user)

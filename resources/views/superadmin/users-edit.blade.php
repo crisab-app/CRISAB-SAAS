@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-4">
-            <a href="{{ route('superadmin.index') }}" class="text-gray-500 hover:text-indigo-600 dark:text-gray-400 transition">
+            <a href="{{ url()->previous() }}" class="text-gray-500 hover:text-indigo-600 dark:text-gray-400 transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
             </a>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                ✏️ Editar Usuario: {{ $user->name }}
+                ✏️ Editar Usuario: <span class="text-indigo-600 dark:text-indigo-400">{{ $user->name }}</span>
             </h2>
         </div>
     </x-slot>
@@ -21,8 +21,8 @@
 
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Información del Perfil</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">Actualiza el nombre y el correo de acceso de este usuario.</p>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Información y Privilegios</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Modifica el acceso y el rol de este usuario en su iglesia.</p>
                 </div>
 
                 <div class="p-8">
@@ -30,22 +30,41 @@
                         @csrf
                         @method('PUT')
 
-                        <div class="mb-6">
-                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nombre Completo</label>
-                            <input type="text" name="name" value="{{ old('name', $user->name) }}" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('name') <span class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</span> @enderror
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nombre Completo</label>
+                                <input type="text" name="name" value="{{ old('name', $user->name) }}" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Correo Electrónico</label>
+                                <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
                         </div>
 
-                        <div class="mb-8">
-                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Correo Electrónico</label>
-                            <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('email') <span class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</span> @enderror
+                        <hr class="my-6 border-gray-200 dark:border-gray-700">
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Rol en la Iglesia</label>
+                            <select name="role" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="miembro" {{ $user->role == 'miembro' ? 'selected' : '' }}>Miembro (Acceso Básico)</option>
+                                <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Administrador (Gestión de Iglesia)</option>
+                                <option value="pastor" {{ $user->role == 'pastor' ? 'selected' : '' }}>Pastor / Presidente (Acceso Total)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-8 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-lg">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" name="is_church_owner" value="1" {{ $user->is_church_owner ? 'checked' : '' }} class="rounded border-gray-300 text-purple-600 shadow-sm focus:border-purple-500 dark:bg-gray-900 dark:border-gray-600 w-5 h-5">
+                                <span class="ml-3 text-sm text-purple-900 dark:text-purple-300 font-bold">Es el Creador / Dueño de la cuenta</span>
+                            </label>
+                            <p class="text-xs text-purple-700 dark:text-purple-400 ml-8 mt-1">Solo el dueño tiene poder absoluto y no puede ser borrado por otros pastores.</p>
                         </div>
 
                         <div class="flex justify-end gap-4 border-t border-gray-100 dark:border-gray-700 pt-5">
-                            <a href="{{ route('superadmin.index') }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-bold py-2 transition">Cancelar</a>
+                            <a href="{{ url()->previous() }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-bold py-2 transition">Cancelar</a>
                             <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition">
-                                💾 Guardar Cambios
+                                💾 Guardar Privilegios
                             </button>
                         </div>
                     </form>
