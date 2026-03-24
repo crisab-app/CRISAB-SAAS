@@ -1,62 +1,94 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
-        <div>
-            <x-input-label for="church_name" value="Nombre de tu Iglesia / Ministerio" />
-            <x-text-input id="church_name" class="block mt-1 w-full" type="text" name="church_name" :value="old('church_name')" required autofocus placeholder="Ej. Iglesia Vida Abundante" />
-            <x-input-error :messages="$errors->get('church_name')" class="mt-2" />
-        </div>
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')"/>
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
-
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="mt-6 bg-gray-50 p-4 rounded-md border border-gray-200">
-            <label for="terms" class="inline-flex items-start">
-                <input id="terms" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 mt-1 cursor-pointer" name="terms" required>
-                <span class="ms-3 text-sm text-gray-600">
-                    He leído y acepto los <a href="{{ route('terminos') }}" target="_blank" class="font-semibold underline text-indigo-600 hover:text-indigo-900">Términos de Servicio</a> y el <a href="{{ route('privacidad') }}" target="_blank" class="font-semibold underline text-indigo-600 hover:text-indigo-900">Aviso de Privacidad</a>.
-                </span>
-            </label>
-            <x-input-error :messages="$errors->get('terms')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-6">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
+    <x-slot name="logo">
+        <div class="flex justify-center mb-4">
+            <a href="/">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo Administrarme" class="w-40 h-auto drop-shadow-sm">
             </a>
+        </div>
+    </x-slot>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+    <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-200">Únete a administrarme.com</h2>
+        <p class="text-sm text-gray-400">Comienza a gestionar tu ministerio de forma inteligente</p>
+    </div>
+
+    <form method="POST" action="{{ route('register') }}" class="space-y-4">
+        @csrf
+        
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 space-y-4">
+            
+            <div class="border-b border-gray-700 pb-4 mb-4">
+                <h3 class="text-sm font-bold text-indigo-400 uppercase mb-3">1. Datos del Ministerio</h3>
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Nombre de la Iglesia / Ministerio *</label>
+                    <input type="text" name="church_name" value="{{ old('church_name') }}" required autofocus placeholder="Ej. Iglesia Nueva Vida"
+                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                    @error('church_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-bold text-indigo-400 uppercase mb-3">2. Datos del Administrador</h3>
+                <div class="space-y-4">
+                    
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Tu Nombre Completo *</label>
+                        <input type="text" name="name" value="{{ old('name') }}" required placeholder="Ej. Juan Pérez"
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                        @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Teléfono (Obligatorio) *</label>
+                            <input type="tel" name="phone" value="{{ old('phone') }}" required placeholder="+52 998 123 4567"
+                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                            @error('phone') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Correo (Opcional)</label>
+                            <input type="email" name="email" value="{{ old('email') }}" placeholder="tu@correo.com"
+                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Contraseña *</label>
+                            <input type="password" name="password" required autocomplete="new-password" placeholder="Mínimo 8 caracteres"
+                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                            @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Confirmar Contraseña *</label>
+                            <input type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Repite la contraseña"
+                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-2">
+                        <label for="terms_register" class="inline-flex items-start">
+                            <input id="terms_register" type="checkbox" class="rounded bg-gray-900 border-gray-600 text-indigo-600 shadow-sm focus:ring-indigo-500 mt-1 cursor-pointer" name="terms" required>
+                            <span class="ms-3 text-sm text-gray-400">
+                                He leído y acepto los <a href="{{ route('terminos') }}" target="_blank" class="font-bold text-indigo-400 hover:text-indigo-300">Términos de Servicio</a> y el <a href="{{ route('privacidad') }}" target="_blank" class="font-bold text-indigo-400 hover:text-indigo-300">Aviso de Privacidad</a>.
+                            </span>
+                        </label>
+                        @error('terms') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-4">
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-bold shadow-lg transition transform active:scale-95 text-lg">
+                    Registrarme
+                </button>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ route('login') }}" class="text-sm text-gray-400 hover:text-white transition">¿Ya tienes una cuenta? <span class="text-indigo-400 underline">Inicia sesión aquí</span></a>
+            </div>
         </div>
     </form>
 </x-guest-layout>

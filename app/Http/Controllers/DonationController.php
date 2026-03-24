@@ -12,18 +12,16 @@ class DonationController extends Controller
         return view('cafe.index');
     }
 
-    // 2. Procesar el pago y enviar a Stripe
+    // 2. Procesar el pago VOLUNTARIO (Único) y enviar a Stripe
     public function checkout(Request $request)
     {
-        // Tu código mágico de Stripe
+        // ⚠️ RECUERDA CAMBIAR ESTO POR TU NUEVO CÓDIGO DE PAGO ÚNICO
         $priceId = 'price_1TE8ONDkKagBvgg5Km7PRdJH'; 
 
-        // Usamos Cashier para crear la suscripción y redirigir al pago seguro
-        return $request->user()
-            ->newSubscription('cafe_mensual', $priceId)
-            ->checkout([
-                'success_url' => route('dashboard') . '?cafe=gracias', // A dónde va si paga con éxito
-                'cancel_url' => route('cafe.index'), // A dónde va si se arrepiente
-            ]);
+        // Usamos checkout directo para un pago voluntario de una sola vez
+        return $request->user()->checkout([$priceId => 1], [
+            'success_url' => route('dashboard') . '?cafe=gracias',
+            'cancel_url' => route('cafe.index'),
+        ]);
     }
 }

@@ -37,15 +37,26 @@ class LoginRequest extends FormRequest
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function authenticate(): void
+public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // 1. Averiguar si lo que escribió el usuario es un correo o un teléfono
+        $loginType = filter_var($this->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        // 2. Preparamos las credenciales basadas en lo que descubrimos
+        $credentials = [
+            $loginType => $this->input('email'), // Aunque el campo HTML se llame 'email', lo buscamos en BD como phone o email
+            'password' => $this->input('password')
+        ];
+
+        // 3. Intentamos iniciar sesión
+        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
+            // Mensaje de error personalizado
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => __('Estas credenciales no coinciden con nuestros registros. Revisa tu correo o número telefónico.'),
             ]);
         }
 

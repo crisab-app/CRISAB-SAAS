@@ -15,9 +15,10 @@
 
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">1. Información Personal</h3>
+                        
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre(s)</label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre(s) *</label>
                                 <input type="text" name="name" value="{{ old('name', $miembro->name) }}" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
                             <div>
@@ -28,8 +29,18 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Apellido Materno</label>
                                 <input type="text" name="maternal_surname" value="{{ old('maternal_surname', $miembro->maternal_surname) }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
+
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de Nacimiento</label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono *</label>
+                                <input type="tel" name="phone" value="{{ old('phone', $miembro->phone) }}" required placeholder="+52..." class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo Electrónico (Opcional)</label>
+                                <input type="email" name="email" value="{{ old('email', $miembro->email) }}" placeholder="tu@correo.com" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de Nacimiento *</label>
                                 <input type="date" name="birthdate" 
                                     value="{{ old('birthdate', $miembro->birthdate ? $miembro->birthdate->format('Y-m-d') : '') }}" 
                                     required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">

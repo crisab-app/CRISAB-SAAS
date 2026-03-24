@@ -1,4 +1,12 @@
 <x-guest-layout>
+    <x-slot name="logo">
+        <div class="flex justify-center mb-4">
+            <a href="/">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo Administrarme" class="w-40 h-auto drop-shadow-sm">
+            </a>
+        </div>
+    </x-slot>
+
     <div class="text-center mb-6">
         <h2 class="text-2xl font-bold text-gray-200">Crea tu cuenta en administrarme.com</h2>
         <p class="text-sm text-gray-400">Digitaliza la administración de tu iglesia hoy mismo</p>
@@ -22,6 +30,7 @@
             <div>
                 <h3 class="text-sm font-bold text-indigo-400 uppercase mb-3">2. Datos del Administrador</h3>
                 <div class="space-y-4">
+                    
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Nombre Completo *</label>
                         <input type="text" name="pastor_name" value="{{ old('pastor_name') }}" required placeholder="Tu nombre"
@@ -29,11 +38,20 @@
                         @error('pastor_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Correo Electrónico *</label>
-                        <input type="email" name="email" value="{{ old('email') }}" required placeholder="admin@iglesia.com"
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                        @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Teléfono (Obligatorio) *</label>
+                            <input type="tel" name="phone" value="{{ old('phone') }}" required placeholder="+52 998 123 4567"
+                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                            @error('phone') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Correo (Opcional)</label>
+                            <input type="email" name="email" value="{{ old('email') }}" placeholder="admin@iglesia.com"
+                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -48,6 +66,16 @@
                             <input type="password" name="password_confirmation" required placeholder="Repite la contraseña"
                                 class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
+                    </div>
+
+                    <div class="mt-4 pt-2">
+                        <label for="terms" class="inline-flex items-start">
+                            <input id="terms" type="checkbox" class="rounded bg-gray-900 border-gray-600 text-indigo-600 shadow-sm focus:ring-indigo-500 mt-1 cursor-pointer" name="terms" required>
+                            <span class="ms-3 text-sm text-gray-400">
+                                He leído y acepto los <a href="{{ route('terminos') }}" target="_blank" class="font-bold text-indigo-400 hover:text-indigo-300">Términos de Servicio</a> y el <a href="{{ route('privacidad') }}" target="_blank" class="font-bold text-indigo-400 hover:text-indigo-300">Aviso de Privacidad</a>.
+                            </span>
+                        </label>
+                        @error('terms') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>

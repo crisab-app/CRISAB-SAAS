@@ -13,34 +13,44 @@ class ChurchRegistrationController extends Controller
     // 1. Mostrar el formulario público de registro de nueva iglesia
     public function create()
     {
-        return view('auth.register_church');
+        return view('auth.register_church'); // Asegúrate de que el nombre de esta vista coincida con tu archivo
     }
 
     // 2. Procesar el formulario y crear la cuenta
     public function store(Request $request)
     {
-        // Validamos que vengan los datos de la iglesia y del pastor
+        // Validamos los datos: Teléfono OBLIGATORIO, Correo OPCIONAL
         $request->validate([
             'church_name' => 'required|string|max:255',
             'pastor_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'phone'       => 'required|string|max:20|unique:users', // Exigimos el teléfono y que no esté repetido
+            'email'       => 'nullable|string|email|max:255|unique:users', // El correo ahora es opcional
+            'password'    => 'required|string|min:8|confirmed',
+            'terms'       => 'accepted', // Validamos que hayan marcado la casilla de términos
         ]);
 
         // A. Creamos la nueva Iglesia (Contrato)
         $contract = Contract::create([
             'name' => $request->church_name,
-            // Si tu tabla contracts requiere otros campos por defecto (como un slug), agrégalos aquí. 
-            // Por ejemplo: 'status' => 'active'
+            'status' => 'active', // Nos aseguramos de que la iglesia nazca activa
         ]);
 
-        // B. Creamos al usuario (Pastor/Admin) amarrado a esa nueva iglesia
+        // B. Creamos al usuario amarrado a esa nueva iglesia
         $user = User::create([
             'name' => $request->pastor_name,
-            'email' => $request->email,
+            'phone' => $request->phone,   // Guardamos el teléfono
+            'email' => $request->email,   // Guardamos el correo (aunque venga vacío)
             'password' => Hash::make($request->password),
             'contract_id' => $contract->id, // ¡Aquí ocurre la magia de la conexión!
-            // Le asignamos por defecto datos básicos para que no truene la validación
+            
+            // 🔥 LE DAMOS EL PODER ABSOLUTO DESDE EL DÍA 1
+            'is_church_owner' => true,
+            'role' => 'pastor',
+            'can_manage_finances' => true,
+            'can_manage_members' => true,
+            'can_manage_church' => true,
+
+            // Le asignamos por defecto datos básicos para que no truene la validación en otras pantallas
             'birthdate' => now(), 
             'nationality' => 'México',
         ]);

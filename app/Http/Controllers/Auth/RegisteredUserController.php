@@ -23,11 +23,12 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'church_name' => ['required', 'string', 'max:255'], // Validamos la iglesia
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            // Hacemos que proporcione correo O teléfono (al menos uno de los dos)
+            'email' => ['nullable', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'phone' => ['required', 'string', 'max:20', 'unique:'.User::class], // Exigimos el teléfono
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'terms' => ['accepted', 'required'], 
+            'church_name' => ['required', 'string', 'max:255'],
         ]);
 
         // 1. CREAMOS LA IGLESIA PRIMERO
@@ -40,6 +41,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'contract_id' => $contract->id, // ¡El candado mágico!
             'is_church_owner' => true, // Asignamos el rol de pastor al registrarse

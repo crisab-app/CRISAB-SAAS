@@ -31,8 +31,10 @@ class MemberController extends Controller
     // 3. Guardar el nuevo miembro (Interno)
     public function store(Request $request)
     {
+        // Validamos: Teléfono requerido, Correo opcional
         $request->validate([
-            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:20|unique:users,phone',
+            'email' => 'nullable|email|unique:users,email',
             'password' => 'required|min:6',
             'name' => 'required|string|max:255',
             'birthdate' => 'required|date',
@@ -49,7 +51,8 @@ class MemberController extends Controller
 
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'phone' => $request->phone, // <-- Guardamos el teléfono
+            'email' => $request->email, // <-- Guardamos el correo (si lo puso)
             'password' => Hash::make($request->password), 
             'contract_id' => auth()->user()->contract_id,
             'paternal_surname' => $request->paternal_surname,
@@ -90,16 +93,21 @@ class MemberController extends Controller
             abort(403);
         }
 
+        // Validamos excluyendo el ID del propio miembro para que no marque error de duplicado
         $request->validate([
             'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20|unique:users,phone,' . $miembro->id,
+            'email' => 'nullable|email|unique:users,email,' . $miembro->id,
             'birthdate' => 'required|date',
             'nationality' => 'required|string',
             'curp' => 'required_if:nationality,México|nullable|string|max:18',
             'profile_photo' => 'nullable|image|max:2048',
         ]);
 
+        // Agregamos phone y email a la lista de datos permitidos para actualizar
         $miembro->fill($request->only([
             'name', 'paternal_surname', 'maternal_surname', 
+            'phone', 'email', 
             'birthdate', 'nationality', 'curp', 'marital_status'
         ]));
 
@@ -146,7 +154,8 @@ class MemberController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:20|unique:users,phone',
+            'email' => 'nullable|email|unique:users,email',
             'password' => 'required|min:6|confirmed', 
             'birthdate' => 'required|date',
             'gender' => 'required|string|in:Masculino,Femenino', 
@@ -165,7 +174,8 @@ class MemberController extends Controller
             'name' => $request->name,
             'paternal_surname' => $request->paternal_surname,
             'maternal_surname' => $request->maternal_surname,
-            'email' => $request->email,
+            'phone' => $request->phone, // <-- Guardamos el teléfono
+            'email' => $request->email, // <-- Guardamos el correo
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
             'contract_id' => $iglesia->id,
             'birthdate' => $request->birthdate,
@@ -186,25 +196,19 @@ class MemberController extends Controller
     // ==========================================
     public function updatePermissions(Request $request, User $miembro)
     {
-        // 1. Validamos que el administrador no esté editando a alguien de otra iglesia
         if ($miembro->contract_id !== auth()->user()->contract_id) {
             abort(403, 'No tienes permiso para editar a este usuario.');
         }
 
-        // 2. Si la petición viene desde la vista "Editar" (usa el campo hidden 'permission_type')
         if ($request->has('permission_type')) {
             $field = $request->permission_type;
-            
-            // Medida de seguridad: Solo permitimos modificar estos 3 campos exactos
             $allowedPermissions = ['can_manage_finances', 'can_manage_members', 'can_manage_church'];
             
             if (in_array($field, $allowedPermissions)) {
-                // Si el switch está encendido, 'status' existirá. Si está apagado, no existirá.
                 $miembro->$field = $request->has('status');
                 $miembro->save();
             }
         } 
-        // 3. Si la petición viene desde la tabla del "Directorio" (que por ahora solo manda finanzas)
         else {
             $miembro->can_manage_finances = $request->has('can_manage_finances');
             $miembro->save();

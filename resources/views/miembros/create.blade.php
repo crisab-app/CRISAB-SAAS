@@ -7,21 +7,18 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-200 dark:border-gray-700">
                 
                 <form action="{{ route('miembros.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">1. Credenciales de Acceso</h3>
+                        <p class="text-sm text-gray-500 mb-4">Estos datos le permitirán al miembro iniciar sesión en el sistema (si le das permisos en el paso 4).</p>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo Electrónico *</label>
-                                <input type="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
-                            </div>
-                            <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña Provisional *</label>
-                                <input type="password" name="password" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
+                                <input type="password" name="password" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm" placeholder="Mínimo 8 caracteres">
                             </div>
                         </div>
                     </div>
@@ -41,6 +38,16 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Apellido Materno</label>
                                 <input type="text" name="maternal_surname" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
                             </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono *</label>
+                                <input type="tel" name="phone" required placeholder="+52..." class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo Electrónico (Opcional)</label>
+                                <input type="email" name="email" placeholder="tu@correo.com" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
+                            </div>
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de Nacimiento *</label>
                                 <input type="date" name="birthdate" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
@@ -91,7 +98,7 @@
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">4. Privilegios</h3>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">4. Privilegios (Habilidades)</h3>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             @foreach($skills as $skill)
                                 <label class="inline-flex items-center">
@@ -135,7 +142,6 @@
             toggleCurp();
 
             // --- 2. LÓGICA DE COMPRESIÓN DE IMÁGENES ---
-            // Creamos una función reutilizable para aplicar a cualquier input
             function activarCompresion(inputId) {
                 const inputElement = document.getElementById(inputId);
                 
@@ -145,12 +151,11 @@
                         if (!file) return;
 
                         new Compressor(file, {
-                            quality: 0.7, // Calidad del 70% (mantiene el texto de la identificación legible)
-                            maxWidth: 1200, // Un poco más grande para que las credenciales se puedan leer
+                            quality: 0.7,
+                            maxWidth: 1200,
                             maxHeight: 1200,
                             mimeType: 'image/jpeg',
                             success(result) {
-                                // Reemplazar archivo original por el comprimido
                                 const dataTransfer = new DataTransfer();
                                 const compressedFile = new File([result], result.name.replace(/\.[^/.]+$/, "") + ".jpg", {
                                     type: 'image/jpeg',
