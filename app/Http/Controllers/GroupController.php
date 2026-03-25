@@ -11,7 +11,6 @@ class GroupController extends Controller
     // Listar los grupos de MI iglesia
     public function index()
     {
-        // Si el usuario no tiene contrato, no mostramos nada (seguridad)
         if (!auth()->user()->contract) {
             abort(403, 'No tienes una iglesia asignada.');
         }
@@ -32,12 +31,14 @@ class GroupController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'has_sales' => 'required|boolean', // Validamos que envíe 1 o 0
         ]);
 
         // Crear el grupo vinculado automáticamente a la iglesia del usuario
         auth()->user()->contract->groups()->create([
             'name' => $request->name,
             'description' => $request->description,
+            'has_sales' => $request->has_sales, // Guardamos la configuración de la tiendita
         ]);
 
         return redirect()->route('grupos.index')->with('success', 'Grupo creado exitosamente.');
@@ -46,23 +47,17 @@ class GroupController extends Controller
     // Ver los detalles y la directiva del grupo
     public function show(Group $group)
     {
-        // Usamos != (solo dos símbolos) en lugar de !==
         if ($group->contract_id != auth()->user()->contract_id) {
             abort(403, 'No tienes permiso para ver este grupo.');
         }
 
-        // Cargamos los miembros...
-
-        // Cargamos los miembros con sus cargos
         $group->load('members');
-        
-        // Traemos a todos los usuarios de la iglesia para poder agregarlos a la directiva
         $users = auth()->user()->contract->users;
 
         return view('groups.show', compact('group', 'users'));
     }
     
-    // Asignar un cargo (Presidente, Tesorero, etc.) a alguien
+    // Asignar un cargo
     public function assignMember(Request $request, Group $group)
     {
         $request->validate([
@@ -70,10 +65,6 @@ class GroupController extends Controller
             'role' => 'required|string',
         ]);
 
-        // Guardar o actualizar el cargo en la tabla puente
-        // syncWithoutDetaching evita duplicados, pero aquí queremos permitir cambios
-        // Usaremos attach para agregar, o updateExistingPivot si ya existe.
-        // Para simplificar: Quitamos si ya estaba y lo volvemos a poner con el nuevo cargo
         $group->members()->detach($request->user_id);
         $group->members()->attach($request->user_id, ['role' => $request->role]);
 
@@ -86,10 +77,10 @@ class GroupController extends Controller
         $group->members()->detach($user->id);
         return back()->with('success', 'Miembro removido del grupo.');
     }
+
     // Eliminar un grupo por completo
     public function destroy(Group $group)
     {
-        // Usamos != en lugar de !==
         if ($group->contract_id != auth()->user()->contract_id) {
             abort(403, 'No tienes permiso para eliminar este grupo.');
         }

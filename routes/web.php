@@ -154,6 +154,27 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
     Route::post('/grupos/{group}/assign', [GroupController::class, 'assignMember'])->name('grupos.assign');
     Route::delete('/grupos/{group}/remove/{user}', [GroupController::class, 'removeMember'])->name('grupos.remove');
 
+    // ==========================================
+    // RUTAS PARA LA TIENDITA DE LOS GRUPOS
+    // ==========================================
+    Route::get('/grupos/{group}/tiendita', [App\Http\Controllers\GroupStoreController::class, 'index'])->name('grupos.store.index');
+    
+    // 1. Ventas
+    Route::get('/grupos/{group}/tiendita/ventas', [App\Http\Controllers\GroupStoreController::class, 'pos'])->name('grupos.store.pos');
+    Route::post('/grupos/{group}/tiendita/ventas', [App\Http\Controllers\GroupStoreController::class, 'storeSale'])->name('grupos.store.pos.store');
+
+    // 2. Compras
+    Route::get('/grupos/{group}/tiendita/compras', [App\Http\Controllers\GroupStoreController::class, 'purchases'])->name('grupos.store.purchases');
+    Route::post('/grupos/{group}/tiendita/compras', [App\Http\Controllers\GroupStoreController::class, 'storePurchase'])->name('grupos.store.purchases.store');
+
+    // 3. Inventario
+    Route::get('/grupos/{group}/tiendita/inventario', [App\Http\Controllers\GroupStoreController::class, 'inventory'])->name('grupos.store.inventory');
+    Route::post('/grupos/{group}/tiendita/inventario', [App\Http\Controllers\GroupStoreController::class, 'storeProduct'])->name('grupos.store.inventory.store');
+    // AGREGA ESTA LÍNEA NUEVA PARA ELIMINAR:
+    Route::delete('/grupos/{group}/tiendita/inventario/{product}', [App\Http\Controllers\GroupStoreController::class, 'destroyProduct'])->name('grupos.store.inventory.destroy');
+    
+    // 4. Reportes
+    Route::get('/grupos/{group}/tiendita/reportes', [App\Http\Controllers\GroupStoreController::class, 'reports'])->name('grupos.store.reports');   
     // --- Privilegios y Ministerios ---
     Route::resource('privilegios', SkillController::class)->parameters(['privilegios' => 'skill']);
     Route::post('/privilegios/{skill}/assign', [SkillController::class, 'assignUser'])->name('privilegios.assign');

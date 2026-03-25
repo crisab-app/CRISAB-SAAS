@@ -12,7 +12,7 @@ class Group extends Model
     use BelongsToTenant;
     use HasFactory;
 
-    protected $fillable = ['contract_id', 'name', 'description'];
+    protected $fillable = ['contract_id', 'name', 'description', 'has_sales'];
 
     // 1. Generar el código secreto automáticamente al crear el grupo
     protected static function boot()
@@ -37,5 +37,14 @@ class Group extends Model
     public function members()
     {
         return $this->belongsToMany(User::class)->withPivot('role')->withTimestamps();
+    }
+    public function products()
+    {
+        return $this->hasMany(GroupProduct::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(GroupTransaction::class);
     }
 }
