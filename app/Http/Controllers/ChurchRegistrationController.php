@@ -7,6 +7,9 @@ use App\Models\Contract;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeChurchMail;
+use App\Mail\AdminNotificationMail;
 
 class ChurchRegistrationController extends Controller
 {
@@ -54,6 +57,14 @@ class ChurchRegistrationController extends Controller
             'birthdate' => now(), 
             'nationality' => 'México',
         ]);
+        
+        // A. Notificar al sistema SIEMPRE que haya un registro
+        Mail::to('administrarme@crisab.com')->send(new AdminNotificationMail($user, $contract->name));
+
+        // B. Enviar Bienvenida y Manual al Pastor (SOLO SI DEJÓ CORREO)
+        if ($user->email) {
+            Mail::to($user->email)->send(new WelcomeChurchMail($user, $contract->name));
+        }
 
         // C. Iniciamos sesión automáticamente con este nuevo usuario
         Auth::login($user);
