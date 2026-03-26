@@ -66,8 +66,34 @@
                                 <input type="text" name="curp" id="curp" value="{{ old('curp', $miembro->curp) }}" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 uppercase">
                             </div>
                         </div>
-                    </div>
 
+                        <div class="col-span-full mt-6 p-5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl">
+                            <h4 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
+                                🕊️ Paso Espiritual (Bautismo)
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="flex items-center h-full pt-2">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="hidden" name="is_baptized" value="0">
+                                        <input type="checkbox" name="is_baptized" id="is_baptized" value="1" 
+                                            class="w-5 h-5 text-indigo-600 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-900 focus:ring-indigo-500 shadow-sm" 
+                                            onchange="toggleBaptismDate()"
+                                            {{ (isset($miembro) && $miembro->is_baptized) ? 'checked' : '' }}>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">¿Está bautizado en agua?</span>
+                                    </label>
+                                </div>
+
+                                <div id="baptism_date_container" class="{{ (isset($miembro) && $miembro->is_baptized) ? '' : 'hidden' }}">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de Bautismo</label>
+                                    <input type="date" name="baptism_date" 
+                                        value="{{ (isset($miembro) && $miembro->baptism_date) ? $miembro->baptism_date->format('Y-m-d') : '' }}"
+                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">2. Actualizar Documentos</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -176,6 +202,18 @@
     </div>
     
     <script>
+        function toggleBaptismDate() {
+            const checkbox = document.getElementById('is_baptized');
+            const container = document.getElementById('baptism_date_container');
+            if(checkbox.checked) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+                // Limpia la fecha si se desmarca
+                container.querySelector('input').value = '';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const nationalitySelect = document.getElementById('nationality');
             const curpInput = document.getElementById('curp');

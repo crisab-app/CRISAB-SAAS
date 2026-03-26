@@ -52,6 +52,33 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de Nacimiento *</label>
                                 <input type="date" name="birthdate" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
                             </div>
+                            <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                                <h4 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Paso Espiritual</h4>
+                                
+                                <div class="flex items-center gap-4">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" name="is_baptized" id="is_baptized" value="1" class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" onchange="toggleBaptismDate()">
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">¿Está bautizado en agua?</span>
+                                    </label>
+                                </div>
+
+                                <div id="baptism_date_container" class="mt-3 hidden">
+                                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Fecha de Bautismo</label>
+                                    <input type="date" name="baptism_date" class="w-full md:w-1/2 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-200 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+
+                            <script>
+                                function toggleBaptismDate() {
+                                    const checkbox = document.getElementById('is_baptized');
+                                    const dateContainer = document.getElementById('baptism_date_container');
+                                    if(checkbox.checked) {
+                                        dateContainer.classList.remove('hidden');
+                                    } else {
+                                        dateContainer.classList.add('hidden');
+                                    }
+                                }
+                            </script>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Estado Civil</label>
                                 <select name="marital_status" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">

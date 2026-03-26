@@ -13,6 +13,7 @@ use App\Http\Controllers\BibleController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\ChurchProfileController;
 use App\Http\Controllers\FinanceController;
+use App\Models\Event; // <-- Agregamos el modelo de Eventos para el Dashboard
 
 Route::get('/', function () {
     return view('welcome');
@@ -63,9 +64,6 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
     Route::put('/master-panel/users/{user}', [SuperAdminController::class, 'updateUser'])->name('master.users.update');
     Route::put('/master-panel/users/{user}/password', [SuperAdminController::class, 'updatePassword'])->name('master.users.password');
     Route::delete('/master-panel/users/{user}', [SuperAdminController::class, 'destroyUser'])->name('master.users.destroy');
-    Route::get('/master-panel/users/{user}/edit', [\App\Http\Controllers\SuperAdminController::class, 'editUser'])->name('superadmin.users.edit');
-    Route::put('/master-panel/users/{user}', [\App\Http\Controllers\SuperAdminController::class, 'updateUser'])->name('superadmin.users.update');
-    Route::delete('/master-panel/users/{user}', [\App\Http\Controllers\SuperAdminController::class, 'destroyUser'])->name('superadmin.users.destroy');
 });
 
 
@@ -74,8 +72,20 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
 // ==========================================================
 Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::class])->group(function () {
     
-    // Dashboard General
-    Route::view('/dashboard', 'dashboard')->name('dashboard');
+    // ==========================================
+    // 📊 DASHBOARD GENERAL (AQUÍ ESTÁ LA MAGIA CORREGIDA)
+    // ==========================================
+    Route::get('/dashboard', function () {
+        // Traemos las próximas 5 actividades de la iglesia actual
+        $upcomingActivities = Event::where('contract_id', auth()->user()->contract_id)
+                                   ->where('date', '>=', now()->startOfDay())
+                                   ->orderBy('date', 'asc')
+                                   ->take(5)
+                                   ->get();
+
+        return view('dashboard', compact('upcomingActivities'));
+    })->name('dashboard');
+    
     
     // ==========================================
     // ☕ MÓDULO: INVÍTAME UN CAFÉ
@@ -143,12 +153,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
     // Rutas para administrar el Aula Virtual
     Route::post('/cursos/{curso}/enroll', [\App\Http\Controllers\CourseController::class, 'enroll'])->name('cursos.enroll');
     Route::patch('/cursos/{curso}/students/{student}/status', [\App\Http\Controllers\CourseController::class, 'updateStudentStatus'])->name('cursos.students.status');
-    
-    
 
-    // --- Módulo de Biblioteca Digital ---
-    Route::resource('biblioteca', \App\Http\Controllers\LibraryController::class)->parameters(['biblioteca' => 'biblioteca']);
-    
     // --- Grupos y Sociedades ---
     Route::resource('grupos', GroupController::class)->parameters(['grupos' => 'group']);
     Route::post('/grupos/{group}/assign', [GroupController::class, 'assignMember'])->name('grupos.assign');
@@ -170,11 +175,11 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
     // 3. Inventario
     Route::get('/grupos/{group}/tiendita/inventario', [App\Http\Controllers\GroupStoreController::class, 'inventory'])->name('grupos.store.inventory');
     Route::post('/grupos/{group}/tiendita/inventario', [App\Http\Controllers\GroupStoreController::class, 'storeProduct'])->name('grupos.store.inventory.store');
-    // AGREGA ESTA LÍNEA NUEVA PARA ELIMINAR:
     Route::delete('/grupos/{group}/tiendita/inventario/{product}', [App\Http\Controllers\GroupStoreController::class, 'destroyProduct'])->name('grupos.store.inventory.destroy');
     
     // 4. Reportes
     Route::get('/grupos/{group}/tiendita/reportes', [App\Http\Controllers\GroupStoreController::class, 'reports'])->name('grupos.store.reports');   
+    
     // --- Privilegios y Ministerios ---
     Route::resource('privilegios', SkillController::class)->parameters(['privilegios' => 'skill']);
     Route::post('/privilegios/{skill}/assign', [SkillController::class, 'assignUser'])->name('privilegios.assign');

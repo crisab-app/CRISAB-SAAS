@@ -30,6 +30,8 @@ class User extends Authenticatable
         'maternal_surname',
         'gender', // <-- Agregado (lo necesitaremos para las estadísticas)
         'marital_status',
+        'is_baptized',
+        'baptism_date',
         'birthdate',
         'nationality',
         'curp',
@@ -44,6 +46,9 @@ class User extends Authenticatable
         'is_church_owner',
         'last_login_at',  
         'last_login_ip',  
+    ];
+    protected $casts = [
+    'baptism_date' => 'date',
     ];
 
     /**
