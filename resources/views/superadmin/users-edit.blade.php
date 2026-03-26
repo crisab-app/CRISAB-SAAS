@@ -52,6 +52,18 @@
                                 <option value="pastor" {{ $user->role == 'pastor' ? 'selected' : '' }}>Pastor / Presidente (Acceso Total)</option>
                             </select>
                         </div>
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">🔐 Cambiar Contraseña (Opcional)</h3>
+                            <p class="text-sm text-gray-500 mb-4">Si dejas este campo en blanco, la contraseña actual se mantendrá intacta.</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nueva Contraseña</label>
+                                    <input type="password" name="password" placeholder="Mínimo 8 caracteres" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="mb-8 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-lg">
                             <label class="flex items-center cursor-pointer">

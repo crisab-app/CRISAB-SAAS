@@ -145,6 +145,14 @@ public function updateUser(Request $request, User $user)
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
+        if ($request->filled('password')) {
+            $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('superadmin.users.index')->with('success', 'Usuario y contraseña actualizados.');
+    }
         
         // Verificamos si marcaste la casilla de "Dueño"
         $user->is_church_owner = $request->has('is_church_owner');
