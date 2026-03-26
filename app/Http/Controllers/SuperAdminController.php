@@ -40,34 +40,36 @@ class SuperAdminController extends Controller
         // Pon aquí el precio exacto que le pusiste a tu producto en Stripe (ej. 5.00 USD o 100.00 MXN)
         $precioCafe = 5.00; 
 
-        $reporteDiezmos = Contract::withoutGlobalScopes()
+        // Traemos a las iglesias con sus usuarios
+        $iglesiasParaReporte = Contract::withoutGlobalScopes()
             ->with(['users' => function($query) {
-                // Traemos a los usuarios y sus suscripciones para no hacer la base de datos lenta
                 $query->withoutGlobalScopes()->with('subscriptions'); 
             }])
-            ->get()
-            ->map(function ($church) use ($precioCafe) {
-                
-                // Contamos cuántos usuarios de esta iglesia están pagando el café
-                $activeDonorsCount = 0;
-                foreach ($church->users as $user) {
-                    // Cashier verifica mágicamente si el pago está activo en Stripe
-                    if ($user->subscribed('cafe_mensual')) { 
-                        $activeDonorsCount++;
-                    }
+            ->get();
+
+        // Usamos map para transformar los datos de cada iglesia y calcular los totales
+        $reporteDiezmos = $iglesiasParaReporte->map(function ($church) use ($precioCafe) {
+            $activeDonorsCount = 0;
+            
+            foreach ($church->users as $user) {
+                if ($user->subscribed('cafe_mensual')) { 
+                    $activeDonorsCount++;
                 }
+            }
 
-                $church->donantes_activos = $activeDonorsCount;
-                $church->total_recaudado = $activeDonorsCount * $precioCafe;
-                $church->diezmo_a_devolver = $church->total_recaudado * 0.10; // Sacamos el 10%
+            // Agregamos las variables calculadas al objeto de la iglesia
+            $church->donantes_activos = $activeDonorsCount;
+            $church->total_recaudado = $activeDonorsCount * $precioCafe;
+            $church->diezmo_a_devolver = $church->total_recaudado * 0.10; // Sacamos el 10%
 
-                return $church;
-            })
-            ->filter(function ($church) {
-                // Filtramos para que SOLO aparezcan las iglesias que ya tengan al menos 1 donante
-                return $church->donantes_activos > 0;
-            })
-            ->sortByDesc('total_recaudado'); // Ordenamos de las que más donan a las que menos
+            return $church;
+        })
+        ->filter(function ($church) {
+            // Filtramos para que SOLO aparezcan las iglesias que ya tengan al menos 1 donante
+            return $church->donantes_activos > 0;
+        })
+        ->sortByDesc('total_recaudado')
+        ->values(); // Re-indexamos el arreglo después de filtrar y ordenar
 
         return view('superadmin.index', compact('churches', 'totalChurches', 'activeChurches', 'totalUsers', 'allUsers', 'reporteDiezmos', 'precioCafe'));
     }
@@ -99,6 +101,7 @@ class SuperAdminController extends Controller
             'status' => $request->status,
         ]);
 
+        // Asegúrate de que la ruta /master-panel sea correcta para tu sistema
         return redirect('/master-panel')->with('success', 'Iglesia actualizada correctamente.');
     }
 
@@ -133,28 +136,22 @@ class SuperAdminController extends Controller
         return view('superadmin.users-edit', compact('user'));
     }
 
-public function updateUser(Request $request, User $user)
+    // FUNCIÓN CORREGIDA Y UNIFICADA
+    public function updateUser(Request $request, User $user)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'nullable|email|unique:users,email,' . $user->id,
+            'phone' => 'required|string|max:20|unique:users,phone,' . $user->id, // Validación de teléfono obligatoria
             'role' => 'required|in:miembro,admin,pastor',
+            'password' => 'nullable|string|min:8', // Validación de contraseña opcional
         ]);
 
-        // Guardamos los datos básicos y el rol
+        // Guardamos los datos básicos
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->phone = $request->phone;
         $user->role = $request->role;
-        if ($request->filled('password')) {
-            $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
-        }
-
-        $user->save();
-
-        return redirect()->route('superadmin.users.index')->with('success', 'Usuario y contraseña actualizados.');
-    }
-        
-        // Verificamos si marcaste la casilla de "Dueño"
         $user->is_church_owner = $request->has('is_church_owner');
 
         // MAGIA: Si lo haces Pastor o Admin, le encendemos los permisos de los menús
@@ -164,12 +161,19 @@ public function updateUser(Request $request, User $user)
             $user->can_manage_church = true;
         }
 
+        // Si escribió una contraseña, la actualizamos
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
         $user->save();
 
+        // Redirigimos a la lista de usuarios de esa iglesia
         return redirect()->route('superadmin.churchUsers', $user->contract_id)
                          ->with('success', 'Usuario y privilegios actualizados correctamente.');
     }
 
+    // Esta función la dejé por si tienes un formulario exclusivo solo para cambiar la contraseña
     public function updatePassword(Request $request, User $user)
     {
         $request->validate([
