@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Liturgia - {{ $event->title }}</title>
+    <title>Actividad - {{ $event->title }}</title>
     <style>
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; font-size: 14px; }
         .header { text-align: center; border-bottom: 2px solid #4f46e5; padding-bottom: 10px; margin-bottom: 20px; }
@@ -23,8 +23,8 @@
     <div class="header">
         <h1>{{ $event->title }}</h1>
         <p>
-            <strong>Inicio:</strong> {{ \Carbon\Carbon::parse($event->start_time)->format('d/m/Y h:i A') }} <br>
-            <strong>Fin:</strong> {{ \Carbon\Carbon::parse($event->end_time)->format('d/m/Y h:i A') }}
+            <strong>Inicio:</strong> {{ \Carbon\Carbon::parse($event->start_time)->timezone(config('app.timezone'))->format('d/m/Y h:i A') }} <br>
+            <strong>Fin:</strong> {{ \Carbon\Carbon::parse($event->end_time)->timezone(config('app.timezone'))->format('d/m/Y h:i A') }}
         </p>
     </div>
 
