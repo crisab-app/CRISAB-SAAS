@@ -23,14 +23,24 @@
     <div class="header">
         <h1>{{ $event->title }}</h1>
         <p>
-            <strong>Inicio:</strong> {{ \Carbon\Carbon::parse($event->start_time)->timezone(config('app.timezone'))->format('d/m/Y h:i A') }} <br>
-            <strong>Fin:</strong> {{ \Carbon\Carbon::parse($event->end_time)->timezone(config('app.timezone'))->format('d/m/Y h:i A') }}
+            @php
+                // Unimos la fecha y la hora reales de tu base de datos
+                $fechaInicioStr = ($event->date ?? '') . ' ' . ($event->time ?? '');
+                $fechaInicio = trim($fechaInicioStr) ? \Carbon\Carbon::parse($fechaInicioStr) : now();
+
+                // Intentamos obtener el fin (si tienes end_time o time_end)
+                $fechaFinStr = ($event->date ?? '') . ' ' . ($event->end_time ?? $event->time_end ?? '');
+                $fechaFin = trim($fechaFinStr) != ($event->date . ' ') ? \Carbon\Carbon::parse($fechaFinStr) : null;
+            @endphp
+            
+            <strong>Inicio:</strong> {{ $fechaInicio->format('d/m/Y h:i A') }} <br>
+            <strong>Fin:</strong> {{ $fechaFin ? $fechaFin->format('d/m/Y h:i A') : 'No definido' }}
         </p>
     </div>
 
     <div class="section-title">📋 Orden de Servicio</div>
     
-    @if($event->items->count() > 0)
+    @if($event->items && $event->items->count() > 0)
         <table>
             <thead>
                 <tr>
@@ -47,7 +57,6 @@
                         <td>{{ strtoupper($item->name) }}</td>
                         <td>
                             @php
-                                // Buscamos al usuario asignado (si existe)
                                 $user = \App\Models\User::find($item->user_id);
                             @endphp
                             {{ $user ? $user->name : 'Sin asignar' }}
