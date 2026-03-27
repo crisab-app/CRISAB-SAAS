@@ -25,7 +25,8 @@
 
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">2. Información Personal</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre(s) *</label>
                                 <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
@@ -47,38 +48,11 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Correo Electrónico (Opcional)</label>
                                 <input type="email" name="email" placeholder="tu@correo.com" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
                             </div>
-
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de Nacimiento *</label>
                                 <input type="date" name="birthdate" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
                             </div>
-                            <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
-                                <h4 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Paso Espiritual</h4>
-                                
-                                <div class="flex items-center gap-4">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="checkbox" name="is_baptized" id="is_baptized" value="1" class="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" onchange="toggleBaptismDate()">
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">¿Está bautizado en agua?</span>
-                                    </label>
-                                </div>
 
-                                <div id="baptism_date_container" class="mt-3 hidden">
-                                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Fecha de Bautismo</label>
-                                    <input type="date" name="baptism_date" class="w-full md:w-1/2 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-200 focus:ring-blue-500 focus:border-blue-500">
-                                </div>
-                            </div>
-
-                            <script>
-                                function toggleBaptismDate() {
-                                    const checkbox = document.getElementById('is_baptized');
-                                    const dateContainer = document.getElementById('baptism_date_container');
-                                    if(checkbox.checked) {
-                                        dateContainer.classList.remove('hidden');
-                                    } else {
-                                        dateContainer.classList.add('hidden');
-                                    }
-                                }
-                            </script>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Estado Civil</label>
                                 <select name="marital_status" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm">
@@ -104,6 +78,23 @@
                                 <input type="text" name="curp" id="curp" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm uppercase">
                             </div>
                         </div>
+
+                        <div class="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                            <h4 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 mb-3 uppercase tracking-wider">Paso Espiritual</h4>
+                            
+                            <div class="flex flex-col md:flex-row md:items-center gap-4">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" name="is_baptized" id="is_baptized" value="1" class="w-5 h-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" onchange="toggleBaptismDate()">
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">¿El miembro está bautizado en agua?</span>
+                                </label>
+
+                                <div id="baptism_date_container" class="hidden flex-1 md:ml-6">
+                                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Fecha de Bautismo</label>
+                                    <input type="date" name="baptism_date" class="w-full md:w-1/2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-200 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
@@ -151,7 +142,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- 1. LÓGICA DE CURP ---
+            // --- 1. LÓGICA DE BAUTISMO ---
+            window.toggleBaptismDate = function() {
+                const checkbox = document.getElementById('is_baptized');
+                const dateContainer = document.getElementById('baptism_date_container');
+                if(checkbox.checked) {
+                    dateContainer.classList.remove('hidden');
+                } else {
+                    dateContainer.classList.add('hidden');
+                }
+            }
+
+            // --- 2. LÓGICA DE CURP ---
             const nationalitySelect = document.getElementById('nationality');
             const curpInput = document.getElementById('curp');
             const curpLabel = document.getElementById('curp_label');
@@ -168,7 +170,7 @@
             nationalitySelect.addEventListener('change', toggleCurp);
             toggleCurp();
 
-            // --- 2. LÓGICA DE COMPRESIÓN DE IMÁGENES ---
+            // --- 3. LÓGICA DE COMPRESIÓN DE IMÁGENES ---
             function activarCompresion(inputId) {
                 const inputElement = document.getElementById(inputId);
                 
@@ -201,7 +203,6 @@
                 }
             }
 
-            // Aplicamos la compresión a los tres campos de la vista
             activarCompresion('profile_photo');
             activarCompresion('id_front');
             activarCompresion('id_back');

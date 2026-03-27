@@ -31,7 +31,7 @@ class MemberController extends Controller
     // 3. Guardar el nuevo miembro (Interno)
     public function store(Request $request)
     {
-        // Validamos: Teléfono requerido, Correo opcional
+        // Validamos: Agregamos las reglas para el bautismo
         $request->validate([
             'phone' => 'required|string|max:20|unique:users,phone',
             'email' => 'nullable|email|unique:users,email',
@@ -40,6 +40,8 @@ class MemberController extends Controller
             'birthdate' => 'required|date',
             'nationality' => 'required|string|max:255',
             'curp' => 'required_if:nationality,México|nullable|string|max:18|unique:users,curp',
+            'is_baptized' => 'nullable|boolean', // Agregado
+            'baptism_date' => 'nullable|date', // Agregado
             'profile_photo' => 'nullable|image|max:2048', 
             'id_front' => 'nullable|image|max:2048',
             'id_back' => 'nullable|image|max:2048',
@@ -51,8 +53,8 @@ class MemberController extends Controller
 
         $user = User::create([
             'name' => $request->name,
-            'phone' => $request->phone, // <-- Guardamos el teléfono
-            'email' => $request->email, // <-- Guardamos el correo (si lo puso)
+            'phone' => $request->phone,
+            'email' => $request->email,
             'password' => Hash::make($request->password), 
             'contract_id' => auth()->user()->contract_id,
             'paternal_surname' => $request->paternal_surname,
@@ -61,6 +63,8 @@ class MemberController extends Controller
             'birthdate' => $request->birthdate,
             'nationality' => $request->nationality,
             'curp' => mb_strtoupper($request->curp),
+            'is_baptized' => $request->has('is_baptized'), // Devuelve true/false mágicamente
+            'baptism_date' => $request->has('is_baptized') ? $request->baptism_date : null, // Solo guarda la fecha si marcó la casilla
             'profile_photo_path' => $profilePath,
             'id_front_path' => $idFrontPath,
             'id_back_path' => $idBackPath,
@@ -93,7 +97,6 @@ class MemberController extends Controller
             abort(403);
         }
 
-        // Validamos excluyendo el ID del propio miembro para que no marque error de duplicado
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20|unique:users,phone,' . $miembro->id,
@@ -101,15 +104,20 @@ class MemberController extends Controller
             'birthdate' => 'required|date',
             'nationality' => 'required|string',
             'curp' => 'required_if:nationality,México|nullable|string|max:18',
+            'is_baptized' => 'nullable|boolean', // Agregado
+            'baptism_date' => 'nullable|date', // Agregado
             'profile_photo' => 'nullable|image|max:2048',
         ]);
 
-        // Agregamos phone y email a la lista de datos permitidos para actualizar
         $miembro->fill($request->only([
             'name', 'paternal_surname', 'maternal_surname', 
             'phone', 'email', 
             'birthdate', 'nationality', 'curp', 'marital_status'
         ]));
+
+        // Lógica de actualización para el bautismo
+        $miembro->is_baptized = $request->has('is_baptized');
+        $miembro->baptism_date = $request->has('is_baptized') ? $request->baptism_date : null;
 
         if ($request->hasFile('profile_photo')) {
             $miembro->profile_photo_path = $request->file('profile_photo')->store('kyc/profiles', 'public');
@@ -161,6 +169,8 @@ class MemberController extends Controller
             'gender' => 'required|string|in:Masculino,Femenino', 
             'nationality' => 'required|string',
             'curp' => 'required_if:nationality,México|nullable|string|max:18|unique:users,curp',
+            'is_baptized' => 'nullable|boolean', // Agregado
+            'baptism_date' => 'nullable|date', // Agregado
             'profile_photo' => 'nullable|image|max:2048', 
             'id_front' => 'nullable|image|max:2048',
             'id_back' => 'nullable|image|max:2048',
@@ -174,8 +184,8 @@ class MemberController extends Controller
             'name' => $request->name,
             'paternal_surname' => $request->paternal_surname,
             'maternal_surname' => $request->maternal_surname,
-            'phone' => $request->phone, // <-- Guardamos el teléfono
-            'email' => $request->email, // <-- Guardamos el correo
+            'phone' => $request->phone,
+            'email' => $request->email,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
             'contract_id' => $iglesia->id,
             'birthdate' => $request->birthdate,
@@ -183,6 +193,8 @@ class MemberController extends Controller
             'nationality' => $request->nationality,
             'curp' => mb_strtoupper($request->curp),
             'marital_status' => $request->marital_status,
+            'is_baptized' => $request->has('is_baptized'), // Devuelve true/false
+            'baptism_date' => $request->has('is_baptized') ? $request->baptism_date : null, // Solo guarda si marcó la casilla
             'profile_photo_path' => $profilePath,
             'id_front_path' => $idFrontPath,
             'id_back_path' => $idBackPath,
@@ -191,7 +203,7 @@ class MemberController extends Controller
         return redirect()->back()->with('success', '¡Registro completado! Tu líder revisará tu información pronto.');
     }
 
-// ==========================================
+    // ==========================================
     // 9. ACTUALIZAR PRIVILEGIOS Y PERMISOS (RBAC)
     // ==========================================
     public function updatePermissions(Request $request, User $miembro)
