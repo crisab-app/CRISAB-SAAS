@@ -28,7 +28,7 @@
                         @if(Str::contains($error, 'validation.min.string'))
                             <li>Uno de los campos es demasiado corto (Las contraseñas deben tener mínimo 8 caracteres).</li>
                         @elseif(Str::contains($error, 'validation.unique'))
-                            <li>Ese correo o CURP ya está registrado en nuestro sistema.</li>
+                            <li>Ese correo, teléfono o CURP ya está registrado en nuestro sistema.</li>
                         @else
                             <li>{{ str_replace('validation.', 'Error en: ', $error) }}</li>
                         @endif
@@ -61,23 +61,30 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Correo Electrónico *</label>
-                    <input type="email" name="email" required placeholder="ejemplo@correo.com" value="{{ old('email') }}"
-                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Teléfono (Obligatorio) *</label>
+                        <input type="tel" name="phone" required placeholder="+52..." value="{{ old('phone') }}"
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Correo Electrónico (Opcional)</label>
+                        <input type="email" name="email" placeholder="ejemplo@correo.com" value="{{ old('email') }}"
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Contraseña *</label>
                         <input type="password" name="password" required 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300">
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                         <p class="text-[10px] text-gray-500 mt-1">Mínimo 8 caracteres.</p>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Confirmar Contraseña *</label>
                         <input type="password" name="password_confirmation" required 
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300">
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                 </div>
 
@@ -123,6 +130,22 @@
                     </div>
                 </div>
 
+                <div class="mt-4 p-4 bg-gray-900/50 rounded-xl border border-gray-700 w-full">
+                    <h4 class="text-xs font-bold text-indigo-400 mb-3 uppercase tracking-wider">Paso Espiritual</h4>
+                    
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" name="is_baptized" id="is_baptized" value="1" class="w-5 h-5 text-indigo-600 rounded bg-gray-900 border-gray-600 focus:ring-indigo-500" onchange="toggleBaptismDate()" {{ old('is_baptized') ? 'checked' : '' }}>
+                            <span class="text-sm font-medium text-gray-300">¿Estás bautizado(a) en agua?</span>
+                        </label>
+
+                        <div id="baptism_date_container" class="{{ old('is_baptized') ? '' : 'hidden' }} flex-1 sm:ml-6">
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Fecha de Bautismo (Aprox.)</label>
+                            <input type="date" name="baptism_date" value="{{ old('baptism_date') }}" class="w-full sm:w-auto bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm autosave">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="border-t border-gray-700 pt-5 mt-5 space-y-4">
                     <h3 class="text-sm font-bold text-gray-300 mb-2">Fotografía y Documentos <span class="text-gray-500 font-normal">(Opcional)</span></h3>
                     
@@ -163,6 +186,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             
+            // --- LÓGICA DE BAUTISMO ---
+            window.toggleBaptismDate = function() {
+                const checkbox = document.getElementById('is_baptized');
+                const dateContainer = document.getElementById('baptism_date_container');
+                if(checkbox.checked) {
+                    dateContainer.classList.remove('hidden');
+                } else {
+                    dateContainer.classList.add('hidden');
+                }
+            }
+
             // --- LÓGICA DE AUTO-GUARDADO SEGURO ---
             const formInputs = document.querySelectorAll('.autosave');
             const formId = 'registro_miembro_';
