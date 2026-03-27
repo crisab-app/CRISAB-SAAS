@@ -9,15 +9,27 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_baptized')->default(false)->after('marital_status');
-            $table->date('baptism_date')->nullable()->after('is_baptized');
+            // Preguntamos: ¿NO existe la columna 'is_baptized'? Entonces créala.
+            if (!Schema::hasColumn('users', 'is_baptized')) {
+                $table->boolean('is_baptized')->default(false)->after('marital_status');
+            }
+            
+            // Preguntamos: ¿NO existe la columna 'baptism_date'? Entonces créala.
+            if (!Schema::hasColumn('users', 'baptism_date')) {
+                $table->date('baptism_date')->nullable()->after('is_baptized');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['is_baptized', 'baptism_date']);
+            if (Schema::hasColumn('users', 'is_baptized')) {
+                $table->dropColumn('is_baptized');
+            }
+            if (Schema::hasColumn('users', 'baptism_date')) {
+                $table->dropColumn('baptism_date');
+            }
         });
     }
 };
