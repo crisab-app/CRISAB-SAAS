@@ -60,8 +60,6 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
     Route::put('/master-panel/church/{church}', [SuperAdminController::class, 'updateChurch'])->name('superadmin.church.update');
     Route::delete('/master-panel/church/{church}', [SuperAdminController::class, 'destroyChurch'])->name('superadmin.church.destroy');
     Route::get('/master-panel/church/{church}/users', [SuperAdminController::class, 'churchUsers'])->name('superadmin.churchUsers');
-    
-    // 🔥 RUTAS CORREGIDAS: Cambiamos 'master.users...' por 'superadmin.users...'
     Route::get('/master-panel/users/{user}/edit', [SuperAdminController::class, 'editUser'])->name('superadmin.users.edit');
     Route::put('/master-panel/users/{user}', [SuperAdminController::class, 'updateUser'])->name('superadmin.users.update');
     Route::put('/master-panel/users/{user}/password', [SuperAdminController::class, 'updatePassword'])->name('superadmin.users.password');
@@ -75,13 +73,13 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
 Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::class])->group(function () {
     
     // ==========================================
-    // 📊 DASHBOARD GENERAL (AQUÍ ESTÁ LA MAGIA CORREGIDA)
+    // 📊 DASHBOARD GENERAL (¡CORREGIDO CON START_TIME!)
     // ==========================================
     Route::get('/dashboard', function () {
-        // Traemos las próximas 5 actividades de la iglesia actual
+        // Traemos las próximas 5 actividades de la iglesia actual basándonos en 'start_time'
         $upcomingActivities = Event::where('contract_id', auth()->user()->contract_id)
-                                   ->where('date', '>=', now()->startOfDay())
-                                   ->orderBy('date', 'asc')
+                                   ->where('start_time', '>=', now()->startOfDay())
+                                   ->orderBy('start_time', 'asc')
                                    ->take(5)
                                    ->get();
 
@@ -235,4 +233,3 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('biblioteca', \App\Http\Controllers\LibraryController::class)->parameters(['biblioteca' => 'biblioteca']);
 });
-
