@@ -1,8 +1,8 @@
 <x-guest-layout>
     <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-200">¡Bienvenido(a)!</h2>
-        <p class="text-sm text-gray-400">Estás registrándote en:</p>
-        <p class="text-indigo-400 text-xl font-bold uppercase tracking-wider">{{ $iglesia->name }}</p>
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">¡Bienvenido(a)!</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Estás registrándote en:</p>
+        <p class="text-indigo-600 dark:text-indigo-400 text-xl font-bold uppercase tracking-wider mt-1">{{ $iglesia->name }}</p>
     </div>
 
     @if(session('success'))
@@ -40,7 +40,7 @@
         <form id="registroForm" action="{{ route('miembros.invitacion.store', $iglesia->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
             
-            <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 space-y-4">
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 space-y-5">
                 
                 <div>
                     <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Nombre(s) *</label>
@@ -48,7 +48,7 @@
                         class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Apellido Paterno</label>
                         <input type="text" name="paternal_surname" placeholder="Primer apellido" value="{{ old('paternal_surname') }}"
@@ -61,20 +61,20 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Teléfono (Obligatorio) *</label>
                         <input type="tel" name="phone" required placeholder="+52..." value="{{ old('phone') }}"
                             class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Correo Electrónico (Opcional)</label>
+                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Correo (Opcional)</label>
                         <input type="email" name="email" placeholder="ejemplo@correo.com" value="{{ old('email') }}"
                             class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 autosave">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Contraseña *</label>
                         <input type="password" name="password" required 
@@ -88,7 +88,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">F. Nacimiento *</label>
                         <input type="date" name="birthdate" required value="{{ old('birthdate') }}"
@@ -102,17 +102,19 @@
                             <option value="Femenino" {{ old('gender') == 'Femenino' ? 'selected' : '' }}>Femenino</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Estado Civil</label>
                         <select name="marital_status" class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500 autosave">
                             <option value="Soltero(a)" {{ old('marital_status') == 'Soltero(a)' ? 'selected' : '' }}>Soltero(a)</option>
                             <option value="Casado(a)" {{ old('marital_status') == 'Casado(a)' ? 'selected' : '' }}>Casado(a)</option>
                             <option value="Unión Libre" {{ old('marital_status') == 'Unión Libre' ? 'selected' : '' }}>Unión Libre</option>
+                            <option value="Divorciado(a)" {{ old('marital_status') == 'Divorciado(a)' ? 'selected' : '' }}>Divorciado(a)</option>
+                            <option value="Viudo(a)" {{ old('marital_status') == 'Viudo(a)' ? 'selected' : '' }}>Viudo(a)</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Nacionalidad</label>
                         <select name="nationality" id="nationality_public" 
@@ -122,12 +124,13 @@
                             <option value="Otro" {{ old('nationality') == 'Otro' ? 'selected' : '' }}>Otro</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-400 uppercase mb-1" id="curp_label">CURP *</label>
-                        <input type="text" name="curp" id="curp_public" placeholder="Ingresa tu CURP (18 caracteres)" value="{{ old('curp') }}"
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 uppercase focus:ring-indigo-500 focus:border-indigo-500 autosave">
-                        <p class="text-[10px] text-gray-500 mt-1" id="curp_helper">Formato de 18 caracteres.</p>
-                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1" id="curp_label">CURP *</label>
+                    <input type="text" name="curp" id="curp_public" placeholder="Ingresa tu CURP (18 caracteres)" value="{{ old('curp') }}"
+                        class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 uppercase focus:ring-indigo-500 focus:border-indigo-500 autosave">
+                    <p class="text-[10px] text-gray-500 mt-1" id="curp_helper">Formato de 18 caracteres.</p>
                 </div>
 
                 <div class="mt-4 p-4 bg-gray-900/50 rounded-xl border border-gray-700 w-full">
@@ -152,19 +155,19 @@
                     <div>
                         <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Foto de Perfil</label>
                         <input type="file" name="profile_photo" id="profile_photo" accept="image/*" capture="user"
-                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700">
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 transition">
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Identificación (Frente)</label>
                             <input type="file" name="id_front" id="id_front" accept="image/*" capture="environment"
-                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-gray-700 file:text-white hover:file:bg-gray-600">
+                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-gray-700 file:text-white hover:file:bg-gray-600 transition">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Identificación (Reverso)</label>
                             <input type="file" name="id_back" id="id_back" accept="image/*" capture="environment"
-                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-gray-700 file:text-white hover:file:bg-gray-600">
+                                class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-gray-700 file:text-white hover:file:bg-gray-600 transition">
                         </div>
                     </div>
                 </div>
