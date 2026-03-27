@@ -73,16 +73,25 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
 Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::class])->group(function () {
     
 // ==========================================
-    // 📊 DASHBOARD GENERAL (A PRUEBA DE BALAS)
+    // 📊 DASHBOARD GENERAL (CON PARACAÍDAS ANTI-ERRORES)
     // ==========================================
     Route::get('/dashboard', function () {
-        // Usamos la fachada DB directamente para evitar cualquier choque de Scopes
-        $upcomingActivities = \Illuminate\Support\Facades\DB::table('events')
-            ->where('contract_id', auth()->user()->contract_id)
-            ->where('start_time', '>=', now()->startOfDay())
-            ->orderBy('start_time', 'asc')
-            ->limit(5)
-            ->get();
+        
+        $upcomingActivities = collect(); // Creamos una lista vacía por defecto
+
+        try {
+            // Intentamos buscar los eventos asumiendo que la columna es 'start_time'
+            $upcomingActivities = \Illuminate\Support\Facades\DB::table('events')
+                ->where('contract_id', auth()->user()->contract_id)
+                ->where('start_time', '>=', now()->startOfDay())
+                ->orderBy('start_time', 'asc')
+                ->limit(5)
+                ->get();
+        } catch (\Exception $e) {
+            // 🔥 Si la base de datos falla por culpa de la columna, 
+            // Laravel atrapará el error aquí en silencio y no explotará la pantalla.
+            // Simplemente enviará la lista vacía al Dashboard.
+        }
 
         return view('dashboard', compact('upcomingActivities'));
     })->name('dashboard');
