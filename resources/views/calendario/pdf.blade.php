@@ -23,18 +23,8 @@
     <div class="header">
         <h1>{{ $event->title }}</h1>
         <p>
-            @php
-                // Unimos la fecha y la hora reales de tu base de datos
-                $fechaInicioStr = ($event->date ?? '') . ' ' . ($event->time ?? '');
-                $fechaInicio = trim($fechaInicioStr) ? \Carbon\Carbon::parse($fechaInicioStr) : now();
-
-                // Intentamos obtener el fin (si tienes end_time o time_end)
-                $fechaFinStr = ($event->date ?? '') . ' ' . ($event->end_time ?? $event->time_end ?? '');
-                $fechaFin = trim($fechaFinStr) != ($event->date . ' ') ? \Carbon\Carbon::parse($fechaFinStr) : null;
-            @endphp
-            
-            <strong>Inicio:</strong> {{ $fechaInicio->format('d/m/Y h:i A') }} <br>
-            <strong>Fin:</strong> {{ $fechaFin ? $fechaFin->format('d/m/Y h:i A') : 'No definido' }}
+            <strong>Inicio:</strong> {{ \Carbon\Carbon::parse($event->start_time)->format('d/m/Y h:i A') }} <br>
+            <strong>Fin:</strong> {{ \Carbon\Carbon::parse($event->end_time)->format('d/m/Y h:i A') }}
         </p>
     </div>
 
