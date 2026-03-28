@@ -20,7 +20,7 @@ class ChurchProfileController extends Controller
     {
         $church = Auth::user()->contract;
 
-        // Validamos que suban imágenes reales y que los links sean URLs válidas
+        // Validamos que suban imágenes reales, URLs válidas y la nueva Zona Horaria
         $request->validate([
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // Max 2MB
             'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096', // Max 4MB
@@ -29,6 +29,7 @@ class ChurchProfileController extends Controller
             'contact_phone' => 'nullable|string',
             'facebook_url' => 'nullable|url',
             'youtube_url' => 'nullable|url',
+            'timezone' => 'required|string', // <-- ¡Validamos la zona horaria!
         ]);
 
         // 1. Si subió un Logo Nuevo, lo guardamos y borramos el anterior (si existía)
@@ -47,9 +48,9 @@ class ChurchProfileController extends Controller
             $church->cover_photo_path = $request->file('cover_photo')->store('church_covers', 'public');
         }
 
-        // 3. Guardamos los textos y redes sociales
+        // 3. Guardamos los textos, redes sociales y LA ZONA HORARIA
         $church->fill($request->only([
-            'history', 'contact_email', 'contact_phone', 'facebook_url', 'youtube_url'
+            'history', 'contact_email', 'contact_phone', 'facebook_url', 'youtube_url', 'timezone' // <-- ¡Agregado aquí!
         ]));
         
         $church->save();

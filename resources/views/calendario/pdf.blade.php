@@ -20,11 +20,11 @@
 </head>
 <body>
 
-    <div class="header">
+<div class="header">
         <h1>{{ $event->title }}</h1>
         <p>
-            <strong>Inicio:</strong> {{ \Carbon\Carbon::parse($event->start_time)->format('d/m/Y h:i A') }} <br>
-            <strong>Fin:</strong> {{ \Carbon\Carbon::parse($event->end_time)->format('d/m/Y h:i A') }}
+            <strong>Inicio:</strong> {{ $startFormatted }} <br>
+            <strong>Fin:</strong> {{ $endFormatted }}
         </p>
     </div>
 

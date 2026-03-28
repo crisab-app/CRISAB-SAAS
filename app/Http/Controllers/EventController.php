@@ -20,12 +20,15 @@ class EventController extends Controller
             })
             ->get()
             ->map(function($event) {
+                // Soportamos ambos nombres de columna por seguridad
+                $start = $event->start_time ?? $event->start;
+                $end = $event->end_time ?? $event->end;
+
                 return [
                     'title' => $event->title,
-                    'start' => $event->start_time->toIso8601String(),
-                    'end' => $event->end_time->toIso8601String(),
+                    'start' => $start ? \Carbon\Carbon::parse($start)->toIso8601String() : now()->toIso8601String(),
+                    'end' => $end ? \Carbon\Carbon::parse($end)->toIso8601String() : now()->addHours(2)->toIso8601String(),
                     'color' => $event->color ?? '#3b82f6',
-                    // Podemos mandar datos extra al calendario si lo necesitamos
                     'description' => $event->preaching_topic ?? '', 
                 ];
             });
@@ -42,28 +45,29 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validamos todos los datos, incluyendo los nuevos de liturgia y privacidad
+        // 1. Validamos usando los nombres que vengan del formulario (start o start_time)
         $request->validate([
             'title' => 'required|string|max:255',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after_or_equal:start_time',
             'color' => 'nullable|string|max:7',
-            'visibility' => 'required|in:public,private', // Privacidad
-            'preaching_topic' => 'nullable|string|max:255', // Tema sermón
-            'liturgy_details' => 'nullable|string', // Cantos/Lecturas
+            'visibility' => 'required|in:public,private',
+            'preaching_topic' => 'nullable|string|max:255',
+            'liturgy_details' => 'nullable|string',
             'participants' => 'nullable|array', 
         ]);
+
+        // Atrapamos las fechas sin importar cómo se llamen en el formulario HTML
+        $startTime = $request->start_time ?? $request->start;
+        $endTime = $request->end_time ?? $request->end;
 
         // 2. Guardamos el evento
         $event = Event::create([
             'title' => $request->title,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
+            'start_time' => $startTime,
+            'end_time' => $endTime,
             'color' => $request->color ?? '#3b82f6',
             'visibility' => $request->visibility,
             'preaching_topic' => $request->preaching_topic,
             'liturgy_details' => $request->liturgy_details,
-            // attendance_count se queda en 0 por defecto al crear
             'user_id' => Auth::id(),
         ]);
 
@@ -76,35 +80,48 @@ class EventController extends Controller
             }
         }
 
-        // Te redirige al calendario usando el nombre de ruta que ya tenías
         return redirect()->route('calendario')->with('success', 'Evento programado exitosamente.');
     }
 
-    // === AQUÍ EMPIEZA LA NUEVA FUNCIÓN (Bien separada de la anterior) ===
     public function updateSermon(Request $request, $id)
     {
-        // 1. Buscamos el evento en la base de datos
         $event = Event::findOrFail($id);
         
-        // 2. Actualizamos los 3 campos (¡Incluyendo la nueva lectura bíblica!)
         $event->update([
             'preaching_topic' => $request->preaching_topic,
-            'bible_reading'   => $request->bible_reading, // ¡Aquí atrapamos la lectura!
+            'bible_reading'   => $request->bible_reading,
             'sermon_notes'    => $request->sermon_notes,
         ]);
 
-        // 3. Recargamos la página
         return redirect()->back()->with('success', 'Bosquejo y lectura guardados correctamente.');
     }
+
+    // ==========================================
+    // 🖨️ EXPORTAR PDF (CON MAGIA DE ZONAS HORARIAS)
+    // ==========================================
     public function exportPdf($id)
     {
-        // Buscamos el evento con sus ítems de liturgia
+        // 1. Buscamos el evento
         $event = Event::with('items')->findOrFail($id);
         
-        // Generamos el PDF usando una vista especial que crearemos ahora
-        $pdf = Pdf::loadView('calendario.pdf', compact('event'));
+        // 2. Extraemos la zona horaria de ESTA iglesia específica (o usamos Cancún si es vieja)
+        $timezone = auth()->user()->contract->timezone ?? 'America/Cancun';
+
+        // 3. Buscamos las fechas asegurándonos de agarrar la columna correcta
+        $rawStart = $event->start_time ?? $event->start ?? $event->date;
+        $rawEnd = $event->end_time ?? $event->end ?? $event->date;
+
+        // 4. Convertimos la fecha a la zona horaria de la iglesia y le damos formato bonito AQUÍ
+        $startFormatted = $rawStart ? \Carbon\Carbon::parse($rawStart)->timezone($timezone)->format('d/m/Y h:i A') : 'Hora no definida';
+        $endFormatted = $rawEnd ? \Carbon\Carbon::parse($rawEnd)->timezone($timezone)->format('d/m/Y h:i A') : 'Hora no definida';
+
+        // 5. Generamos el PDF pasándole las fechas ya procesadas como texto
+        $pdf = Pdf::loadView('calendario.pdf', [
+            'event' => $event,
+            'startFormatted' => $startFormatted,
+            'endFormatted' => $endFormatted
+        ]);
         
-        // Descargamos el archivo con un nombre bonito
         return $pdf->download('Liturgia - ' . $event->title . '.pdf');
     }
 }

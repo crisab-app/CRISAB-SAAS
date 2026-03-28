@@ -97,6 +97,31 @@
                         </div>
                     </div>
 
+                    <h3 class="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-2">🌍 Ubicación y Horario</h3>
+                    
+                    <div class="mb-8">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Zona Horaria (País) *</label>
+                        <select name="timezone" required style="background-color: #111827; border: 1px solid #374151; color: #f3f4f6;" class="w-full rounded-lg p-3 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="America/Cancun" {{ old('timezone', $church->timezone) == 'America/Cancun' ? 'selected' : '' }}>México - Cancún / Quintana Roo</option>
+                            <option value="America/Mexico_City" {{ old('timezone', $church->timezone) == 'America/Mexico_City' ? 'selected' : '' }}>México - Centro (CDMX)</option>
+                            <option value="America/Tijuana" {{ old('timezone', $church->timezone) == 'America/Tijuana' ? 'selected' : '' }}>México - Tijuana / Pacífico</option>
+                            
+                            <option value="America/Guatemala" {{ old('timezone', $church->timezone) == 'America/Guatemala' ? 'selected' : '' }}>Guatemala / Centroamérica</option>
+                            <option value="America/Bogota" {{ old('timezone', $church->timezone) == 'America/Bogota' ? 'selected' : '' }}>Colombia / Perú / Ecuador</option>
+                            <option value="America/Caracas" {{ old('timezone', $church->timezone) == 'America/Caracas' ? 'selected' : '' }}>Venezuela / Bolivia</option>
+                            <option value="America/Santiago" {{ old('timezone', $church->timezone) == 'America/Santiago' ? 'selected' : '' }}>Chile</option>
+                            <option value="America/Argentina/Buenos_Aires" {{ old('timezone', $church->timezone) == 'America/Argentina/Buenos_Aires' ? 'selected' : '' }}>Argentina</option>
+                            
+                            <option value="America/New_York" {{ old('timezone', $church->timezone) == 'America/New_York' ? 'selected' : '' }}>Estados Unidos - Este (NY / Miami)</option>
+                            <option value="America/Chicago" {{ old('timezone', $church->timezone) == 'America/Chicago' ? 'selected' : '' }}>Estados Unidos - Centro (Chicago / Dallas)</option>
+                            <option value="America/Los_Angeles" {{ old('timezone', $church->timezone) == 'America/Los_Angeles' ? 'selected' : '' }}>Estados Unidos - Pacífico (LA)</option>
+                            
+                            <option value="Europe/Madrid" {{ old('timezone', $church->timezone) == 'Europe/Madrid' ? 'selected' : '' }}>España (Península) / Europa Central</option>
+                            <option value="Atlantic/Canary" {{ old('timezone', $church->timezone) == 'Atlantic/Canary' ? 'selected' : '' }}>España (Islas Canarias)</option>
+                        </select>
+                        <p class="text-xs text-gray-400 mt-2">Esta configuración ajustará automáticamente la hora de tus eventos y PDFs a tu región.</p>
+                    </div>
+
                     <div class="flex justify-end mt-8">
                         <button type="submit" id="submitBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-all text-lg flex items-center gap-2">
                             💾 Guardar Perfil
