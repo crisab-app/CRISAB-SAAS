@@ -1,0 +1,13 @@
+http://crisab-saas.test/login
+
+Aquí tienes los datos de la tarjeta de prueba. Úsalos para llenar el formulario de pago:
+
+💳 Número de tarjeta: 4242 4242 4242 4242 (escribe 4242 cuatro veces)
+
+📅 Fecha de expiración (MM/AA): Cualquier fecha en el futuro (ejemplo: 12 / 30)
+
+🔒 CVC (Código de seguridad): Cualquier número de 3 dígitos (ejemplo: 123)
+
+👤 Nombre en la tarjeta: El que tú quieras (ejemplo: Juan Pérez)
+
+📍 Código Postal (ZIP): Cualquier número (ejemplo: 77500)
