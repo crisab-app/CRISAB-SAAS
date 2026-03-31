@@ -108,7 +108,7 @@
         </div>
     </div>
 
-    <footer class="bg-gray-100 dark:bg-gray-950 py-10 border-t border-gray-200 dark:border-gray-800">
+<footer class="bg-gray-100 dark:bg-gray-950 py-10 border-t border-gray-200 dark:border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2">
                 <span class="text-xl">⛪</span>
@@ -117,7 +117,8 @@
             <p class="text-gray-500 dark:text-gray-400 text-sm">
                 &copy; {{ date('Y') }} Todos los derechos reservados.
             </p>
-            <div class="flex gap-4">
+            <div class="flex gap-6 items-center">
+                <a href="/aviso-de-privacidad" class="text-sm text-gray-500 hover:text-indigo-500 transition">Aviso de Privacidad</a>
                 <a href="{{ route('login') }}" class="text-sm text-gray-500 hover:text-indigo-500 transition">Iniciar Sesión</a>
             </div>
         </div>
