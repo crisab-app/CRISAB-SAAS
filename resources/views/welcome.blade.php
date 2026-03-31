@@ -118,7 +118,8 @@
                 &copy; {{ date('Y') }} Todos los derechos reservados.
             </p>
             <div class="flex gap-6 items-center">
-                <a href="/aviso-de-privacidad" class="text-sm text-gray-500 hover:text-indigo-500 transition">Aviso de Privacidad</a>
+                <a href="{{ route('privacidad') }}" class="text-sm text-gray-500 hover:text-indigo-500 transition">Aviso de Privacidad</a>
+                
                 <a href="{{ route('login') }}" class="text-sm text-gray-500 hover:text-indigo-500 transition">Iniciar Sesión</a>
             </div>
         </div>
