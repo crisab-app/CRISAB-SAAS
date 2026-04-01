@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
@@ -38,6 +40,17 @@ Route::view('/terminos-de-servicio', 'legales.terminos')->name('terminos');
 Route::view('/aviso-de-privacidad', 'legales.privacidad')->name('privacidad');
 Route::view('/herramientas/generador', 'generador-activos')->name('generador');
 
+// Ruta para procesar el logout por GET (Evita el 419)
+Route::get('/logout', function (Request $request) {
+    Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    
+    return redirect()->route('despedida');
+})->name('logout.get');
+
+// Ruta para la página de despedida
+Route::view('/despedida', 'auth.despedida')->name('despedida');
 
 // ==========================================================
 // 🔒 RUTAS DE CUARENTENA (Para iglesias suspendidas)

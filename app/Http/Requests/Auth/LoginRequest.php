@@ -24,13 +24,14 @@ class LoginRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ];
-    }
+public function rules(): array
+{
+    return [
+        'email' => ['required', 'string', 'email'],
+        'password' => ['required', 'string'],
+        'captcha' => ['required', 'captcha'], // <-- Añadir esta línea
+    ];
+}
 
     /**
      * Attempt to authenticate the request's credentials.
@@ -93,4 +94,10 @@ public function authenticate(): void
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
+    public function messages()
+{
+    return [
+        'captcha.captcha' => 'El código de seguridad es incorrecto. Inténtalo de nuevo.',
+    ];
+}
 }
