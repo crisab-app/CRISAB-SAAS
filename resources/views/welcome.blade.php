@@ -46,7 +46,7 @@
             </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
             <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 drop-shadow-sm">
-                Organiza tu congregación <br class="hidden md:block">
+                Organiza tu ministerio <br class="hidden md:block">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">sin complicaciones</span>
             </h1>
             <p class="mt-4 text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
