@@ -40,14 +40,23 @@
     </nav>
 
     <div class="relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden">
+        <div class="relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
+            
+            <div class="flex justify-center mb-8">
+                <img src="{{ asset('img/logo-escudo.png') }}" alt="AdministrarMe Escudo" class="h-28 md:h-32 w-auto object-contain drop-shadow-2xl" 
+                     onerror="this.outerHTML='<div class=\'h-24 w-24 md:h-28 md:w-28 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl rotate-45 flex items-center justify-center shadow-2xl mx-auto border-4 border-white dark:border-gray-800\'><span class=\'-rotate-45 text-4xl md:text-5xl text-white font-extrabold\'>AM</span></div>'">
+            </div>
+
             <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 drop-shadow-sm">
-                Organiza tu congregación <br class="hidden md:block">
+                Organiza tu ministerio <br class="hidden md:block">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">sin complicaciones</span>
             </h1>
-            <p class="mt-4 text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
-                La plataforma todo en uno para iglesias. Gestiona miembros, organiza liturgias, crea calendarios y mantén a tu comunidad conectada desde cualquier lugar.
+            
+            <p class="mt-4 text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto mb-10 leading-relaxed">
+                La plataforma escalable que se adapta a tu visión. Ideal para uso personal como agenda, trabajo en <span class="text-indigo-600 dark:text-indigo-400 font-semibold">Campos Blancos</span>, congregaciones locales o la administración centralizada de <span class="text-purple-600 dark:text-purple-400 font-semibold">múltiples iglesias</span>.
             </p>
+            
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="{{ route('register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-full shadow-xl transition transform hover:-translate-y-1 text-lg">
                     Comenzar Gratis
@@ -57,6 +66,11 @@
                 </a>
             </div>
         </div>
+        
+        <div class="absolute top-0 left-1/2 w-full -translate-x-1/2 h-full overflow-hidden -z-10 opacity-20 dark:opacity-10 pointer-events-none">
+            <div class="absolute w-[800px] h-[800px] rounded-full bg-indigo-500 blur-3xl -top-40 left-1/2 transform -translate-x-1/2"></div>
+        </div>
+    </div>
         
         <div class="absolute top-0 left-1/2 w-full -translate-x-1/2 h-full overflow-hidden -z-10 opacity-20 dark:opacity-10 pointer-events-none">
             <div class="absolute w-[800px] h-[800px] rounded-full bg-indigo-500 blur-3xl -top-40 left-1/2 transform -translate-x-1/2"></div>
