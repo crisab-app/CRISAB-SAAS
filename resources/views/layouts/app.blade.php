@@ -50,7 +50,7 @@
             <main class="text-gray-900 dark:text-gray-100">
                 @if(auth()->check() && auth()->user()->contract && auth()->user()->contract->status === 'trial')
                 <div class="bg-yellow-500 text-black px-4 py-2.5 text-center font-bold shadow-md">
-                    ⏳ Tu iglesia está usando una versión de prueba. Disfruta la plataforma y <a href="#" class="underline hover:text-white transition">adquiere tu plan aquí</a>.
+                    ⏳ Tu iglesia está usando una versión de gratuita. Disfruta la plataforma y <a href="{{ route('cafe.index') }}" class="underline hover:text-white transition">invitanos un cafe al equipo</a>.
                 </div>
             @endif
 

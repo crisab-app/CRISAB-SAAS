@@ -121,6 +121,7 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
         Route::get('/mi-iglesia', [ChurchProfileController::class, 'edit'])->name('church.profile.edit');
         Route::put('/mi-iglesia', [ChurchProfileController::class, 'update'])->name('church.profile.update');
     });
+    Route::post('/stripe/webhook', [\App\Http\Controllers\DonationController::class, 'webhook'])->name('cafe.webhook');
 
     // 🛡️ MÓDULO DE FINANZAS (Protegido)
     Route::middleware([\App\Http\Middleware\CheckFinancePermission::class])->controller(FinanceController::class)->group(function () {

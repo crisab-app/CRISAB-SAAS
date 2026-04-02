@@ -12,9 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        
+        // 1. Aquí mantenemos tu guardia de estatus
         $middleware->alias([
-            'church.status' => CheckChurchStatus::class, // Aquí registramos el guardia
+            'church.status' => CheckChurchStatus::class, 
         ]);
+
+        // 2. 👇 AQUÍ AGREGAMOS LA EXCEPCIÓN PARA STRIPE 👇
+        $middleware->validateCsrfTokens(except: [
+            'stripe/webhook',
+        ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
