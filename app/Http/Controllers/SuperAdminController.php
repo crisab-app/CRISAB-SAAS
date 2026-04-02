@@ -105,13 +105,48 @@ class SuperAdminController extends Controller
         return redirect('/master-panel')->with('success', 'Iglesia actualizada correctamente.');
     }
 
-    public function destroyChurch(Contract $church)
+    public function destroyChurch($id)
     {
-        // Borramos usuarios ignorando los scopes
-        User::withoutGlobalScopes()->where('contract_id', $church->id)->delete();
-        $church->delete();
-        
-        return back()->with('success', 'Iglesia y todos sus usuarios eliminados permanentemente.');
+        $church = \App\Models\Contract::findOrFail($id);
+
+        // Usamos una transacción: Si algo falla, la base de datos se echa para atrás y no rompe nada
+        \Illuminate\Support\Facades\DB::transaction(function () use ($church) {
+            
+            // 1. Limpiar Liturgias y Eventos (Esto resuelve tu error de SQLSTATE 1451)
+            $eventIds = \Illuminate\Support\Facades\DB::table('events')->where('contract_id', $church->id)->pluck('id');
+            if ($eventIds->isNotEmpty()) {
+                \Illuminate\Support\Facades\DB::table('event_items')->whereIn('event_id', $eventIds)->delete();
+            }
+            \Illuminate\Support\Facades\DB::table('events')->where('contract_id', $church->id)->delete();
+
+            // 2. Limpiar Plantillas de Liturgia
+            $templateIds = \Illuminate\Support\Facades\DB::table('service_templates')->where('contract_id', $church->id)->pluck('id');
+            if ($templateIds->isNotEmpty()) {
+                \Illuminate\Support\Facades\DB::table('service_template_items')->whereIn('service_template_id', $templateIds)->delete();
+            }
+            \Illuminate\Support\Facades\DB::table('service_templates')->where('contract_id', $church->id)->delete();
+
+            // 3. Limpiar Relaciones de Usuarios con Grupos y Privilegios
+            $groupIds = \Illuminate\Support\Facades\DB::table('groups')->where('contract_id', $church->id)->pluck('id');
+            if ($groupIds->isNotEmpty()) {
+                \Illuminate\Support\Facades\DB::table('group_user')->whereIn('group_id', $groupIds)->delete();
+            }
+            \Illuminate\Support\Facades\DB::table('groups')->where('contract_id', $church->id)->delete();
+            
+            $skillIds = \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->pluck('id');
+            if ($skillIds->isNotEmpty()) {
+                \Illuminate\Support\Facades\DB::table('skill_user')->whereIn('skill_id', $skillIds)->delete();
+            }
+            \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->delete();
+
+            // 4. Eliminar Usuarios de la Iglesia
+            \Illuminate\Support\Facades\DB::table('users')->where('contract_id', $church->id)->delete();
+
+            // 5. Finalmente, eliminar la Iglesia (Contrato)
+            $church->delete();
+        });
+
+        return back()->with('success', 'Iglesia y todos sus registros asociados fueron eliminados correctamente.');
     }
 
     // ==========================================
@@ -136,44 +171,54 @@ class SuperAdminController extends Controller
         return view('superadmin.users-edit', compact('user'));
     }
 
-    // FUNCIÓN CORREGIDA Y UNIFICADA
+    // FUNCIÓN CORREGIDA
     public function updateUser(Request $request, User $user)
     {
+        // 1. Validamos los datos (El teléfono ahora es opcional)
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'nullable|email|unique:users,email,' . $user->id,
-            'phone' => 'required|string|max:20|unique:users,phone,' . $user->id, // Validación de teléfono obligatoria
+            'phone' => 'nullable|string|max:20|unique:users,phone,' . $user->id, 
             'role' => 'required|in:miembro,admin,pastor',
-            'password' => 'nullable|string|min:8', // Validación de contraseña opcional
+            'password' => 'nullable|string|min:8', 
         ]);
 
-        // Guardamos los datos básicos
+        // 2. Guardamos los datos básicos
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->phone = $request->phone;
+        
+        // Si el formulario mandó un teléfono, lo actualiza, si no, lo deja como estaba
+        if ($request->has('phone')) {
+            $user->phone = $request->phone;
+        }
+
         $user->role = $request->role;
         $user->is_church_owner = $request->has('is_church_owner');
 
-        // MAGIA: Si lo haces Pastor o Admin, le encendemos los permisos de los menús
+        // 3. MAGIA: Si lo haces Pastor o Admin, le encendemos los permisos de los menús
         if (in_array($request->role, ['pastor', 'admin']) || $user->is_church_owner) {
             $user->can_manage_finances = true;
             $user->can_manage_members = true;
             $user->can_manage_church = true;
+        } else {
+            // Opcional: Si lo bajas a 'miembro', le quitamos los permisos administrativos
+            $user->can_manage_finances = false;
+            $user->can_manage_members = false;
+            $user->can_manage_church = false;
         }
 
-        // Si escribió una contraseña, la actualizamos
+        // 4. Si escribió una contraseña, la actualizamos
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
         $user->save();
 
-        // Redirigimos a la lista de usuarios de esa iglesia
+        // 5. Redirigimos a la lista de usuarios de esa iglesia
         return redirect()->route('superadmin.churchUsers', $user->contract_id)
                          ->with('success', 'Usuario y privilegios actualizados correctamente.');
     }
 
-    // Esta función la dejé por si tienes un formulario exclusivo solo para cambiar la contraseña
     public function updatePassword(Request $request, User $user)
     {
         $request->validate([
