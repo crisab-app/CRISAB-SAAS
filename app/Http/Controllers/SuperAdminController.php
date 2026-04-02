@@ -101,25 +101,23 @@ class SuperAdminController extends Controller
             'status' => $request->status,
         ]);
 
-        // Asegúrate de que la ruta /master-panel sea correcta para tu sistema
         return redirect('/master-panel')->with('success', 'Iglesia actualizada correctamente.');
     }
 
-public function destroyChurch($id)
+    public function destroyChurch($id)
     {
         $church = \App\Models\Contract::findOrFail($id);
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($church) {
             
-            // 1. Limpiar Liturgias y Eventos (Esto resuelve tu error de SQLSTATE 1451)
+            // 1. Limpiar Liturgias y Eventos
             $eventIds = \Illuminate\Support\Facades\DB::table('events')->where('contract_id', $church->id)->pluck('id');
             if ($eventIds->isNotEmpty()) {
                 \Illuminate\Support\Facades\DB::table('event_items')->whereIn('event_id', $eventIds)->delete();
             }
             \Illuminate\Support\Facades\DB::table('events')->where('contract_id', $church->id)->delete();
 
-            // 2. Limpiar Plantillas de Liturgia (¡CORREGIDO!)
-            // Borramos directamente las plantillas, ya que no existe la tabla anidada que causaba el error.
+            // 2. Limpiar Plantillas de Liturgia
             if (\Illuminate\Support\Facades\Schema::hasTable('service_templates')) {
                 \Illuminate\Support\Facades\DB::table('service_templates')->where('contract_id', $church->id)->delete();
             }
@@ -150,6 +148,7 @@ public function destroyChurch($id)
 
         return back()->with('success', 'Iglesia y todos sus registros asociados fueron eliminados correctamente.');
     }
+
     // ==========================================
     // --- GESTIÓN DE USUARIOS ---
     // ==========================================
@@ -172,7 +171,6 @@ public function destroyChurch($id)
         return view('superadmin.users-edit', compact('user'));
     }
 
-    // FUNCIÓN CORREGIDA
     public function updateUser(Request $request, User $user)
     {
         // 1. Validamos los datos (El teléfono ahora es opcional)
@@ -188,13 +186,15 @@ public function destroyChurch($id)
         $user->name = $request->name;
         $user->email = $request->email;
         
-        // Si el formulario mandó un teléfono, lo actualiza, si no, lo deja como estaba
         if ($request->has('phone')) {
             $user->phone = $request->phone;
         }
 
         $user->role = $request->role;
         $user->is_church_owner = $request->has('is_church_owner');
+        
+        // 👇 AQUÍ ESTÁ LA LÍNEA NUEVA PARA ACTIVAR AL USUARIO 👇
+        $user->is_active_donor = $request->has('is_active_donor');
 
         // 3. MAGIA: Si lo haces Pastor o Admin, le encendemos los permisos de los menús
         if (in_array($request->role, ['pastor', 'admin']) || $user->is_church_owner) {
@@ -202,7 +202,6 @@ public function destroyChurch($id)
             $user->can_manage_members = true;
             $user->can_manage_church = true;
         } else {
-            // Opcional: Si lo bajas a 'miembro', le quitamos los permisos administrativos
             $user->can_manage_finances = false;
             $user->can_manage_members = false;
             $user->can_manage_church = false;
@@ -217,7 +216,7 @@ public function destroyChurch($id)
 
         // 5. Redirigimos a la lista de usuarios de esa iglesia
         return redirect()->route('superadmin.churchUsers', $user->contract_id)
-                         ->with('success', 'Usuario y privilegios actualizados correctamente.');
+                         ->with('success', 'Usuario, privilegios y estatus actualizados correctamente.');
     }
 
     public function updatePassword(Request $request, User $user)

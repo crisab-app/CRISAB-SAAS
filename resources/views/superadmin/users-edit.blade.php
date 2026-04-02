@@ -52,6 +52,7 @@
                                 <option value="pastor" {{ $user->role == 'pastor' ? 'selected' : '' }}>Pastor / Presidente (Acceso Total)</option>
                             </select>
                         </div>
+                        
                         <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">🔐 Cambiar Contraseña (Opcional)</h3>
                             <p class="text-sm text-gray-500 mb-4">Si dejas este campo en blanco, la contraseña actual se mantendrá intacta.</p>
@@ -65,12 +66,22 @@
                             </div>
                         </div>
 
-                        <div class="mb-8 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-lg">
+                        <div class="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-lg mt-8">
                             <label class="flex items-center cursor-pointer">
                                 <input type="checkbox" name="is_church_owner" value="1" {{ $user->is_church_owner ? 'checked' : '' }} class="rounded border-gray-300 text-purple-600 shadow-sm focus:border-purple-500 dark:bg-gray-900 dark:border-gray-600 w-5 h-5">
                                 <span class="ml-3 text-sm text-purple-900 dark:text-purple-300 font-bold">Es el Creador / Dueño de la cuenta</span>
                             </label>
                             <p class="text-xs text-purple-700 dark:text-purple-400 ml-8 mt-1">Solo el dueño tiene poder absoluto y no puede ser borrado por otros pastores.</p>
+                        </div>
+
+                        <div class="mb-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-lg">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" name="is_active_donor" value="1" {{ $user->is_active_donor ? 'checked' : '' }} class="rounded border-gray-300 text-amber-600 shadow-sm focus:border-amber-500 dark:bg-gray-900 dark:border-gray-600 w-5 h-5">
+                                <span class="ml-3 text-sm text-amber-900 dark:text-amber-300 font-bold">Cuenta ACTIVADA (Donador Activo)</span>
+                            </label>
+                            <p class="text-xs text-amber-700 dark:text-amber-400 ml-8 mt-1">
+                                Si este switch está encendido, el usuario no verá el mensaje de cobro y tendrá acceso completo a su nivel.
+                            </p>
                         </div>
 
                         <div class="flex justify-end gap-4 border-t border-gray-100 dark:border-gray-700 pt-5">

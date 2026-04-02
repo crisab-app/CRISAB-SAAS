@@ -27,6 +27,17 @@
                         </select>
                     </div>
 
+                    <div class="mb-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-lg">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_active_donor" value="1" {{ $user->is_active_donor ? 'checked' : '' }} 
+                                class="rounded border-gray-300 text-amber-600 shadow-sm focus:border-amber-500 dark:bg-gray-900 dark:border-gray-600 w-5 h-5">
+                            <span class="ml-3 text-sm text-amber-900 dark:text-amber-300 font-bold">Cuenta ACTIVADA (Donador Activo)</span>
+                        </label>
+                        <p class="text-xs text-amber-700 dark:text-amber-400 ml-8 mt-1">
+                            Si este switch está encendido, el usuario puede saltarse el mensaje de cobro y usar todo el sistema.
+                        </p>
+                    </div>
+
                     <div class="flex justify-between items-center">
                         <a href="{{ url('/master-panel') }}" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-bold">← Cancelar</a>
                         <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md font-bold hover:bg-indigo-700">Guardar Cambios</button>
