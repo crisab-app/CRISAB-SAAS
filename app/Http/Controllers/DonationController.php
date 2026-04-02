@@ -51,28 +51,23 @@ class DonationController extends Controller
             return response()->json(['error' => 'Firma inválida'], 400);
         }
 
-        // Manejar el evento específico de pago exitoso
+       
+       // Manejar el evento específico de pago exitoso
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
-            
-            // Laravel Cashier envía automáticamente el ID del usuario en client_reference_id
             $userId = $session->client_reference_id; 
             
             if ($userId) {
                 $user = User::find($userId);
                 if ($user) {
-                    // 🎉 ¡PAGO EXITOSO!
-                    // Aquí el usuario ya pagó. Dejamos un log en el sistema.
-                    Log::info("🎉 ¡El usuario {$user->name} de la iglesia {$user->contract->name} ha invitado un café!");
+                    // 🎉 ¡MAGIA! Activamos la sesión individual de este usuario
+                    $user->is_active_donor = true;
+                    $user->save();
                     
-                    // Opcional: Si en el futuro creas una tabla 'donations' o un campo en 'users',
-                    // lo actualizas aquí. Ejemplo:
-                    // $user->coffee_donations += 1;
-                    // $user->save();
+                    Log::info("🎉 El usuario {$user->name} ha invitado un café y su sesión ha sido ACTIVADA.");
                 }
             }
         }
-
         // Le respondemos a Stripe con un 200 OK para que sepa que recibimos el mensaje
         return response()->json(['status' => 'success'], 200);
     }

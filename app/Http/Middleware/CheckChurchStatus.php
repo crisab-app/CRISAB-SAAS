@@ -4,30 +4,29 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckChurchStatus
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
 
-        // 1. Si es el SuperAdmin "Fantasma" (sin iglesia), no lo dejamos entrar a módulos locales
-        // y lo redirigimos automáticamente a su Centro de Mando Global.
-        if ($user && $user->is_super_admin && is_null($user->contract_id)) {
-            return redirect()->route('superadmin.index')->with('error', 'Estás en modo SuperAdmin global. No tienes una iglesia local asignada para ver este módulo.');
+        // 1. Si es el SuperAdmin, lo dejamos pasar a donde quiera
+        if ($user->is_super_admin) {
+            return $next($request);
         }
 
-        // 2. Seguridad: Si es un usuario normal pero su cuenta perdió la relación con la iglesia
-        if (!$user || !$user->contract) {
-            abort(403, 'Error crítico: Tu usuario no tiene una iglesia asignada en el sistema.');
+        // 2. Si el usuario NO ha invitado su café (is_active_donor es false)
+        // Y NO está intentando acceder a la página de pago, lo redirigimos a pagar.
+        if (!$user->is_active_donor && !$request->routeIs('cafe.*') && !$request->routeIs('logout.get')) {
+            // Aquí puedes decidir: 
+            // O lo mandas a una vista que diga "Tu prueba expiró, paga aquí" (ej. view('errors.suspended'))
+            // O lo mandas directo a la pantalla bonita del café:
+            return redirect()->route('cafe.index')->with('warning', 'Para continuar usando AdministrarMe, por favor activa tu cuenta invitándonos un café.');
         }
 
-        // 3. Cuarentena: Si la iglesia está suspendida por falta de pago o bloqueo
-        if ($user->contract->status === 'suspended') {
-            return redirect()->route('cuenta.suspendida');
-        }
-
-        // Si pasa todas las pruebas, lo dejamos entrar al módulo local
+        // 3. Si ya pagó, lo dejamos pasar libremente
         return $next($request);
     }
 }
