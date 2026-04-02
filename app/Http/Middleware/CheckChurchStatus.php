@@ -12,21 +12,20 @@ class CheckChurchStatus
     {
         $user = auth()->user();
 
-        // 1. Si es el SuperAdmin, lo dejamos pasar a donde quiera
-        if ($user->is_super_admin) {
+        // 1. Si es el SuperAdmin, pasa directo
+        if ($user && $user->is_super_admin) {
             return $next($request);
         }
 
-        // 2. Si el usuario NO ha invitado su café (is_active_donor es false)
-        // Y NO está intentando acceder a la página de pago, lo redirigimos a pagar.
-        if (!$user->is_active_donor && !$request->routeIs('cafe.*') && !$request->routeIs('logout.get')) {
-            // Aquí puedes decidir: 
-            // O lo mandas a una vista que diga "Tu prueba expiró, paga aquí" (ej. view('errors.suspended'))
-            // O lo mandas directo a la pantalla bonita del café:
-            return redirect()->route('cafe.index')->with('warning', 'Para continuar usando AdministrarMe, por favor activa tu cuenta invitándonos un café.');
+        // 2. Si la iglesia completa fue SUSPENDIDA por ti (mal uso, etc.), sí los bloqueamos
+        if ($user && $user->contract && $user->contract->status === 'suspended') {
+            if (!$request->routeIs('cuenta.suspendida') && !$request->routeIs('logout.get')) {
+                return redirect()->route('cuenta.suspendida');
+            }
         }
 
-        // 3. Si ya pagó, lo dejamos pasar libremente
+        // 3. ¡VÍA LIBRE! Ya no bloqueamos si no han donado. 
+        // Dejamos que usen el sistema con los privilegios que tengan.
         return $next($request);
     }
 }

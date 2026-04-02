@@ -33,6 +33,20 @@
         </script>    
     </head>
     <body class="font-sans antialiased">
+        @auth
+            @if(!auth()->user()->is_active_donor && !request()->routeIs('cafe.*'))
+                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-white text-center text-sm shadow-md relative z-50">
+                    <p class="flex items-center justify-center flex-wrap gap-2">
+                        <span>⏳ Tu cuenta está usando la versión gratuita de AdministrarMe.</span>
+                        <span class="hidden sm:inline">|</span>
+                        <span>Apoya este ministerio invitándonos un café al mes.</span>
+                        <a href="{{ route('cafe.index') }}" class="inline-block bg-white text-indigo-700 font-bold px-3 py-1 rounded-full text-xs hover:bg-gray-100 transition shadow-sm ml-2">
+                            ☕ Invitar un café
+                        </a>
+                    </p>
+                </div>
+            @endif
+        @endauth
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
             
             @include('layouts.navigation')
