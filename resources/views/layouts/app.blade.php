@@ -39,7 +39,7 @@
                     <p class="flex items-center justify-center flex-wrap gap-2">
                         <span>⏳ Tu cuenta está usando la versión gratuita de AdministrarMe.</span>
                         <span class="hidden sm:inline">|</span>
-                        <span>Apoya este ministerio invitándonos un café al mes.</span>
+                        <span>Apoya este ministerio invitándonos un café. Ayudanos a mantener el sistema limpio y sin anuncios</span>
                         <a href="{{ route('cafe.index') }}" class="inline-block bg-white text-indigo-700 font-bold px-3 py-1 rounded-full text-xs hover:bg-gray-100 transition shadow-sm ml-2">
                             ☕ Invitar un café
                         </a>
