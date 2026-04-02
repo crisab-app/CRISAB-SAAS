@@ -105,11 +105,10 @@ class SuperAdminController extends Controller
         return redirect('/master-panel')->with('success', 'Iglesia actualizada correctamente.');
     }
 
-    public function destroyChurch($id)
+public function destroyChurch($id)
     {
         $church = \App\Models\Contract::findOrFail($id);
 
-        // Usamos una transacción: Si algo falla, la base de datos se echa para atrás y no rompe nada
         \Illuminate\Support\Facades\DB::transaction(function () use ($church) {
             
             // 1. Limpiar Liturgias y Eventos (Esto resuelve tu error de SQLSTATE 1451)
@@ -119,25 +118,28 @@ class SuperAdminController extends Controller
             }
             \Illuminate\Support\Facades\DB::table('events')->where('contract_id', $church->id)->delete();
 
-            // 2. Limpiar Plantillas de Liturgia
-            $templateIds = \Illuminate\Support\Facades\DB::table('service_templates')->where('contract_id', $church->id)->pluck('id');
-            if ($templateIds->isNotEmpty()) {
-                \Illuminate\Support\Facades\DB::table('service_template_items')->whereIn('service_template_id', $templateIds)->delete();
+            // 2. Limpiar Plantillas de Liturgia (¡CORREGIDO!)
+            // Borramos directamente las plantillas, ya que no existe la tabla anidada que causaba el error.
+            if (\Illuminate\Support\Facades\Schema::hasTable('service_templates')) {
+                \Illuminate\Support\Facades\DB::table('service_templates')->where('contract_id', $church->id)->delete();
             }
-            \Illuminate\Support\Facades\DB::table('service_templates')->where('contract_id', $church->id)->delete();
 
             // 3. Limpiar Relaciones de Usuarios con Grupos y Privilegios
-            $groupIds = \Illuminate\Support\Facades\DB::table('groups')->where('contract_id', $church->id)->pluck('id');
-            if ($groupIds->isNotEmpty()) {
-                \Illuminate\Support\Facades\DB::table('group_user')->whereIn('group_id', $groupIds)->delete();
+            if (\Illuminate\Support\Facades\Schema::hasTable('groups')) {
+                $groupIds = \Illuminate\Support\Facades\DB::table('groups')->where('contract_id', $church->id)->pluck('id');
+                if ($groupIds->isNotEmpty()) {
+                    \Illuminate\Support\Facades\DB::table('group_user')->whereIn('group_id', $groupIds)->delete();
+                }
+                \Illuminate\Support\Facades\DB::table('groups')->where('contract_id', $church->id)->delete();
             }
-            \Illuminate\Support\Facades\DB::table('groups')->where('contract_id', $church->id)->delete();
             
-            $skillIds = \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->pluck('id');
-            if ($skillIds->isNotEmpty()) {
-                \Illuminate\Support\Facades\DB::table('skill_user')->whereIn('skill_id', $skillIds)->delete();
+            if (\Illuminate\Support\Facades\Schema::hasTable('skills')) {
+                $skillIds = \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->pluck('id');
+                if ($skillIds->isNotEmpty()) {
+                    \Illuminate\Support\Facades\DB::table('skill_user')->whereIn('skill_id', $skillIds)->delete();
+                }
+                \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->delete();
             }
-            \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->delete();
 
             // 4. Eliminar Usuarios de la Iglesia
             \Illuminate\Support\Facades\DB::table('users')->where('contract_id', $church->id)->delete();
@@ -148,7 +150,6 @@ class SuperAdminController extends Controller
 
         return back()->with('success', 'Iglesia y todos sus registros asociados fueron eliminados correctamente.');
     }
-
     // ==========================================
     // --- GESTIÓN DE USUARIOS ---
     // ==========================================

@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\CheckChurchStatus; // IMPORTANTE: Agregamos esta línea
+use App\Http\Middleware\CheckChurchStatus;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,12 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         
-        // 1. Aquí mantenemos tu guardia de estatus
+        // 👇 1. AGREGAMOS ESTA LÍNEA PARA COOLIFY (HTTPS) 👇
+        $middleware->trustProxies(at: '*');
+
+        // 2. Tu guardia de estatus
         $middleware->alias([
             'church.status' => CheckChurchStatus::class, 
         ]);
 
-        // 2. 👇 AQUÍ AGREGAMOS LA EXCEPCIÓN PARA STRIPE 👇
+        // 3. La excepción para Stripe
         $middleware->validateCsrfTokens(except: [
             'stripe/webhook',
         ]);
