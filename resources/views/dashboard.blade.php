@@ -89,14 +89,14 @@
                                         @foreach($upcomingActivities as $activity)
                                             <li class="flex items-center gap-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-750 rounded-xl transition border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
                                                 <div class="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg p-2 text-center min-w-[60px]">
-                                                    <p class="text-xs font-bold uppercase">{{ \Carbon\Carbon::parse($activity->date)->translatedFormat('M') }}</p>
-                                                    <p class="text-xl font-black leading-none">{{ \Carbon\Carbon::parse($activity->date)->format('d') }}</p>
+                                                    <p class="text-xs font-bold uppercase">{{ \Carbon\Carbon::parse($activity->start)->translatedFormat('M') }}</p>
+                                                    <p class="text-xl font-black leading-none">{{ \Carbon\Carbon::parse($activity->start)->format('d') }}</p>
                                                 </div>
                                                 
                                                 <div class="flex-grow">
                                                     <p class="font-bold text-gray-900 dark:text-white">{{ $activity->title }}</p>
                                                     <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                                                        🕒 {{ $activity->time ? \Carbon\Carbon::parse($activity->time)->format('h:i A') : 'Todo el día' }}
+                                                        🕒 {{ \Carbon\Carbon::parse($activity->start)->format('h:i A') }}
                                                     </p>
                                                 </div>
                                             </li>

@@ -85,23 +85,16 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
 // ==========================================================
 Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::class])->group(function () {
     
-   // ==========================================
-    // 📊 DASHBOARD GENERAL (CON PARACAÍDAS)
+// ==========================================
+    // 📊 DASHBOARD GENERAL (CÓDIGO DEFINITIVO)
     // ==========================================
     Route::get('/dashboard', function () {
-        
-        $upcomingActivities = collect(); 
-
-        try {
-            // Aún no sabemos el nombre, puse 'start_date' como intento, pero el catch evitará que explote
-            $upcomingActivities = \App\Models\Event::where('contract_id', auth()->user()->contract_id)
-                ->where('start_date', '>=', now()->startOfDay())
-                ->orderBy('start_date', 'asc')
-                ->limit(5)
-                ->get();
-        } catch (\Exception $e) {
-            // Silencio total si la columna vuelve a fallar
-        }
+        // Apuntamos a la columna 'start' que es donde guardas la fecha y hora
+        $upcomingActivities = \App\Models\Event::where('contract_id', auth()->user()->contract_id)
+            ->where('start', '>=', now()->startOfDay())
+            ->orderBy('start', 'asc')
+            ->limit(5)
+            ->get();
 
         return view('dashboard', compact('upcomingActivities'));
     })->name('dashboard');
