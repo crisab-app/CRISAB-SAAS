@@ -135,7 +135,9 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&color=4f46e5&background=e0e7ff&rounded=true" alt="Avatar" class="h-8 w-8 rounded-full mr-2 inline-block">
+                            <div class="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center mr-2 text-indigo-600 dark:text-indigo-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            </div>
                             <div>{{ Auth::user()->name }}</div>
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -159,7 +161,7 @@
             </div>
 
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 transition duration-150 ease-in-out">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-900 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 transition duration-150 ease-in-out relative z-[60]">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -169,7 +171,7 @@
         </div>
     </div>
 
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden dark:bg-gray-800">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden absolute top-16 left-0 w-full bg-white dark:bg-gray-800 shadow-2xl border-b border-gray-200 dark:border-gray-700 z-[100] max-h-[85vh] overflow-y-auto">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">🏠 {{ __('Inicio') }}</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('church.profile.edit')" :active="request()->routeIs('church.profile.*')">⛪ {{ __('Mi Iglesia') }}</x-responsive-nav-link>
@@ -185,20 +187,25 @@
             <x-responsive-nav-link :href="route('biblioteca.index')" :active="request()->routeIs('biblioteca.*')">📚 {{ __('Biblioteca') }}</x-responsive-nav-link>
         </div>
 
-        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900/50">
+            <div class="px-4 flex items-center gap-3 mb-3">
+                <div class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </div>
+                <div>
+                    <div class="font-bold text-base text-gray-800 dark:text-gray-200 leading-tight">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-xs text-gray-500">{{ Auth::user()->email }}</div>
+                </div>
             </div>
 
-            <div class="mt-3 space-y-1">
+            <div class="mt-3 space-y-1 pb-4">
                 @if(Auth::user()->can_manage_members || Auth::user()->can_manage_church || Auth::user()->is_super_admin)
-                    <button @click="openAviso = true" class="w-full text-left flex items-center ps-3 pe-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition duration-150 ease-in-out">
+                    <button @click="openAviso = true" class="w-full text-left flex items-center ps-3 pe-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none transition duration-150 ease-in-out">
                         📢 Enviar Aviso Masivo
                     </button>
                 @endif
                 
-                <button onclick="localStorage.theme = localStorage.theme === 'dark' ? 'light' : 'dark'; document.documentElement.classList.toggle('dark')" class="w-full text-left flex items-center ps-3 pe-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition duration-150 ease-in-out">
+                <button onclick="localStorage.theme = localStorage.theme === 'dark' ? 'light' : 'dark'; document.documentElement.classList.toggle('dark')" class="w-full text-left flex items-center ps-3 pe-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none transition duration-150 ease-in-out">
                     🌓 Cambiar Tema
                 </button>
 
@@ -212,7 +219,7 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
-                        🚪 {{ __('Cerrar Sesión') }}
+                        <span class="text-red-500 font-bold">🚪 {{ __('Cerrar Sesión') }}</span>
                     </x-responsive-nav-link>
                 </form>
             </div>
@@ -220,8 +227,8 @@
     </div>
 
     @if(Auth::user()->can_manage_members || Auth::user()->can_manage_church || Auth::user()->is_super_admin)
-        <div x-show="openAviso" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900 bg-opacity-60 backdrop-blur-sm" @click.away="openAviso = false">
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 transform transition-all" @click.stop>
+        <div x-show="openAviso" style="display: none;" class="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900 bg-opacity-60 backdrop-blur-sm" @click.away="openAviso = false">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 transform transition-all mx-4" @click.stop>
                 <div class="flex justify-between items-center mb-5 border-b border-gray-100 dark:border-gray-700 pb-3">
                     <h3 class="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">📢 Enviar Aviso</h3>
                     <button @click="openAviso = false" class="text-gray-400 hover:text-red-500 transition-colors">
