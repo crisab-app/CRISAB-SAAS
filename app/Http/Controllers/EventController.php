@@ -124,4 +124,20 @@ class EventController extends Controller
         
         return $pdf->download('Liturgia - ' . $event->title . '.pdf');
     }
+    public function exportUpcomingPdf()
+{
+    $church = auth()->user()->contract;
+    
+    // Obtenemos la misma lista del dashboard
+    $activities = \App\Models\Event::where('contract_id', $church->id)
+        ->where('start', '>=', now()->startOfDay())
+        ->where('start', '<=', now()->addMonths(2)->endOfDay())
+        ->orderBy('start', 'asc')
+        ->get();
+
+    // Aquí asumo que usas DomPDF o similar como en tu otra función exportPdf
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.activities-report', compact('activities', 'church'));
+    
+    return $pdf->download('Reporte_Actividades_' . now()->format('d_m_Y') . '.pdf');
+}
 }
