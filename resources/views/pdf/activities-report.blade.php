@@ -49,6 +49,7 @@
         td {
             padding: 12px;
             border-bottom: 1px solid #e5e7eb;
+            vertical-align: middle;
         }
         .date-col {
             width: 25%;
@@ -61,6 +62,15 @@
         }
         .title-col {
             width: 55%;
+        }
+        .color-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px; /* Cambia a 50% si prefieres que sea un círculo en vez de cuadrito */
+            margin-right: 8px;
+            vertical-align: middle;
+            border: 1px solid rgba(0,0,0,0.1);
         }
         .empty-state {
             text-align: center;
@@ -109,6 +119,7 @@
                             {{ \Carbon\Carbon::parse($activity->start)->format('h:i A') }}
                         </td>
                         <td class="title-col">
+                            <span class="color-indicator" style="background-color: {{ $activity->color ?? '#9ca3af' }};"></span>
                             <strong>{{ $activity->title }}</strong>
                         </td>
                     </tr>
