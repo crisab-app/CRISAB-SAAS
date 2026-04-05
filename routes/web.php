@@ -85,30 +85,19 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
 // ==========================================================
 Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::class])->group(function () {
     
-// ==========================================
-    // 📊 DASHBOARD GENERAL (CON PARACAÍDAS ANTI-ERRORES)
+    // ==========================================
+    // 📊 DASHBOARD GENERAL (CORREGIDO)
     // ==========================================
     Route::get('/dashboard', function () {
-        
-        $upcomingActivities = collect(); // Creamos una lista vacía por defecto
-
-        try {
-            // Intentamos buscar los eventos asumiendo que la columna es 'start_time'
-            $upcomingActivities = \Illuminate\Support\Facades\DB::table('events')
-                ->where('contract_id', auth()->user()->contract_id)
-                ->where('start_time', '>=', now()->startOfDay())
-                ->orderBy('start_time', 'asc')
-                ->limit(5)
-                ->get();
-        } catch (\Exception $e) {
-            // 🔥 Si la base de datos falla por culpa de la columna, 
-            // Laravel atrapará el error aquí en silencio y no explotará la pantalla.
-            // Simplemente enviará la lista vacía al Dashboard.
-        }
+        // Quitamos el try-catch. Usamos el modelo Event y asumimos que la columna es 'date'
+        $upcomingActivities = \App\Models\Event::where('contract_id', auth()->user()->contract_id)
+            ->where('date', '>=', now()->startOfDay())
+            ->orderBy('date', 'asc')
+            ->limit(5)
+            ->get();
 
         return view('dashboard', compact('upcomingActivities'));
     })->name('dashboard');
-    
     
     // ==========================================
     // ☕ MÓDULO: INVÍTAME UN CAFÉ
@@ -218,7 +207,6 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
 
         $user = auth()->user();
         
-        // Buscamos a TODOS los miembros que pertenecen a la misma iglesia
         $miembros = \App\Models\User::where('contract_id', $user->contract_id)->get();
 
         \Illuminate\Support\Facades\Notification::send($miembros, new \App\Notifications\ActivityReminder(
