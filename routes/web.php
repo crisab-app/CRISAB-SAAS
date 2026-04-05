@@ -86,18 +86,20 @@ Route::middleware(['auth', \App\Http\Middleware\SuperAdminMiddleware::class])->g
 Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::class])->group(function () {
     
 // ==========================================
-    // 📊 DASHBOARD GENERAL (CÓDIGO DEFINITIVO)
+    // 📊 DASHBOARD GENERAL (Rango de 2 meses)
     // ==========================================
     Route::get('/dashboard', function () {
-        // Apuntamos a la columna 'start' que es donde guardas la fecha y hora
         $upcomingActivities = \App\Models\Event::where('contract_id', auth()->user()->contract_id)
             ->where('start', '>=', now()->startOfDay())
+            ->where('start', '<=', now()->addMonths(2)->endOfDay()) // Próximos 2 meses
             ->orderBy('start', 'asc')
-            ->limit(5)
             ->get();
 
         return view('dashboard', compact('upcomingActivities'));
     })->name('dashboard');
+
+    // Añade esta nueva ruta para el reporte global bajo el middleware de auth
+    Route::get('/dashboard/reporte-actividades', [EventController::class, 'exportUpcomingPdf'])->name('calendario.reporte.pdf');
     
     // ==========================================
     // ☕ MÓDULO: INVÍTAME UN CAFÉ
