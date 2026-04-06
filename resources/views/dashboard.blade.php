@@ -7,6 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            
             @if(request()->query('cafe') == 'gracias')
                 <div class="mb-8 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/40 dark:to-orange-900/40 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 shadow-sm flex items-center justify-between relative overflow-hidden">
                     <div class="flex items-center gap-4 z-10">
@@ -24,11 +25,28 @@
             @endif
             
             @php
-                // Obtenemos mágicamente los datos de la iglesia a la que pertenece este usuario
+                // Obtenemos los datos de la iglesia a la que pertenece este usuario
                 $church = Auth::user()->contract;
             @endphp
 
             @if($church)
+                
+                @if($church->needsCoffeeContribution())
+                    <div class="mb-8 bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-1 shadow-lg animate-pulse">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="text-4xl">☕</div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-gray-900 dark:text-white">¡Tu mes de regalo ha finalizado!</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Esperamos que el sistema esté siendo de gran bendición para tu congregación. Para ayudarnos a mantener los servidores activos y seguros, te invitamos a apoyarnos con un café mensual.</p>
+                                </div>
+                            </div>
+                            <a href="{{ route('cafe.index') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition shadow-md whitespace-nowrap text-center">
+                                Invitar un Café
+                            </a>
+                        </div>
+                    </div>
+                @endif
                 <div class="bg-gray-800 border border-gray-700 shadow-xl rounded-xl overflow-hidden mb-8">
                     <div class="h-64 md:h-80 w-full bg-gray-900 relative bg-cover bg-center"
                          style="background-image: url('{{ $church->cover_photo_path ? asset('storage/' . $church->cover_photo_path) : 'https://images.unsplash.com/photo-1438283173091-5dbf5c5a3206?q=80&w=1000&auto=format&fit=crop' }}');">
@@ -80,12 +98,12 @@
                                     <h3 class="text-lg font-black text-gray-800 dark:text-white flex items-center gap-2">
                                         📅 Próximas Actividades (2 Meses)
                                     </h3>
-                                @if(!$upcomingActivities->isEmpty())
-                                            <a href="{{ route('calendario.reporte.pdf') }}" target="_blank" class="text-xs bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-lg transition shadow-sm flex items-center gap-2">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                                Descargar Reporte
-                                            </a>
-                                        @endif
+                                    @if(!$upcomingActivities->isEmpty())
+                                        <a href="{{ route('calendario.reporte.pdf') }}" target="_blank" class="text-xs bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-lg transition shadow-sm flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                            Descargar Reporte
+                                        </a>
+                                    @endif
                                 </div>
 
                                 @if($upcomingActivities->isEmpty())

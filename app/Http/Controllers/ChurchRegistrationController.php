@@ -35,7 +35,7 @@ class ChurchRegistrationController extends Controller
         // A. Creamos la nueva Iglesia (Contrato)
         $contract = Contract::create([
             'name' => $request->church_name,
-            'status' => 'active', // Nos aseguramos de que la iglesia nazca activa
+            'status' => 'trial', // Nos aseguramos de que la iglesia nazca en modo de prueba
         ]);
 
         // B. Creamos al usuario amarrado a esa nueva iglesia

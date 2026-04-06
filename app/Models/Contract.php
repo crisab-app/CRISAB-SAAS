@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class Contract extends Model
 {
@@ -25,6 +26,22 @@ class Contract extends Model
         'facebook_url',
         'youtube_url',
     ];
+    /**
+     * Determina si la iglesia aún está en su mes de regalo.
+     */
+    public function isWithinTrialPeriod()
+    {
+        // Si la iglesia tiene menos de 30 días de creada, es periodo de gracia
+        return $this->created_at->diffInDays(now()) <= 30;
+    }
+    /**
+     * Determina si debe mostrarse el aviso del café.
+     */
+    public function needsCoffeeContribution()
+    {
+        // Si ya pasó el mes Y no tiene un estatus de 'active' (pagado/VIP)
+        return !$this->isWithinTrialPeriod() && $this->status !== 'active';
+    }
 
     /**
      * Lógica Automática (Cerebro del Modelo)
