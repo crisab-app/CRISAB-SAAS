@@ -80,11 +80,12 @@
                                     <h3 class="text-lg font-black text-gray-800 dark:text-white flex items-center gap-2">
                                         📅 Próximas Actividades (2 Meses)
                                     </h3>
-                                    @if(!$upcomingActivities->isEmpty())
-                                        <a href="{{ route('calendario.reporte.pdf') }}" target="_blank" class="text-xs bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-lg transition shadow-sm flex items-center gap-2">
-                                            picture_as_pdf Descargar Reporte
-                                        </a>
-                                    @endif
+                                @if(!$upcomingActivities->isEmpty())
+                                            <a href="{{ route('calendario.reporte.pdf') }}" target="_blank" class="text-xs bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 rounded-lg transition shadow-sm flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                Descargar Reporte
+                                            </a>
+                                        @endif
                                 </div>
 
                                 @if($upcomingActivities->isEmpty())
