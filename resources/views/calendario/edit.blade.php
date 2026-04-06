@@ -38,6 +38,20 @@
                             </div>
                         </div>
 
+                        @if(isset($templates) && $templates->count() > 0)
+                        <div class="mb-6 bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg border border-indigo-100 dark:border-indigo-800">
+                            <label for="template_id" class="block text-sm font-bold text-indigo-800 dark:text-indigo-300">📋 Aplicar Plantilla de Actividad (Opcional)</label>
+                            <p class="text-xs text-indigo-600 dark:text-indigo-400 mb-2">Si seleccionas una nueva plantilla, se agregarán sus puntos a este evento.</p>
+                            <select name="template_id" id="template_id" 
+                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-600 dark:text-gray-300 sm:text-sm">
+                                <option value="">-- Mantener la configuración actual sin cambios --</option>
+                                @foreach($templates as $template)
+                                    <option value="{{ $template->id }}">{{ $template->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
+
                         <div class="mb-6 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
                             <label for="visibility" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Privacidad del Evento *</label>
                             <select name="visibility" id="visibility" required 
@@ -51,13 +65,13 @@
                             <div>
                                 <label for="start" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha y Hora de Inicio *</label>
                                 <input type="datetime-local" name="start" id="start" 
-                                    value="{{ old('start', \Carbon\Carbon::parse($event->start_time)->format('Y-m-d\TH:i')) }}" required 
+                                    value="{{ old('start', \Carbon\Carbon::parse($event->start)->format('Y-m-d\TH:i')) }}" required 
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300 sm:text-sm">
                             </div>
                             <div>
                                 <label for="end" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Fecha y Hora de Fin *</label>
                                 <input type="datetime-local" name="end" id="end" 
-                                    value="{{ old('end', \Carbon\Carbon::parse($event->end_time)->format('Y-m-d\TH:i')) }}" required 
+                                    value="{{ old('end', \Carbon\Carbon::parse($event->end)->format('Y-m-d\TH:i')) }}" required 
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300 sm:text-sm">
                             </div>
                         </div>

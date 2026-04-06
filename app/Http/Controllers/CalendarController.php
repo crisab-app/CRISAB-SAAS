@@ -163,15 +163,13 @@ class CalendarController extends Controller
     // NUEVAS FUNCIONES DE EDICIÓN
     // ==========================================
 
-    public function edit(Event $event)
-    {
-        // Seguridad: Solo los de esta iglesia pueden editarlo
-        if ($event->contract_id !== auth()->user()->contract_id) {
-            abort(403, 'No tienes permiso para editar este evento.');
-        }
-
-        return view('calendario.edit', compact('event'));
-    }
+public function edit(Event $event)
+{
+    // Obtener las plantillas de esta iglesia
+    $templates = \App\Models\ServiceTemplate::where('contract_id', auth()->user()->contract_id)->get();
+    
+    return view('calendario.edit', compact('event', 'templates'));
+}
 
     public function update(Request $request, Event $event)
     {
