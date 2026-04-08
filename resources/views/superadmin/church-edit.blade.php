@@ -29,7 +29,7 @@
 
                     <div class="mb-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-lg">
                         <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" name="is_active_donor" value="1" {{ $user->is_active_donor ? 'checked' : '' }} 
+                            <input type="checkbox" name="is_active_donor" value="1" {{ $church->is_active_donor ? 'checked' : '' }} 
                                 class="rounded border-gray-300 text-amber-600 shadow-sm focus:border-amber-500 dark:bg-gray-900 dark:border-gray-600 w-5 h-5">
                             <span class="ml-3 text-sm text-amber-900 dark:text-amber-300 font-bold">Cuenta ACTIVADA (Donador Activo)</span>
                         </label>

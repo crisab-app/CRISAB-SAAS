@@ -36,10 +36,13 @@
                                 <input type="text" name="name" value="{{ old('name', $user->name) }}" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
 
-                            <div>
+                        <div>
                                 <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Correo Electrónico</label>
                                 <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             </div>
+                        </div> <div class="mb-6">
+                            <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Teléfono (Opcional)</label>
+                            <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
 
                         <hr class="my-6 border-gray-200 dark:border-gray-700">
