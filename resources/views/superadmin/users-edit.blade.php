@@ -24,6 +24,42 @@
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white">Información y Privilegios</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400">Modifica el acceso y el rol de este usuario en su iglesia.</p>
                 </div>
+                <div class="bg-blue-50 dark:bg-blue-900/20 border-b border-blue-100 dark:border-blue-800 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 rounded-full">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider">Última sesión en el sistema</p>
+                            <p class="text-sm font-medium text-blue-900 dark:text-blue-300 mt-0.5">
+                                @if($user->last_login_at)
+                                    {{ \Carbon\Carbon::parse($user->last_login_at)->translatedFormat('l d \d\e F, Y - h:i A') }}
+                                    <span class="text-blue-500 dark:text-blue-400 text-xs ml-2">({{ \Carbon\Carbon::parse($user->last_login_at)->diffForHumans() }})</span>
+                                @else
+                                    <span class="italic opacity-70">El usuario aún no ha iniciado sesión.</span>
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    
+                    @if($user->last_login_ip)
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider">Dirección IP</p>
+                            <p class="text-sm font-medium text-blue-900 dark:text-blue-300 mt-0.5 font-mono bg-white dark:bg-blue-900/50 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-700">
+                                {{ $user->last_login_ip }}
+                            </p>
+                        </div>
+                    @endif
+                </div>
+                ```
+
+**¿Qué hace esto?**
+Crea una barra de monitoreo en tono azul claro (o azul oscuro si usas modo noche) que te mostrará:
+* El día exacto y la hora del último inicio de sesión (Ej. "Miércoles 08 de Abril, 2026 - 11:09 AM").
+* Hace cuánto tiempo fue eso (Ej. "hace 2 días").
+* La dirección IP desde donde se conectó (muy útil por seguridad).
+
+Si un usuario se acaba de registrar pero nunca ha entrado, la plataforma elegantemente te dirá: *"El usuario aún no ha iniciado sesión."*
 
                 <div class="p-8">
                     <form action="{{ route('superadmin.users.update', $user) }}" method="POST">

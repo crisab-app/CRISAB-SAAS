@@ -22,11 +22,22 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
+/**
+     * Handle an incoming authentication request.
+     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        // --- NUEVO: GUARDAR EL ÚLTIMO ACCESO ---
+        $user = Auth::user();
+        $user->update([
+            'last_login_at' => now(), // Guarda la fecha y hora exacta
+            'last_login_ip' => $request->ip() // Guarda desde qué IP se conectó
+        ]);
+        // ---------------------------------------
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
