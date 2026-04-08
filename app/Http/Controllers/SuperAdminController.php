@@ -104,25 +104,47 @@ class SuperAdminController extends Controller
         return redirect('/master-panel')->with('success', 'Iglesia actualizada correctamente.');
     }
 
-    public function destroyChurch($id)
+public function destroyChurch($id)
     {
         $church = \App\Models\Contract::findOrFail($id);
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($church) {
             
-            // 1. Limpiar Liturgias y Eventos
+            // 1. Limpiar Liturgias, Eventos y sus Items
             $eventIds = \Illuminate\Support\Facades\DB::table('events')->where('contract_id', $church->id)->pluck('id');
             if ($eventIds->isNotEmpty()) {
                 \Illuminate\Support\Facades\DB::table('event_items')->whereIn('event_id', $eventIds)->delete();
             }
             \Illuminate\Support\Facades\DB::table('events')->where('contract_id', $church->id)->delete();
 
-            // 2. Limpiar Plantillas de Liturgia
+            // 2. Limpiar Plantillas de Liturgia y sus Items
             if (\Illuminate\Support\Facades\Schema::hasTable('service_templates')) {
+                $templateIds = \Illuminate\Support\Facades\DB::table('service_templates')->where('contract_id', $church->id)->pluck('id');
+                
+                if ($templateIds->isNotEmpty() && \Illuminate\Support\Facades\Schema::hasTable('service_template_items')) {
+                    \Illuminate\Support\Facades\DB::table('service_template_items')->whereIn('template_id', $templateIds)->delete();
+                }
+                
                 \Illuminate\Support\Facades\DB::table('service_templates')->where('contract_id', $church->id)->delete();
             }
 
-            // 3. Limpiar Relaciones de Usuarios con Grupos y Privilegios
+            // 3. Limpiar Privilegios (Skills) - AQUÍ ESTÁ LA CORRECCIÓN AL ERROR 1451
+            if (\Illuminate\Support\Facades\Schema::hasTable('skills')) {
+                $skillIds = \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->pluck('id');
+                
+                if ($skillIds->isNotEmpty()) {
+                    // a) Borrar relaciones con usuarios
+                    \Illuminate\Support\Facades\DB::table('skill_user')->whereIn('skill_id', $skillIds)->delete();
+                    
+                    // b) Borrar CUALQUIER item huérfano de eventos que siga usando este privilegio
+                    if (\Illuminate\Support\Facades\Schema::hasTable('event_items')) {
+                        \Illuminate\Support\Facades\DB::table('event_items')->whereIn('skill_id', $skillIds)->delete();
+                    }
+                }
+                \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->delete();
+            }
+
+            // 4. Limpiar Grupos y Sociedades
             if (\Illuminate\Support\Facades\Schema::hasTable('groups')) {
                 $groupIds = \Illuminate\Support\Facades\DB::table('groups')->where('contract_id', $church->id)->pluck('id');
                 if ($groupIds->isNotEmpty()) {
@@ -130,25 +152,16 @@ class SuperAdminController extends Controller
                 }
                 \Illuminate\Support\Facades\DB::table('groups')->where('contract_id', $church->id)->delete();
             }
-            
-            if (\Illuminate\Support\Facades\Schema::hasTable('skills')) {
-                $skillIds = \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->pluck('id');
-                if ($skillIds->isNotEmpty()) {
-                    \Illuminate\Support\Facades\DB::table('skill_user')->whereIn('skill_id', $skillIds)->delete();
-                }
-                \Illuminate\Support\Facades\DB::table('skills')->where('contract_id', $church->id)->delete();
-            }
 
-            // 4. Eliminar Usuarios de la Iglesia
+            // 5. Eliminar Usuarios de la Iglesia
             \Illuminate\Support\Facades\DB::table('users')->where('contract_id', $church->id)->delete();
 
-            // 5. Finalmente, eliminar la Iglesia (Contrato)
+            // 6. Finalmente, eliminar la Iglesia (Contrato)
             $church->delete();
         });
 
         return back()->with('success', 'Iglesia y todos sus registros asociados fueron eliminados correctamente.');
     }
-
     // ==========================================
     // --- GESTIÓN DE USUARIOS ---
     // ==========================================
