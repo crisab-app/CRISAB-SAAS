@@ -46,11 +46,11 @@
             </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
             <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 drop-shadow-sm">
-                Organiza tu ministerio <br class="hidden md:block">
+                Organiza tu ministerio, campos, devocionales personales, lleva un registro dia a dia.<br class="hidden md:block">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">sin complicaciones</span>
             </h1>
             <p class="mt-4 text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
-                La plataforma todo en uno para iglesias. Gestiona miembros, organiza liturgias, crea calendarios y mantén a tu comunidad conectada desde cualquier lugar.
+                La plataforma todo en uno para iglesias. Gestiona miembros, organiza tus lecturas biblicas, actidades y predicas, crea calendarios y mantén a tu comunidad conectada desde cualquier lugar.
             </p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="{{ route('register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-full shadow-xl transition transform hover:-translate-y-1 text-lg">
@@ -85,7 +85,7 @@
 
                 <div class="bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl transition relative overflow-hidden">
                     <div class="text-4xl mb-4">📅</div>
-                    <h4 class="text-xl font-bold mb-3">Calendario y Liturgias</h4>
+                    <h4 class="text-xl font-bold mb-3">Calendario y actividades</h4>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
                         Programa reuniones, cultos y actividades. Genera y exporta en PDF el orden de servicio, incluyendo bosquejos de predicación y lecturas bíblicas.
                     </p>
@@ -95,7 +95,7 @@
                     <div class="text-4xl mb-4">🔒</div>
                     <h4 class="text-xl font-bold mb-3">Roles y Privacidad</h4>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        Protege la información de tu iglesia. Decide quién puede ver eventos privados, administrar finanzas o dar de alta a nuevos creyentes.
+                        Protege la información de tu iglesia. Decide quién puede ver eventos privados, administrar finanzas o dar de alta a nuevos miembros o creyentes(crea un seguimiento personal a los nuevos).
                     </p>
                 </div>
             </div>
