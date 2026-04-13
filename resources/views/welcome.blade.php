@@ -50,7 +50,7 @@
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">sin complicaciones</span>
             </h1>
             <p class="mt-4 text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
-                La plataforma todo en uno para iglesias. Gestiona miembros, organiza tus lecturas biblicas, actidades y predicas, crea calendarios y mantén a tu comunidad conectada desde cualquier lugar.
+                La plataforma todo en uno para iglesias. Gestiona miembros, organiza tus lecturas biblicas, actividades, devocionales y predicas, crea calendarios y mantén a tu comunidad conectada desde cualquier lugar.
             </p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="{{ route('register') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-full shadow-xl transition transform hover:-translate-y-1 text-lg">
