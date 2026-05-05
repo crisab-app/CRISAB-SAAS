@@ -15,17 +15,17 @@
 
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
+      "@@context": "https://schema.org",
+      "@@type": "SoftwareApplication",
       "name": "Administrarme",
       "operatingSystem": "Windows, macOS, Android, iOS, Web",
       "applicationCategory": "BusinessApplication",
       "offers": {
-        "@type": "Offer",
+        "@@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
       },
-      "description": "Plataforma SaaS integral para la administración, gestión de tareas y control de tesorería de organizaciones y proyectos."
+      "description": "Plataforma SaaS integral para la administración."
     }
     </script>
 
@@ -218,7 +218,7 @@
             <h2 class="text-3xl font-black text-center mb-12">Dudas frecuentes</h2>
             <div class="space-y-4" x-data="{ active: null }">
                 <div class="border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
-                    <button @click="active !== 1 ? active = 1 : active = null" class="w-full p-6 text-left font-black flex justify-between items-center bg-white dark:bg-gray-800">
+                    <button @@click="active !== 1 ? active = 1 : active = null" class="w-full p-6 text-left font-black flex justify-between items-center bg-white dark:bg-gray-800">
                         ¿Cómo protege administrarme.com mis datos financieros?
                         <span class="text-xl" x-text="active === 1 ? '-' : '+'"></span>
                     </button>
@@ -227,7 +227,7 @@
                     </div>
                 </div>
                 <div class="border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden">
-                    <button @click="active !== 2 ? active = 2 : active = null" class="w-full p-6 text-left font-black flex justify-between items-center bg-white dark:bg-gray-800">
+                    <button @@click="active !== 2 ? active = 2 : active = null" class="w-full p-6 text-left font-black flex justify-between items-center bg-white dark:bg-gray-800">
                         ¿Es realmente gratuito para organizaciones pequeñas?
                         <span class="text-xl" x-text="active === 2 ? '-' : '+'"></span>
                     </button>
