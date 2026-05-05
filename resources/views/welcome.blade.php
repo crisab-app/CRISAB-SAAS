@@ -30,7 +30,6 @@
     </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="antialiased bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 selection:bg-indigo-500 selection:text-white">
@@ -88,9 +87,7 @@
 
                 <div class="relative max-w-5xl mx-auto group">
                     <div class="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition duration-1000"></div>
-
                     <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-[0_32px_64px_-15px_rgba(0,0,0,0.2)] overflow-hidden border border-gray-100 dark:border-gray-700 transform transition-all duration-500 group-hover:scale-[1.02]">
-                        
                         <div class="bg-gray-100 dark:bg-gray-900 px-5 py-3 flex items-center gap-2 border-b border-gray-200 dark:border-gray-700">
                             <div class="flex gap-1.5">
                                 <div class="w-3 h-3 rounded-full bg-red-400"></div>
@@ -200,7 +197,7 @@
                             <li class="flex items-center gap-2"><span>✅</span> Gestión de tesorería</li>
                             <li class="flex items-center gap-2"><span>✅</span> Registro de actividades</li>
                         </ul>
-                        <a href="{{ route('register') }}" class="block w-full py-4 rounded-2xl border border-white/20 font-black hover:bg-white/10 transition">Empezar Ahora</a>
+                        <a href="{{ route('register') }}" class="block w-full py-4 rounded-2xl border border-white/20 font-black hover:bg-white/10 transition text-center">Empezar Ahora</a>
                     </div>
                     <div class="p-10 bg-indigo-600 rounded-[2.5rem] shadow-2xl shadow-indigo-500/40 transform md:-translate-y-6">
                         <div class="inline-block bg-white/20 px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4">Soporte Solidario</div>
@@ -211,7 +208,7 @@
                             <li class="flex items-center gap-2"><span>🚀</span> Reportes avanzados PDF</li>
                             <li class="flex items-center gap-2"><span>🚀</span> Soporte prioritario</li>
                         </ul>
-                        <a href="{{ route('register') }}" class="block w-full py-4 bg-white text-indigo-600 rounded-2xl font-black shadow-xl transition hover:bg-gray-100">Donar y Unirse</a>
+                        <a href="{{ route('register') }}" class="block w-full py-4 bg-white text-indigo-600 rounded-2xl font-black shadow-xl transition hover:bg-gray-100 text-center">Donar y Unirse</a>
                     </div>
                 </div>
             </div>
