@@ -16,6 +16,10 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\ChurchProfileController;
 use App\Http\Controllers\FinanceController;
 use App\Models\Event; 
+use App\Http\Controllers\Auth\GoogleController;
+
+Route::get('/auth/google/redirect', [GoogleController::class, 'redirect'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 
 Route::get('/', function () {
     return view('welcome');
