@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\URL; // <-- Muy importante agregar esta línea
+use Illuminate\Support\Facades\URL;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Auth\Notifications\VerifyEmail; // Se agregó esta importación
 use Illuminate\Notifications\Messages\MailMessage;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,16 +23,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // 🚀 MAGIA PARA TRADUCIR EL CORREO DE RECUPERACIÓN
+        // 🚀 1. TRADUCCIÓN DEL CORREO DE RECUPERACIÓN DE CONTRASEÑA
         ResetPassword::toMailUsing(function ($notifiable, $token) {
-            
-            // 1. Construimos el enlace seguro de Laravel
+            // Construimos el enlace seguro
             $url = url(route('password.reset', [
                 'token' => $token,
                 'email' => $notifiable->getEmailForPasswordReset(),
             ], false));
 
-            // 2. Armamos el correo 100% en español y personalizado
             return (new MailMessage)
                 ->subject('🔐 Recuperación de Contraseña - administrarme.com')
                 ->greeting('¡Hola, ' . $notifiable->name . '!')
@@ -41,8 +40,22 @@ class AppServiceProvider extends ServiceProvider
                 ->line('Si tú no solicitaste este cambio, no es necesario que realices ninguna acción. Tu cuenta sigue estando segura.')
                 ->salutation('Bendiciones, el equipo de administrarme.com');
         });
-        // Forzar HTTPS si estamos en el servidor de producción
-        if (env('APP_ENV') !== 'local') {
+
+        // 📧 2. TRADUCCIÓN DEL CORREO DE VERIFICACIÓN DE CUENTA
+        VerifyEmail::toMailUsing(function ($notifiable, $url) {
+            return (new MailMessage)
+                ->subject('✅ Verifica tu cuenta - administrarme.com')
+                ->greeting('¡Hola, ' . $notifiable->name . '!')
+                ->line('¡Gracias por registrarte en administrarme.com! Antes de comenzar, necesitamos que confirmes tu dirección de correo electrónico.')
+                ->line('Haz clic en el botón de abajo para activar tu cuenta y acceder a todas las herramientas de administración.')
+                ->action('Verificar mi cuenta', $url)
+                ->line('Si no creaste esta cuenta, simplemente ignora este mensaje.')
+                ->salutation('Bendiciones, el equipo de administrarme.com');
+        });
+
+        // 🔒 3. FORZAR HTTPS EN PRODUCCIÓN
+        // Usamos config() en lugar de env() directamente para mayor estabilidad
+        if (config('app.env') !== 'local') {
             URL::forceScheme('https');
         }
     }
