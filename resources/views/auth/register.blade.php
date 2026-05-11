@@ -76,6 +76,21 @@
                         </div>
                     </div>
 
+                    <div class="pt-4 border-t border-gray-700/50 mt-4">
+                        <label for="captcha" class="block text-xs font-bold text-gray-400 uppercase mb-2">Resuelve el Captcha de Seguridad *</label>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-3">
+                            <div class="bg-white rounded-lg overflow-hidden border border-gray-600 inline-block shadow-sm">
+                                {!! captcha_img('flat', ['class' => 'captcha-img-reg h-12 w-auto cursor-pointer hover:opacity-90 transition', 'title' => 'Haz clic para recargar la imagen', 'onclick' => 'this.src="/captcha/flat?"+Math.random()']) !!}
+                            </div>
+                            <button type="button" class="text-indigo-400 hover:text-indigo-300 transition text-sm flex items-center justify-center gap-1 bg-gray-900 border border-gray-700 py-2 px-4 rounded-lg flex-1 sm:flex-none" onclick="document.querySelector('.captcha-img-reg').src = '/captcha/flat?' + Math.random()">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                Recargar
+                            </button>
+                        </div>
+                        <input type="text" name="captcha" id="captcha" required placeholder="Escribe el texto de la imagen..."
+                            class="w-full bg-gray-900 border-gray-700 rounded-lg text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                        @error('captcha') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
                     <div class="mt-4 pt-2">
                         <label for="terms_register" class="inline-flex items-start">
                             <input id="terms_register" type="checkbox" class="rounded bg-gray-900 border-gray-600 text-indigo-600 shadow-sm focus:ring-indigo-500 mt-1 cursor-pointer transition" name="terms" required>
