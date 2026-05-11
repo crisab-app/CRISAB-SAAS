@@ -16,7 +16,7 @@ class ChurchRegistrationController extends Controller
     // 1. Mostrar el formulario público de registro de nueva iglesia
     public function create()
     {
-        return view('auth.register'); // Asegúrate de que apunte a la vista correcta que modificamos
+        return view('auth.register');
     }
 
     // 2. Procesar el formulario y crear la cuenta
@@ -31,7 +31,7 @@ class ChurchRegistrationController extends Controller
         // Validamos los datos, incluyendo el Captcha de seguridad
         $request->validate([
             'church_name' => 'required|string|max:255',
-            'name'        => 'required|string|max:255', // Corregido: antes decía pastor_name, pero la vista envía 'name'
+            'name'        => 'required|string|max:255',
             'phone'       => 'required|string|max:20|unique:users',
             'email'       => 'nullable|string|email|max:255|unique:users',
             'password'    => 'required|string|min:8|confirmed',
@@ -50,7 +50,7 @@ class ChurchRegistrationController extends Controller
 
         // B. Creamos al usuario amarrado a esa nueva iglesia
         $user = User::create([
-            'name' => $request->name,     // Corregido para usar $request->name
+            'name' => $request->name,
             'phone' => $request->phone,   
             'email' => $request->email,   
             'password' => Hash::make($request->password),
