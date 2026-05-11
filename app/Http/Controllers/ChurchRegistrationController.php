@@ -16,20 +16,30 @@ class ChurchRegistrationController extends Controller
     // 1. Mostrar el formulario público de registro de nueva iglesia
     public function create()
     {
-        return view('auth.register_church'); // Asegúrate de que el nombre de esta vista coincida con tu archivo
+        return view('auth.register'); // Asegúrate de que apunte a la vista correcta que modificamos
     }
 
     // 2. Procesar el formulario y crear la cuenta
     public function store(Request $request)
     {
-        // Validamos los datos: Teléfono OBLIGATORIO, Correo OPCIONAL
+        // 🚀 BLOQUEO DE BOTS (HONEYPOT)
+        // Si el campo invisible tiene algún texto, matamos la petición inmediatamente con un error 403.
+        if ($request->filled('work_email_address')) {
+            abort(403, 'Actividad automatizada sospechosa detectada.');
+        }
+
+        // Validamos los datos, incluyendo el Captcha de seguridad
         $request->validate([
             'church_name' => 'required|string|max:255',
-            'pastor_name' => 'required|string|max:255',
-            'phone'       => 'required|string|max:20|unique:users', // Exigimos el teléfono y que no esté repetido
-            'email'       => 'nullable|string|email|max:255|unique:users', // El correo ahora es opcional
+            'name'        => 'required|string|max:255', // Corregido: antes decía pastor_name, pero la vista envía 'name'
+            'phone'       => 'required|string|max:20|unique:users',
+            'email'       => 'nullable|string|email|max:255|unique:users',
             'password'    => 'required|string|min:8|confirmed',
-            'terms'       => 'accepted', // Validamos que hayan marcado la casilla de términos
+            'terms'       => 'accepted',
+            'captcha'     => 'required|captcha', // 🔥 VALIDACIÓN DEL CAPTCHA
+        ], [
+            // Mensaje personalizado en español si fallan el captcha
+            'captcha.captcha' => 'El código de seguridad de la imagen es incorrecto. Por favor, intenta de nuevo.',
         ]);
 
         // A. Creamos la nueva Iglesia (Contrato)
@@ -40,11 +50,11 @@ class ChurchRegistrationController extends Controller
 
         // B. Creamos al usuario amarrado a esa nueva iglesia
         $user = User::create([
-            'name' => $request->pastor_name,
-            'phone' => $request->phone,   // Guardamos el teléfono
-            'email' => $request->email,   // Guardamos el correo (aunque venga vacío)
+            'name' => $request->name,     // Corregido para usar $request->name
+            'phone' => $request->phone,   
+            'email' => $request->email,   
             'password' => Hash::make($request->password),
-            'contract_id' => $contract->id, // ¡Aquí ocurre la magia de la conexión!
+            'contract_id' => $contract->id, 
             
             // 🔥 LE DAMOS EL PODER ABSOLUTO DESDE EL DÍA 1
             'is_church_owner' => true,
@@ -58,18 +68,18 @@ class ChurchRegistrationController extends Controller
             'nationality' => 'México',
         ]);
         
-        // A. Notificar al sistema SIEMPRE que haya un registro
+        // C. Notificar al sistema SIEMPRE que haya un registro
         Mail::to('administrarme@crisab.com')->send(new AdminNotificationMail($user, $contract->name));
 
-        // B. Enviar Bienvenida y Manual al Pastor (SOLO SI DEJÓ CORREO)
+        // D. Enviar Bienvenida y Manual al Pastor (SOLO SI DEJÓ CORREO)
         if ($user->email) {
             Mail::to($user->email)->send(new WelcomeChurchMail($user, $contract->name));
         }
 
-        // C. Iniciamos sesión automáticamente con este nuevo usuario
+        // E. Iniciamos sesión automáticamente con este nuevo usuario
         Auth::login($user);
 
-        // D. Lo mandamos directo a su nuevo panel de control
+        // F. Lo mandamos directo a su nuevo panel de control
         return redirect()->route('dashboard')->with('success', '¡Bienvenido! El espacio para tu iglesia ha sido creado con éxito.');
     }
 }
