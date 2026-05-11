@@ -55,6 +55,9 @@ Route::get('/logout', function (Request $request) {
 
 // Ruta para la página de despedida
 Route::view('/despedida', 'auth.despedida')->name('despedida');
+// ... otras rutas ...
+
+Route::post('/register', [ChurchRegistrationController::class, 'store']);
 
 // ==========================================================
 // 🔒 RUTAS DE CUARENTENA (Para iglesias suspendidas)
