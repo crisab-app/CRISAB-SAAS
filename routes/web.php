@@ -141,6 +141,8 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\CheckChurchStatus::c
     Route::get('/mi-billetera', [\App\Http\Controllers\PersonalFinanceController::class, 'index'])->name('personal.finances');
     Route::post('/mi-billetera', [\App\Http\Controllers\PersonalFinanceController::class, 'store'])->name('personal.finances.store');
     Route::delete('/mi-billetera/{transaction}', [\App\Http\Controllers\PersonalFinanceController::class, 'destroy'])->name('personal.finances.destroy');
+    Route::post('/mi-billetera/deuda', [\App\Http\Controllers\PersonalFinanceController::class, 'storeDebt'])->name('personal.debts.store');
+    Route::delete('/mi-billetera/deuda/{debt}', [\App\Http\Controllers\PersonalFinanceController::class, 'destroyDebt'])->name('personal.debts.destroy');
 
     // 🛡️ MÓDULO DE MIEMBROS (Protegido)
     Route::middleware([\App\Http\Middleware\CheckMembersPermission::class])->group(function () {
