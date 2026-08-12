@@ -37,6 +37,9 @@
                             </x-nav-link>
                         @endif
                     @endif
+                    <x-nav-link :href="route('personal.finances')" :active="request()->routeIs('personal.finances')">
+                        💼 {{ __('Mi Billetera') }}
+                    </x-nav-link>
 
                     <x-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">
                         👥 {{ __('Grupos') }}
@@ -179,6 +182,7 @@
             <x-responsive-nav-link :href="route('grupos.index')" :active="request()->routeIs('grupos.*')">👥 {{ __('Grupos') }}</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('privilegios.index')" :active="request()->routeIs('privilegios.*')">⭐ {{ __('Privilegios') }}</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('templates.index')" :active="request()->routeIs('templates.*')">📋 {{ __('Actividades') }}</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('personal.finances')" :active="request()->routeIs('personal.finances')"> 💼 {{ __('Mi Billetera') }} </x-responsive-nav-link>
             
             @if(Auth::user()->can_manage_finances || Auth::user()->is_super_admin)
                 <x-responsive-nav-link :href="route('finances.index')" :active="request()->routeIs('finances.*')">💰 {{ __('Finanzas') }}</x-responsive-nav-link>
