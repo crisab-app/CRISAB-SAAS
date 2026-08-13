@@ -71,4 +71,8 @@ class PersonalDebt extends Model
         $days = $this->days_until_payment;
         return $days !== null && $days >= 0 && $days <= 5;
     }
+    public function transactions()
+    {
+        return $this->hasMany(PersonalTransaction::class);
+    }
 }

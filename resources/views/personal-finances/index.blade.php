@@ -9,10 +9,33 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             @if(session('success'))
-                <div class="mb-6 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded-xl shadow-sm flex items-center gap-2 font-bold">
+                <div class="mb-6 bg-green-100 dark:bg-green-900/30 border border-green-400 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg shadow-sm font-bold flex items-center gap-2">
                     ✅ {{ session('success') }}
                 </div>
             @endif
+
+            <!-- 1. Tarjetas de Resumen -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border-l-4 border-green-500 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-16 h-16 bg-green-500/10 rounded-bl-full"></div>
+                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ingresos del Mes</p>
+                    <h3 class="text-3xl font-extrabold text-green-600 dark:text-green-400 mt-2">${{ number_format($totalIncome, 2) }}</h3>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border-l-4 border-red-500 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-16 h-16 bg-red-500/10 rounded-bl-full"></div>
+                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Gastos del Mes</p>
+                    <h3 class="text-3xl font-extrabold text-red-600 dark:text-red-400 mt-2">${{ number_format($totalExpense, 2) }}</h3>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border-l-4 {{ $balance >= 0 ? 'border-indigo-500' : 'border-orange-500' }} relative overflow-hidden ring-1 {{ $balance >= 0 ? 'ring-indigo-500/30' : 'ring-red-500/30' }}">
+                    <div class="absolute right-0 top-0 w-16 h-16 {{ $balance >= 0 ? 'bg-indigo-500/10' : 'bg-red-500/10' }} rounded-bl-full"></div>
+                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Balance Disponible</p>
+                    <h3 class="text-3xl font-extrabold {{ $balance >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400' }} mt-2">
+                        ${{ number_format($balance, 2) }}
+                    </h3>
+                </div>
+            </div>
 
             <!-- Navegación de Pestañas -->
             <div class="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 pb-px overflow-x-auto">
@@ -29,29 +52,6 @@
             <!-- ============================================== -->
             <div x-show="tab === 'resumen'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
                 
-                <!-- Tarjetas de Resumen -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
-                        <div class="absolute right-0 top-0 w-16 h-16 bg-green-500/10 rounded-bl-full"></div>
-                        <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ingresos (Mes)</p>
-                        <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-2">${{ number_format($totalIncome, 2) }}</h3>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
-                        <div class="absolute right-0 top-0 w-16 h-16 bg-red-500/10 rounded-bl-full"></div>
-                        <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Gastos (Mes)</p>
-                        <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-2">${{ number_format($totalExpense, 2) }}</h3>
-                    </div>
-
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden ring-1 {{ $balance >= 0 ? 'ring-indigo-500/30' : 'ring-red-500/30' }}">
-                        <div class="absolute right-0 top-0 w-16 h-16 {{ $balance >= 0 ? 'bg-indigo-500/10' : 'bg-red-500/10' }} rounded-bl-full"></div>
-                        <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Balance Disponible</p>
-                        <h3 class="text-3xl font-black {{ $balance >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-red-500' }} mt-2">
-                            ${{ number_format($balance, 2) }}
-                        </h3>
-                    </div>
-                </div>
-
                 <!-- 🏥 TERMÓMETRO FINANCIERO Y PLAN DE RESCATE -->
                 @if($totalIncome > 0)
                     <div class="bg-gray-900 rounded-2xl shadow-xl border border-gray-700 p-6 md:p-8 mb-8 relative overflow-hidden">
@@ -203,8 +203,24 @@
                                     <input type="text" name="description" placeholder="Opcional..." class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-indigo-500">
                                 </div>
 
-                                <button type="submit" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition transform active:scale-95">
-                                    💾 Guardar
+                                <!-- Selector de Cuenta / Método de Pago -->
+                                <div class="pt-2 border-t border-gray-100 dark:border-gray-700 mt-4">
+                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Método de Pago / Cuenta *</label>
+                                    <select name="personal_debt_id" class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-indigo-500">
+                                        <option value="">💵 Efectivo / Débito (Mi Billetera)</option>
+                                        @if(isset($debts) && $debts->count() > 0)
+                                            <optgroup label="Mis Tarjetas y Créditos">
+                                                @foreach($debts as $debt)
+                                                    <option value="{{ $debt->id }}">💳 {{ $debt->name }}</option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endif
+                                    </select>
+                                    <p class="text-[10px] text-gray-400 mt-1">Si pagas con tarjeta de crédito, tu efectivo no disminuirá pero tu deuda aumentará.</p>
+                                </div>
+
+                                <button type="submit" class="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition transform active:scale-95 mt-4">
+                                    💾 Guardar Movimiento
                                 </button>
                             </form>
                         </div>
@@ -224,7 +240,7 @@
                                     </div>
                                 @else
                                     <table class="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                                        <thead class="bg-gray-50 dark:bg-gray-900/80 sticky top-0 backdrop-blur-sm shadow-sm">
+                                        <thead class="bg-gray-50 dark:bg-gray-900/80 sticky top-0 backdrop-blur-sm shadow-sm z-10">
                                             <tr>
                                                 <th class="px-6 py-3 font-black text-xs uppercase tracking-wider">Fecha</th>
                                                 <th class="px-6 py-3 font-black text-xs uppercase tracking-wider">Categoría / Detalle</th>
@@ -238,7 +254,16 @@
                                                     <td class="px-6 py-4 whitespace-nowrap font-medium text-xs">{{ $tx->date->format('d/M') }}</td>
                                                     <td class="px-6 py-4">
                                                         <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 mb-1 inline-block">{{ $tx->category }}</span>
-                                                        <span class="font-bold text-gray-900 dark:text-white block">{{ $tx->description ?? '--' }}</span>
+                                                        <span class="font-bold text-gray-900 dark:text-white block mb-1">{{ $tx->description ?? '--' }}</span>
+                                                        @if($tx->debt)
+                                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
+                                                                💳 {{ $tx->debt->name }}
+                                                            </span>
+                                                        @else
+                                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                                                                💵 Efectivo
+                                                            </span>
+                                                        @endif
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-right font-black {{ $tx->type == 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
                                                         {{ $tx->type == 'income' ? '+' : '-' }}${{ number_format($tx->amount, 2) }}
@@ -332,21 +357,9 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 @foreach($debts as $debt)
-                                    @php
-                                        // Calcular si la fecha de pago está cerca (en los próximos 5 días)
-                                        $hoy = \Carbon\Carbon::now()->day;
-                                        $pago = $debt->payment_day;
-                                        $diferencia = $pago - $hoy;
-                                        // Ajuste simple por si cambió de mes
-                                        if ($diferencia < 0 && $diferencia > -20) $diferencia = 99; // Ya pasó
-                                        if ($diferencia < -20) $diferencia = (30 - $hoy) + $pago; // Es a principios del próximo mes
-                                        
-                                        $esPeligro = ($diferencia >= 0 && $diferencia <= 5);
-                                    @endphp
-
-                                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 border shadow-sm relative overflow-hidden {{ $esPeligro ? 'border-red-400 dark:border-red-600' : 'border-gray-200 dark:border-gray-700' }}">
-                                        @if($esPeligro)
-                                            <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-black uppercase px-2 py-1 rounded-bl-lg">¡Pago próximo!</div>
+                                    <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 border shadow-sm relative overflow-hidden {{ $debt->is_payment_near ? 'border-red-400 dark:border-red-600' : 'border-gray-200 dark:border-gray-700' }}">
+                                        @if($debt->is_payment_near)
+                                            <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-black uppercase px-2 py-1 rounded-bl-lg">¡Pago en {{ $debt->days_until_payment }} días!</div>
                                         @endif
                                         
                                         <div class="flex justify-between items-start mb-3">
@@ -375,7 +388,7 @@
 
                                         <div class="flex justify-between text-xs font-medium text-gray-500">
                                             <div>✂️ Corte: Día {{ $debt->cutoff_day ?? '--' }}</div>
-                                            <div class="{{ $esPeligro ? 'text-red-500 font-bold' : '' }}">⚠️ Pago: Día {{ $debt->payment_day }}</div>
+                                            <div class="{{ $debt->is_payment_near ? 'text-red-500 font-bold' : '' }}">⚠️ Pago: Día {{ $debt->payment_day }}</div>
                                         </div>
                                     </div>
                                 @endforeach
