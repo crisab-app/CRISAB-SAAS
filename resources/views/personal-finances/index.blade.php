@@ -9,31 +9,43 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             @if(session('success'))
-                <div class="mb-6 bg-green-100 dark:bg-green-900/30 border border-green-400 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg shadow-sm font-bold flex items-center gap-2">
+                <div class="mb-6 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded-xl shadow-sm flex items-center gap-2 font-bold transition-all">
                     ✅ {{ session('success') }}
                 </div>
             @endif
 
             <!-- 1. Tarjetas de Resumen -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border-l-4 border-green-500 relative overflow-hidden">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
                     <div class="absolute right-0 top-0 w-16 h-16 bg-green-500/10 rounded-bl-full"></div>
                     <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ingresos del Mes</p>
-                    <h3 class="text-3xl font-extrabold text-green-600 dark:text-green-400 mt-2">${{ number_format($totalIncome, 2) }}</h3>
+                    <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-2">${{ number_format($totalIncome, 2) }}</h3>
                 </div>
                 
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border-l-4 border-red-500 relative overflow-hidden">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden">
                     <div class="absolute right-0 top-0 w-16 h-16 bg-red-500/10 rounded-bl-full"></div>
                     <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Gastos del Mes</p>
-                    <h3 class="text-3xl font-extrabold text-red-600 dark:text-red-400 mt-2">${{ number_format($totalExpense, 2) }}</h3>
+                    <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-2">${{ number_format($totalExpense, 2) }}</h3>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border-l-4 {{ $balance >= 0 ? 'border-indigo-500' : 'border-orange-500' }} relative overflow-hidden ring-1 {{ $balance >= 0 ? 'ring-indigo-500/30' : 'ring-red-500/30' }}">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden ring-1 {{ $balance >= 0 ? 'ring-indigo-500/30' : 'ring-red-500/30' }}">
                     <div class="absolute right-0 top-0 w-16 h-16 {{ $balance >= 0 ? 'bg-indigo-500/10' : 'bg-red-500/10' }} rounded-bl-full"></div>
-                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Balance Disponible</p>
-                    <h3 class="text-3xl font-extrabold {{ $balance >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-orange-600 dark:text-orange-400' }} mt-2">
+                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Disponible</p>
+                    <h3 class="text-3xl font-black {{ $balance >= 0 ? 'text-indigo-600 dark:text-indigo-400' : 'text-red-500' }} mt-2">
                         ${{ number_format($balance, 2) }}
                     </h3>
+                    
+                    <!-- Desglose de Efectivo y Débito -->
+                    <div class="flex flex-col sm:flex-row gap-4 mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 text-xs font-bold">
+                        <div class="flex items-center gap-1.5 text-gray-600 dark:text-gray-300">
+                            <span>💵 Efectivo:</span>
+                            <span class="{{ $cashBalance < 0 ? 'text-red-500' : '' }}">${{ number_format($cashBalance, 2) }}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-gray-600 dark:text-gray-300">
+                            <span>🏦 Débito:</span>
+                            <span class="{{ $debitBalance < 0 ? 'text-red-500' : '' }}">${{ number_format($debitBalance, 2) }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -206,12 +218,16 @@
                                 <!-- Selector de Cuenta / Método de Pago -->
                                 <div class="pt-2 border-t border-gray-100 dark:border-gray-700 mt-4">
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Método de Pago / Cuenta *</label>
-                                    <select name="personal_debt_id" class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-indigo-500">
-                                        <option value="">💵 Efectivo / Débito (Mi Billetera)</option>
+                                    <select name="payment_method" required class="w-full rounded-xl border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-white focus:ring-indigo-500">
+                                        <optgroup label="Mi Dinero">
+                                            <option value="cash">💵 Efectivo (Billetes y Monedas)</option>
+                                            <option value="debit">🏦 Débito / Transferencia Bancaria</option>
+                                        </optgroup>
+                                        
                                         @if(isset($debts) && $debts->count() > 0)
                                             <optgroup label="Mis Tarjetas y Créditos">
                                                 @foreach($debts as $debt)
-                                                    <option value="{{ $debt->id }}">💳 {{ $debt->name }}</option>
+                                                    <option value="debt_{{ $debt->id }}">💳 {{ $debt->name }}</option>
                                                 @endforeach
                                             </optgroup>
                                         @endif
@@ -258,6 +274,10 @@
                                                         @if($tx->debt)
                                                             <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
                                                                 💳 {{ $tx->debt->name }}
+                                                            </span>
+                                                        @elseif($tx->wallet_type == 'debit')
+                                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                                                                🏦 Débito
                                                             </span>
                                                         @else
                                                             <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">

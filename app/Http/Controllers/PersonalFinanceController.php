@@ -24,8 +24,8 @@ class PersonalFinanceController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $mesActual = Carbon::now()->month;
-        $anioActual = Carbon::now()->year;
+        $mesActual = \Carbon\Carbon::now()->month;
+        $anioActual = \Carbon\Carbon::now()->year;
 
         $transactions = PersonalTransaction::where('user_id', $user->id)
             ->whereMonth('date', $mesActual)
@@ -36,15 +36,19 @@ class PersonalFinanceController extends Controller
 
         $debts = PersonalDebt::where('user_id', $user->id)->orderBy('total_amount', 'asc')->get();
 
-        // 🧠 CÁLCULO INTELIGENTE DEL BALANCE (EFECTIVO)
         $totalIncome = $transactions->where('type', 'income')->sum('amount');
-        
-        // El efectivo solo baja si pagó con efectivo, O si usó efectivo para abonarle a la tarjeta
         $totalExpense = $transactions->where('type', 'expense')->filter(function ($tx) {
             return is_null($tx->personal_debt_id) || $tx->category === 'Deudas y Tarjetas';
         })->sum('amount');
 
         $balance = $totalIncome - $totalExpense;
+
+        // 💰 NUEVO: CÁLCULO SEPARADO DE EFECTIVO Y DÉBITO
+        $cashBalance = $transactions->where('wallet_type', 'cash')->where('type', 'income')->sum('amount') 
+                     - $transactions->where('wallet_type', 'cash')->where('type', 'expense')->sum('amount');
+
+        $debitBalance = $transactions->where('wallet_type', 'debit')->where('type', 'income')->sum('amount') 
+                      - $transactions->where('wallet_type', 'debit')->where('type', 'expense')->sum('amount');
 
         $pagosMinimosRequeridos = $debts->sum('minimum_payment');
         $totalDeudasPagadas = $transactions->where('category', 'Deudas y Tarjetas')->sum('amount');
@@ -53,7 +57,6 @@ class PersonalFinanceController extends Controller
         $totalDiezmos = $transactions->where('category', 'Diezmos y Ofrendas')->sum('amount');
         $categoriasFijas = ['Vivienda (Renta/Hipoteca)', 'Alimentación / Despensa', 'Servicios (Luz, Agua, Internet)', 'Transporte / Gasolina', 'Salud y Médico'];
         $totalFijos = $transactions->whereIn('category', $categoriasFijas)->sum('amount');
-
         $categoriasVariables = ['Entretenimiento', 'Otros Gastos', 'Educación'];
         $totalVariables = $transactions->whereIn('category', $categoriasVariables)->sum('amount');
 
@@ -61,7 +64,7 @@ class PersonalFinanceController extends Controller
         $expenseCategories = self::EXPENSE_CATEGORIES;
 
         return view('personal-finances.index', compact(
-            'transactions', 'debts', 'totalIncome', 'totalExpense', 'balance', 
+            'transactions', 'debts', 'totalIncome', 'totalExpense', 'balance', 'cashBalance', 'debitBalance',
             'incomeCategories', 'expenseCategories', 
             'pagosMinimosRequeridos', 'totalDeudasPagadas', 'porcentajeDeuda', 'totalDiezmos', 'totalFijos', 'totalVariables'
         ));
@@ -75,12 +78,18 @@ class PersonalFinanceController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'date' => 'required|date',
             'description' => 'nullable|string|max:255',
-            'personal_debt_id' => 'nullable|exists:personal_debts,id' // Validar la cuenta seleccionada
+            'payment_method' => 'required|string' // Puede ser 'cash', 'debit', o 'debt_5'
         ]);
+
+        // Decodificamos de dónde salió el dinero
+        $paymentMethod = $request->payment_method;
+        $walletType = in_array($paymentMethod, ['cash', 'debit']) ? $paymentMethod : null;
+        $personalDebtId = !in_array($paymentMethod, ['cash', 'debit']) ? str_replace('debt_', '', $paymentMethod) : null;
 
         $transaction = PersonalTransaction::create([
             'user_id' => Auth::id(),
-            'personal_debt_id' => $request->personal_debt_id,
+            'personal_debt_id' => $personalDebtId,
+            'wallet_type' => $walletType,
             'type' => $request->type,
             'category' => $request->category,
             'amount' => $request->amount,
@@ -88,18 +97,15 @@ class PersonalFinanceController extends Controller
             'description' => $request->description,
         ]);
 
-        // 🪄 LÓGICA DE ACTUALIZACIÓN DE SALDOS DE DEUDAS
-        if ($request->personal_debt_id) {
-            $debt = PersonalDebt::find($request->personal_debt_id);
+        // 🪄 LÓGICA DE ACTUALIZACIÓN DE SALDOS DE DEUDAS (Se mantiene igual)
+        if ($personalDebtId) {
+            $debt = PersonalDebt::find($personalDebtId);
             if ($debt) {
                 if ($request->type === 'income') {
-                    // Si registra ingreso a una tarjeta (Ej. Disposición de efectivo), sube su deuda
                     $debt->increment('total_amount', $request->amount);
                 } elseif ($request->category === 'Deudas y Tarjetas') {
-                    // Si registra un gasto en categoría "Deudas" hacia una tarjeta, ES UN PAGO. (Baja su deuda)
                     $debt->decrement('total_amount', $request->amount);
                 } else {
-                    // Si registra gasto en "Comida" hacia una tarjeta, es UNA COMPRA. (Sube su deuda)
                     $debt->increment('total_amount', $request->amount);
                 }
             }
@@ -107,6 +113,8 @@ class PersonalFinanceController extends Controller
 
         return back()->with('success', 'Movimiento registrado correctamente.');
     }
+
+
 
     public function destroy(PersonalTransaction $transaction)
     {

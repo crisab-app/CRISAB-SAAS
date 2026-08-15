@@ -11,7 +11,7 @@ class PersonalTransaction extends Model
 
     // Asegúrate de agregar 'personal_debt_id' al arreglo
     protected $fillable = [
-        'user_id', 'personal_debt_id', 'type', 'category', 'amount', 'date', 'description'
+        'user_id', 'personal_debt_id', 'wallet_type', 'type', 'category', 'amount', 'date', 'description'
     ];
 
     public function debt()
